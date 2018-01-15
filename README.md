@@ -1,2 +1,2 @@
-# zume-android-app
-Android App for the Zume Project
+# Zume Android Mobile App
+A volunteer created Android App to extend the Zume Project.
