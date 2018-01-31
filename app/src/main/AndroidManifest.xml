@@ -22,6 +22,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Notifications"
+            android:label="@string/title_activity_notifications"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Downloads"
+            android:label="@string/title_activity_downloads"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Session"
+            android:label="@string/title_activity_session"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
