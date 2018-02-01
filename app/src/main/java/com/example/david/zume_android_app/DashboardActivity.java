@@ -29,12 +29,39 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-        Button btn = (Button)findViewById(R.id.viewProfile);
+        Button viewProfile = (Button)findViewById(R.id.viewProfile);
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        viewProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(DashboardActivity.this, ProfileActivity.class));
+            }
+        });
+
+        Button notifications = (Button)findViewById(R.id.notifications);
+
+        notifications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(DashboardActivity.this, Notifications.class));
+            }
+        });
+
+        Button logOut = (Button)findViewById(R.id.logOut);
+
+        logOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(DashboardActivity.this, LoginActivity.class));
+            }
+        });
+
+        Button downloads = (Button)findViewById(R.id.downloads);
+
+        downloads.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(DashboardActivity.this, Downloads.class));
             }
         });
     }
