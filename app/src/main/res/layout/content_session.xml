@@ -75,7 +75,7 @@
         android:layout_width="200px"
         android:layout_height="wrap_content"
         android:text="Next"
-        android:id="@+id/button10"
+        android:id="@+id/Next"
         android:layout_below="@+id/textView4"
         android:layout_alignRight="@+id/videoView"
         android:layout_alignEnd="@+id/videoView"
@@ -85,8 +85,8 @@
         android:layout_width="200px"
         android:layout_height="wrap_content"
         android:text="Previous"
-        android:id="@+id/button11"
-        android:layout_alignTop="@+id/button10"
+        android:id="@+id/Previous"
+        android:layout_alignTop="@+id/Next"
         android:layout_alignLeft="@+id/videoView"
         android:layout_alignStart="@+id/videoView" />
 </RelativeLayout>
