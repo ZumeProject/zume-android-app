@@ -18,7 +18,8 @@
         android:id="@+id/listView"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:clickable="false" />
 
     <TableLayout
         android:layout_width="wrap_content"
@@ -67,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="View Profile"
-                android:id="@+id/button4"
+                android:id="@+id/viewProfile"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_column="0" />
@@ -76,7 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Notifications"
-                android:id="@+id/button5"
+                android:id="@+id/notifications"
                 android:layout_alignTop="@+id/tableLayout"
                 android:layout_toRightOf="@+id/tableLayout"
                 android:layout_toEndOf="@+id/tableLayout"
@@ -111,14 +112,14 @@
             android:layout_width="232dp"
             android:layout_height="wrap_content"
             android:text="Downloads"
-            android:id="@+id/button2"
+            android:id="@+id/downloads"
             android:layout_gravity="center_vertical" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Log Out"
-            android:id="@+id/button3"
+            android:id="@+id/logOut"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
 
