@@ -23,6 +23,8 @@ public class Notifications extends AppCompatActivity {
                 startActivity(new Intent(Notifications.this, DashboardActivity.class));
             }
         });
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

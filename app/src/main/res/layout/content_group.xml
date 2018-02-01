@@ -34,7 +34,7 @@
             android:layout_width="213dp"
             android:layout_height="wrap_content"
             android:text="Start Next Session"
-            android:id="@+id/button8"
+            android:id="@+id/startSession"
             android:layout_gravity="center_horizontal" />
 
         <TextView
@@ -62,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Invite Member"
-            android:id="@+id/button9"
+            android:id="@+id/inviteMember"
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.02" />
 
@@ -70,7 +70,7 @@
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:text="View Map"
-            android:id="@+id/Next"
+            android:id="@+id/viewMap"
             android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
