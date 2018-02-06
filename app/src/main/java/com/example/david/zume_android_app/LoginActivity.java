@@ -186,8 +186,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            //mAuthTask = new UserLoginTask(email, password);
+            //mAuthTask.execute((Void) null);
+            if (email.equals("test@gmail.com")){
+                if(password.equals("testing")){
+                    startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                }
+                else{
+                    mPasswordView.setError("The password is incorrect");
+                    showProgress(false);
+                }
+            }
+            else{
+                mEmailView.setError(getString(R.string.error_invalid_email));
+                showProgress(false);
+            }
         }
     }
 
