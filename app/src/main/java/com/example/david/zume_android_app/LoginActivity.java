@@ -1,24 +1,23 @@
-package com.example.david.zume_android_app;
+/*package com.example.david.zume_android_app;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -30,31 +29,41 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
+
 /**
  * A login screen that offers login via email/password.
  */
+/*
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
      */
+/*
     private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
+/*
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
+/*
     private UserLoginTask mAuthTask = null;
 
     // UI references.
@@ -62,6 +71,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+/*
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +91,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
+                    try {
+                        attemptLogin();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     return true;
                 }
                 return false;
@@ -87,12 +106,64 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                try {
+                    attemptLogin();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    //
+    private static final String HOST_NAME = "host";
+
+    private int basicAuthDemo(final String username, final String password) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        HttpClient client = new DefaultHttpClient();
+        HttpGet httpGet = new HttpGet("YOUR WEBSITE HERE");
+
+// Add authorization header
+        httpGet.addHeader(BasicScheme.authenticate( new UsernamePasswordCredentials("user", "password"), "UTF-8", false));
+
+// Set up the header types needed to properly transfer JSON
+        httpGet.setHeader("Content-Type", "application/json");
+        try {
+            HttpResponse response = client.execute(httpGet);
+            StatusLine statusLine = response.getStatusLine();
+            int statusCode = statusLine.getStatusCode();
+            if (statusCode == 200) {
+                HttpEntity entity = response.getEntity();
+                InputStream content = entity.getContent();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
+            } else {
+                Log.e(ParseJSON.class.toString(), "Failed to download file");
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } }
+        });
+
+        /*HttpURLConnection c = (HttpURLConnection) new URL("zume.hsutx.edu/wp-json").openConnection();
+        c.setUseCaches(false);
+        String loginInfo = username+":"+password;
+        c.setRequestProperty("Authorization", "basic " +
+                Base64.encode(loginInfo.getBytes(), Base64.NO_WRAP));
+        System.out.println("Debug");
+        return 1;*/
+/*
     }
 
     private void populateAutoComplete() {
@@ -112,7 +183,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
             Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
+                    .setAction(android.R.string.ok, new OnClickListener() {
                         @Override
                         @TargetApi(Build.VERSION_CODES.M)
                         public void onClick(View v) {
@@ -128,6 +199,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Callback received when a permissions request has been completed.
      */
+/*
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -144,7 +216,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
+/*
+    private void attemptLogin() throws IOException {
         if (mAuthTask != null) {
             return;
         }
@@ -188,16 +261,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(true);
             //mAuthTask = new UserLoginTask(email, password);
             //mAuthTask.execute((Void) null);
-            if (email.equals("test@gmail.com")){
-                if(password.equals("testing")){
+            int UserID = basicAuthDemo(email, password);
+            if (UserID >= 0){
+                startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+            }
+            if (email.equals("test@gmail.com")) {
+                if (password.equals("testing")) {
                     startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
-                }
-                else{
+                } else {
                     mPasswordView.setError("The password is incorrect");
                     showProgress(false);
                 }
-            }
-            else{
+            } else {
                 mEmailView.setError(getString(R.string.error_invalid_email));
                 showProgress(false);
             }
@@ -217,6 +292,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Shows the progress UI and hides the login form.
      */
+/*
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -293,6 +369,46 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Login Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.david.zume_android_app/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Login Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.david.zume_android_app/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
+
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -308,6 +424,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
+/*
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
@@ -361,4 +478,133 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 }
+*/
+
+package com.example.david.zume_android_app;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class LoginActivity extends AppCompatActivity {
+    private Button button_login_login;
+    private EditText editText_login_username;
+    private EditText editText_login_password;
+    private String username;
+    private String password;
+    private String baseUrl;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+        // TODO: Replace this with your own IP address or URL.
+        baseUrl = "http://zume.hsutx.edu/wp-json/wp/v2/users/me";
+
+        editText_login_username = (EditText) findViewById(R.id.editText_login_username);
+        editText_login_password = (EditText) findViewById(R.id.editText_login_password);
+
+        button_login_login = (Button) findViewById(R.id.button_login_login);
+
+        button_login_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+
+                    username = editText_login_username.getText().toString();
+                    password = editText_login_password.getText().toString();
+
+                    ApiAuthenticationClient apiAuthenticationClient =
+                            new ApiAuthenticationClient(
+                                    baseUrl
+                                    , username
+                                    , password
+                            );
+
+                    AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
+                    execute.execute();
+                } catch (Exception ex) {
+                }
+            }
+        });
+    }
+
+    /**
+     * This subclass handles the network operations in a new thread.
+     * It starts the progress bar, makes the API call, and ends the progress bar.
+     */
+    public class ExecuteNetworkOperation extends AsyncTask<Void, Void, String> {
+
+        private ApiAuthenticationClient apiAuthenticationClient;
+        private String isValidCredentials;
+
+        /**
+         * Overload the constructor to pass objects to this class.
+         */
+        public ExecuteNetworkOperation(ApiAuthenticationClient apiAuthenticationClient) {
+            this.apiAuthenticationClient = apiAuthenticationClient;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            // Display the progress bar.
+            findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                Log.d("Test", "Made to the execute method");
+                isValidCredentials = apiAuthenticationClient.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            // Hide the progress bar.
+            findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
+            // Login Success
+            if (!isValidCredentials.equals("")) {
+                goToDashboardActivity();
+            }
+            // Login Failure
+            else {
+                Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /**
+     * Open a new activity window.
+     */
+    private void goToDashboardActivity() {
+        Bundle bundle = new Bundle();
+        bundle.putString("username", username);
+        bundle.putString("password", password);
+        bundle.putString("baseUrl", baseUrl);
+
+        Intent intent = new Intent(this, DashboardActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+}
+
+
 
