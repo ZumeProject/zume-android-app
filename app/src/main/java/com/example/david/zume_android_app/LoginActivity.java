@@ -493,6 +493,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class LoginActivity extends AppCompatActivity {
     private Button button_login_login;
     private EditText editText_login_username;
@@ -500,6 +503,7 @@ public class LoginActivity extends AppCompatActivity {
     private String username;
     private String password;
     private String baseUrl;
+    private String UserID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -564,7 +568,6 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             try {
-                Log.d("Test", "Made to the execute method");
                 isValidCredentials = apiAuthenticationClient.execute();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -582,7 +585,13 @@ public class LoginActivity extends AppCompatActivity {
 
             // Login Success
             if (!isValidCredentials.equals("")) {
-                goToDashboardActivity();
+                if (isValidCredentials.substring(2, 4).equals("id")) {
+                    List<String> userInfo = Arrays.asList(isValidCredentials.split(","));
+                    String id = userInfo.get(0);
+                    List<String> identification = Arrays.asList(id.split(":"));
+                    UserID = identification.get(1);
+                    goToDashboardActivity();
+                }
             }
             // Login Failure
             else {
@@ -599,6 +608,7 @@ public class LoginActivity extends AppCompatActivity {
         bundle.putString("username", username);
         bundle.putString("password", password);
         bundle.putString("baseUrl", baseUrl);
+        bundle.putString("UserID", UserID);
 
         Intent intent = new Intent(this, DashboardActivity.class);
         intent.putExtras(bundle);
