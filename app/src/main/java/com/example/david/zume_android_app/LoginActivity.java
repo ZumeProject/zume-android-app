@@ -581,7 +581,7 @@ public class LoginActivity extends AppCompatActivity {
             findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
             // Login Success
-            if (isValidCredentials.equals("true")) {
+            if (!isValidCredentials.equals("")) {
                 goToDashboardActivity();
             }
             // Login Failure

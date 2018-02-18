@@ -284,7 +284,6 @@ public class ApiAuthenticationClient {
             else {
                 Log.d("Test", "Made it to the GET method");
                 InputStream content = (InputStream) connection.getInputStream();
-
                 headerFields = connection.getHeaderFields();
 
                 //connection.
@@ -303,7 +302,8 @@ public class ApiAuthenticationClient {
         if (!outputStringBuilder.toString().equals("")) {
             lastResponse = outputStringBuilder.toString();
         }
-
+        Log.d("Test",lastResponse);
+        Log.d("Test", String.valueOf(outputStringBuilder));
         return outputStringBuilder.toString();
     }
 }
