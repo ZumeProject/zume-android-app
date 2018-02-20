@@ -21,14 +21,14 @@
         android:id="@+id/gridLayout">
 
         <TextView
+            android:id="@+id/name"
             android:layout_width="155dp"
             android:layout_height="62dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Name"
-            android:id="@+id/textView6"
-            android:layout_row="0"
             android:layout_column="0"
-            android:textSize="65px" />
+            android:layout_row="0"
+            android:text="Name"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="35px" />
 
         <TextView
             android:layout_width="161dp"
@@ -40,13 +40,13 @@
             android:background="#c2bcbc" />
 
         <TextView
+            android:id="@+id/lastActivity"
             android:layout_width="178dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Last Activity"
-            android:id="@+id/textView8"
+            android:layout_column="2"
             android:layout_row="1"
-            android:layout_column="2" />
+            android:text="Last Activity"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </GridLayout>
 
