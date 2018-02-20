@@ -204,7 +204,7 @@ public class DashboardActivity extends AppCompatActivity {
                 }
             }
 
-            adapter=new ArrayAdapter<TextView>(this, android.R.layout.simple_list_item_1);
+            adapter=new ArrayAdapter<TextView>(this, R.layout.content_dashboard);
             for(String[] group: groups){
                 TextView clickableGroup = new TextView(this);
                 clickableGroup.setText(group[1]);
