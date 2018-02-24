@@ -55,7 +55,7 @@
                 android:layout_height="30dp"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="User Name"
-                android:id="@+id/textView2"
+                android:id="@+id/name"
                 android:layout_column="0" />
 
         </TableRow>
