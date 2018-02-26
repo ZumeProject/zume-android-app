@@ -231,16 +231,12 @@ public class ApiAuthenticationClient {
     public String execute() {
         String line;
         StringBuilder outputStringBuilder = new StringBuilder();
-        Log.d("Test", "Made to the execute method in AAC");
 
         try {
             StringBuilder urlString = new StringBuilder(baseUrl + urlResource);
-            Log.d("Test", "Built the url");
 
             if (!urlPath.equals("")) {
-                Log.d("Test", urlPath);
                 urlString.append("/" + urlPath);
-                Log.d("Test", String.valueOf(urlString));
             }
 
             if (parameters.size() > 0 && httpMethod.equals("GET")) {
@@ -249,12 +245,9 @@ public class ApiAuthenticationClient {
             }
 
             URL url = new URL(urlString.toString());
-            Log.d("Test", "Here is the url:"+url);
 
             String encoding = Base64Encoder.encode(username + ":" + password);
-            Log.d("Test", encoding);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            Log.d("Test", String.valueOf(connection));
             connection.setRequestMethod(httpMethod);
             connection.setRequestProperty("Authorization", "Basic " + encoding);
             connection.setRequestProperty("Accept", "application/json");
@@ -282,7 +275,6 @@ public class ApiAuthenticationClient {
                 connection.disconnect();
             }
             else {
-                Log.d("Test", "Made it to the GET method");
                 InputStream content = (InputStream) connection.getInputStream();
                 headerFields = connection.getHeaderFields();
 
@@ -291,7 +283,6 @@ public class ApiAuthenticationClient {
 
                 while ((line = in.readLine()) != null) {
                     outputStringBuilder.append(line);
-                    Log.d("Test",line);
                 }
             }
         } catch (Exception e) {
@@ -302,8 +293,6 @@ public class ApiAuthenticationClient {
         if (!outputStringBuilder.toString().equals("")) {
             lastResponse = outputStringBuilder.toString();
         }
-        Log.d("Test",lastResponse);
-        Log.d("Test", String.valueOf(outputStringBuilder));
         return outputStringBuilder.toString();
     }
 }
