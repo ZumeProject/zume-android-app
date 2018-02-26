@@ -482,6 +482,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 package com.example.david.zume_android_app;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -493,6 +494,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
@@ -504,6 +511,7 @@ public class LoginActivity extends AppCompatActivity {
     private String password;
     private String baseUrl;
     private String UserID;
+    private String isValidCredentials;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -511,7 +519,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // TODO: Replace this with your own IP address or URL.
-        baseUrl = "http://zume.hsutx.edu/wp-json/wp/v2/users/me";
+        baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
 
         editText_login_username = (EditText) findViewById(R.id.editText_login_username);
         editText_login_password = (EditText) findViewById(R.id.editText_login_password);
@@ -521,25 +529,74 @@ public class LoginActivity extends AppCompatActivity {
         button_login_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                username = editText_login_username.getText().toString();
+                password = editText_login_password.getText().toString();
+
+                Boolean failed = false;
+                FileInputStream fis = null;
+
                 try {
+                    fis = openFileInput("UserProfile.txt");
+                    Log.d("Test", "Opened the file");
 
-                    username = editText_login_username.getText().toString();
-                    password = editText_login_password.getText().toString();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    failed = true;
+                }
+                if (failed) {
+                    try {
+                        ApiAuthenticationClient apiAuthenticationClient =
+                                new ApiAuthenticationClient(
+                                        baseUrl
+                                        , username
+                                        , password
+                                );
 
-                    ApiAuthenticationClient apiAuthenticationClient =
-                            new ApiAuthenticationClient(
+                        AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
+                        execute.execute();
+                    } catch (Exception ex) {
+                        Log.d("Test", "Error getting dashboard data.");
+                    }
+                } else {
+                    InputStreamReader isr = new InputStreamReader(fis);
+                    BufferedReader bufferedReader = new BufferedReader(isr);
+                    String user = null, pass = null;
+                    try {
+                        user = bufferedReader.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        pass = bufferedReader.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (user.equals(username) && pass.equals(password)) {
+                        try {
+                            isValidCredentials = bufferedReader.readLine();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Log.d("Test", "Passing saved data");
+                        goToDashboardActivity();
+                    } else {
+                        try {
+                            ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
                                     baseUrl
                                     , username
                                     , password
                             );
+                            AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
+                            execute.execute();
+                        } catch (Exception ex) {
+                        }
+                    }
 
-                    AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
-                    execute.execute();
-                } catch (Exception ex) {
                 }
             }
         });
     }
+
 
     /**
      * This subclass handles the network operations in a new thread.
@@ -548,7 +605,7 @@ public class LoginActivity extends AppCompatActivity {
     public class ExecuteNetworkOperation extends AsyncTask<Void, Void, String> {
 
         private ApiAuthenticationClient apiAuthenticationClient;
-        private String isValidCredentials;
+
 
         /**
          * Overload the constructor to pass objects to this class.
@@ -584,17 +641,21 @@ public class LoginActivity extends AppCompatActivity {
             findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
             // Login Success
-            if (!isValidCredentials.equals("")) {
-                if (isValidCredentials.substring(2, 4).equals("id")) {
-                    List<String> userInfo = Arrays.asList(isValidCredentials.split(","));
-                    String id = userInfo.get(0);
-                    List<String> identification = Arrays.asList(id.split(":"));
-                    UserID = identification.get(1);
-                    goToDashboardActivity();
+            if (isValidCredentials != null && !isValidCredentials.equals("")) {
+                String filename = "UserProfile.txt";
+                String fileContents = username+"\n"+password+"\n"+isValidCredentials+"\n";
+                FileOutputStream outputStream;
+
+                try {
+                    outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                    outputStream.write(fileContents.getBytes());
+                    outputStream.close();
+                    Log.d("Test", "Made the file");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }
-            // Login Failure
-            else {
+                goToDashboardActivity();
+            } else {
                 Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
             }
         }
@@ -608,7 +669,6 @@ public class LoginActivity extends AppCompatActivity {
         bundle.putString("username", username);
         bundle.putString("password", password);
         bundle.putString("baseUrl", baseUrl);
-        bundle.putString("UserID", UserID);
 
         Intent intent = new Intent(this, DashboardActivity.class);
         intent.putExtras(bundle);

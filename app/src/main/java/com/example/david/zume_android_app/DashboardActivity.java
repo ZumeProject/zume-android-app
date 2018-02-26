@@ -1,5 +1,6 @@
 package com.example.david.zume_android_app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,18 +14,26 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
-    ArrayAdapter<TextView> adapter;
+
+    //LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
+    ArrayList<String> listItems=new ArrayList<String>();
 
 
     private String resultFromAPI = "";
@@ -94,26 +103,135 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity(new Intent(DashboardActivity.this, Downloads.class));
             }
         });
+        FileInputStream fis= null;
+        try {
+            fis = openFileInput("UserProfile.txt");
+            Log.d("Test", "Opened the file");
 
-        Intent intent = getIntent();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader bufferedReader = new BufferedReader(isr);
+        try {
+            bufferedReader.readLine();
+            bufferedReader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            resultFromAPI = bufferedReader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("Test", "Passing saved data");
+        setGroupList();
+
+        /*Intent intent = getIntent();
         username = intent.getStringExtra("username");
         password = intent.getStringExtra("password");
+        Log.d("Test", username);
+        Log.d("Test", password);
 
         baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
-        try {
+        Log.d("Test", "Made it to the new code");
+        Boolean failed = false;
+        FileInputStream fis= null;
+        if(username.equals(null) && password.equals(null)){
+            try {
+                fis = openFileInput("UserProfile.txt");
+                Log.d("Test", "Opened the file");
 
-            ApiAuthenticationClient apiAuthenticationClient =
-                    new ApiAuthenticationClient(
-                            baseUrl
-                            , username
-                            , password
-                    );
-
-            AsyncTask<Void, Void, String> execute = new DashboardActivity.ExecuteNetworkOperation(apiAuthenticationClient);
-            execute.execute();
-        } catch (Exception ex){
-            Log.d("Test","Error getting dashboard data.");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String user = null, pass = null;
+            try {
+                user = bufferedReader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                pass = bufferedReader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                resultFromAPI = bufferedReader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.d("Test", "Passing saved data");
+            setGroupList();
         }
+        else {
+            try {
+                fis = openFileInput("UserProfile.txt");
+                Log.d("Test", "Opened the file");
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                failed = true;
+            }
+            if (failed) {
+                try {
+                    ApiAuthenticationClient apiAuthenticationClient =
+                            new ApiAuthenticationClient(
+                                    baseUrl
+                                    , username
+                                    , password
+                            );
+
+                    AsyncTask<Void, Void, String> execute = new DashboardActivity.ExecuteNetworkOperation(apiAuthenticationClient);
+                    execute.execute();
+                } catch (Exception ex) {
+                    Log.d("Test", "Error getting dashboard data.");
+                }
+            } else {
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader bufferedReader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                String user = null, pass = null;
+                try {
+                    user = bufferedReader.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    pass = bufferedReader.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (user.equals(username) && pass.equals(password)) {
+                    try {
+                        resultFromAPI = bufferedReader.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("Test", "Passing saved data");
+                    setGroupList();
+                } else {
+                    try {
+
+                        ApiAuthenticationClient apiAuthenticationClient =
+                                new ApiAuthenticationClient(
+                                        baseUrl
+                                        , username
+                                        , password
+                                );
+
+                        AsyncTask<Void, Void, String> execute = new DashboardActivity.ExecuteNetworkOperation(apiAuthenticationClient);
+                        execute.execute();
+                    } catch (Exception ex) {
+                        Log.d("Test", "Error getting dashboard data.");
+                    }
+                }
+            }
+        }*/
 
     }
 
@@ -121,13 +239,10 @@ public class DashboardActivity extends AppCompatActivity {
      * This subclass handles the network operations in a new thread.
      * It starts the progress bar, makes the API call, and ends the progress bar.
      */
+    /*
     public class ExecuteNetworkOperation extends AsyncTask<Void, Void, String> {
 
         private ApiAuthenticationClient apiAuthenticationClient;
-
-        /**
-         * Overload the constructor to pass objects to this class.
-         */
         public ExecuteNetworkOperation(ApiAuthenticationClient apiAuthenticationClient) {
             this.apiAuthenticationClient = apiAuthenticationClient;
         }
@@ -161,6 +276,18 @@ public class DashboardActivity extends AppCompatActivity {
 
             // Credentials correct
             if (resultFromAPI != null && !resultFromAPI.equals("")) {
+                String filename = "UserProfile.txt";
+                String fileContents = username+"\n"+password+"\n"+resultFromAPI+"\n";
+                FileOutputStream outputStream;
+
+                try {
+                    outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                    outputStream.write(fileContents.getBytes());
+                    outputStream.close();
+                    Log.d("Test", "Made the file");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 setGroupList();
             }
             // Login Failure
@@ -169,7 +296,7 @@ public class DashboardActivity extends AppCompatActivity {
             }
         }
     }
-
+*/
     /**
      * Open a new activity window.
      */
@@ -197,6 +324,7 @@ public class DashboardActivity extends AppCompatActivity {
                     String[] thisGroup = new String[2];
                     thisGroup[0] = allFields.get(i).toString();
                     Log.d("Group ID", thisGroup[0]);
+                    listItems.add(thisGroup[0]);
                     JSONArray groupName = reader.getJSONArray(thisGroup[0]);
                     thisGroup[1] = groupName.get(0).toString();
                     Log.d("Group Name", thisGroup[1]);
@@ -204,7 +332,11 @@ public class DashboardActivity extends AppCompatActivity {
                 }
             }
 
-            adapter=new ArrayAdapter<TextView>(this, R.layout.content_dashboard);
+            GroupListAdapter adapter = new GroupListAdapter(listItems, this);
+            ListView listView = (ListView)findViewById(R.id.listView);
+            listView.setAdapter(adapter);
+/*
+            adapter=new ArrayAdapter<TextView>(this, android.R.layout.simple_list_item_1, listItems);
             for(String[] group: groups){
                 TextView clickableGroup = new TextView(this);
                 clickableGroup.setText(group[1]);
@@ -224,13 +356,15 @@ public class DashboardActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
-                adapter.add(clickableGroup);
-            }
+                listItems.add(clickableGroup);
+                adapter.notifyDataSetChanged();
 
+            }
+*/
 
         }
         catch(Exception e) {
-            Log.d("Test", "Error setting group list.");
+            Log.d("Test", e.getMessage());
         }
 
     }
