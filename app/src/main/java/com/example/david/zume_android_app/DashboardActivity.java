@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,8 +31,9 @@ import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
-    ArrayAdapter<TextView> adapter;
+
+    //LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
+    ArrayList<String> listItems=new ArrayList<String>();
 
 
     private String resultFromAPI = "";
@@ -322,6 +324,7 @@ public class DashboardActivity extends AppCompatActivity {
                     String[] thisGroup = new String[2];
                     thisGroup[0] = allFields.get(i).toString();
                     Log.d("Group ID", thisGroup[0]);
+                    listItems.add(thisGroup[0]);
                     JSONArray groupName = reader.getJSONArray(thisGroup[0]);
                     thisGroup[1] = groupName.get(0).toString();
                     Log.d("Group Name", thisGroup[1]);
@@ -329,7 +332,11 @@ public class DashboardActivity extends AppCompatActivity {
                 }
             }
 
-            adapter=new ArrayAdapter<TextView>(this, R.layout.content_dashboard);
+            GroupListAdapter adapter = new GroupListAdapter(listItems, this);
+            ListView listView = (ListView)findViewById(R.id.listView);
+            listView.setAdapter(adapter);
+/*
+            adapter=new ArrayAdapter<TextView>(this, android.R.layout.simple_list_item_1, listItems);
             for(String[] group: groups){
                 TextView clickableGroup = new TextView(this);
                 clickableGroup.setText(group[1]);
@@ -349,13 +356,15 @@ public class DashboardActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
-                adapter.add(clickableGroup);
-            }
+                listItems.add(clickableGroup);
+                adapter.notifyDataSetChanged();
 
+            }
+*/
 
         }
         catch(Exception e) {
-            Log.d("Test", "Error setting group list.");
+            Log.d("Test", e.getMessage());
         }
 
     }
