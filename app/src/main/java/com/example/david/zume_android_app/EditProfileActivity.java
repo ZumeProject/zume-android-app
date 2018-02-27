@@ -21,7 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class ProfileActivity extends AppCompatActivity {
+public class EditProfileActivity extends AppCompatActivity {
 
     private String resultFromAPI = "";
     private String baseUrl = "";
@@ -57,7 +57,7 @@ public class ProfileActivity extends AppCompatActivity {
                 bundle.putString("username", username);
                 bundle.putString("password", password);
 
-                intent = new Intent(ProfileActivity.this, DashboardActivity.class);
+                intent = new Intent(EditProfileActivity.this, DashboardActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
