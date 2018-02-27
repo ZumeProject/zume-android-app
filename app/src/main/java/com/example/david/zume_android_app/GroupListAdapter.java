@@ -1,6 +1,8 @@
 package com.example.david.zume_android_app;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,14 +19,16 @@ import java.util.ArrayList;
  */
 
 public class GroupListAdapter extends BaseAdapter implements ListAdapter {
-    private ArrayList<String> list = new ArrayList<String>();
+    private ArrayList<String[]> list = new ArrayList<String[]>();
     private Context context;
+    private Intent intent;
 
 
 
-    public GroupListAdapter(ArrayList<String> list, Context context) {
+    public GroupListAdapter(ArrayList<String[]> list, Context context, Intent intent) {
         this.list = list;
         this.context = context;
+        this.intent = intent;
     }
 
     @Override
@@ -53,27 +57,40 @@ public class GroupListAdapter extends BaseAdapter implements ListAdapter {
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
-        listItemText.setText(list.get(position));
+        listItemText.setText(list.get(position)[1]);
 
         //Handle buttons and add onClickListeners
         Button viewGroupBtn = (Button)view.findViewById(R.id.viewGroup);
-        Button startSessionBtn = (Button)view.findViewById(R.id.startSession);
 
         viewGroupBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Log.d("Test", "Going to group...");
-                notifyDataSetChanged();
-            }
-        });
-        startSessionBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Log.d("Test", "Starting next session...");
+                Log.d("Test", "Going to group..."+list.get(position)[0]);
+                Intent intent = getIntent();
+                String username = intent.getStringExtra("username");
+                String password = intent.getStringExtra("password");
+
+                Bundle bundle = new Bundle();
+                bundle.putString("username", username);
+                bundle.putString("password", password);
+                bundle.putString("groupID", list.get(position)[0]);
+                bundle.putString("groupName", list.get(position)[1]);
+
+                intent = new Intent(context, GroupActivity.class);
+                intent.putExtras(bundle);
+                context.startActivity(intent);
                 notifyDataSetChanged();
             }
         });
 
         return view;
+    }
+
+    public Intent getIntent(){
+        return this.intent;
+    }
+
+    public void setIntent(Intent intent){
+        this.intent = intent;
     }
 }

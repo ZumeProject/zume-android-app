@@ -9,60 +9,86 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.david.zume_android_app.ProfileActivity"
-    tools:showIn="@layout/activity_profile">
+    tools:context="com.example.david.zume_android_app.EditProfileActivity"
+    tools:showIn="@layout/activity_edit_profile">
 
-    <GridLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:id="@+id/gridLayout">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/name"
-            android:layout_width="155dp"
-            android:layout_height="62dp"
-            android:layout_column="0"
-            android:layout_row="0"
-            android:text="Name"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="35px" />
-
-        <TextView
-            android:layout_width="161dp"
-            android:layout_height="129dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/textView7"
-            android:layout_row="1"
-            android:layout_column="0"
-            android:background="#c2bcbc" />
-
-        <TextView
-            android:id="@+id/lastActivity"
-            android:layout_width="178dp"
+            android:id="@+id/textView11"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_column="2"
-            android:layout_row="1"
-            android:text="Last Activity"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="First Name" />
 
-    </GridLayout>
+        <EditText
+            android:id="@+id/firstName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/gridLayout"
-        android:layout_centerHorizontal="true">
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Last Name" />
+
+        <EditText
+            android:id="@+id/lastName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="22dp" />
+
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email" />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="18dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Phone Number" />
+
+        <EditText
+            android:id="@+id/phoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
 
         <Button
-            android:layout_width="178dp"
-            android:layout_height="wrap_content"
-            android:text="Edit Profile"
-            android:id="@+id/editProfile"
-            android:layout_gravity="center_horizontal" />
+            android:id="@+id/save"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:text="Save" />
+
     </LinearLayout>
 </RelativeLayout>
 
