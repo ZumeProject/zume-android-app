@@ -1,0 +1,302 @@
+{   "name": "Session 1"
+    "pages": {
+        "page1" :{
+            "single" : {
+                "header" : "Pray"
+                "paragraph" :"Begin with prayer. Spiritual insight and transformation is not possible without the Holy Spirit. Take time as a group to invite Him to guide you over this session."
+            }
+            "before" : "empty"
+            "after" : "empty"
+        }
+        "page2" : {
+            "single" : "empty"
+            "before" : {
+                "header" : "Watch"
+                "paragraph" : God uses ordinary people doing simple things to make a big impact. Watch this video on how God works."
+            }
+            "after" : {
+                "header" : "Discuss"
+                "paragraph" : "If Jesus intended every one of His followers to obey His Great Commission, why do so few actually make disciples?"
+            }
+			"video" : " "
+        }
+        "page3" : {
+            "single" : "empty"
+            "before" : {
+                "header" : "Watch"
+                "paragraph" : "What is a disciple? And how do you make one? How do you teach a follower of Jesus to do what He told us in His Great Commission — to obey all of His commands?"
+            }
+            "after" : {
+                "header" : "Discuss"
+                "paragraph" : "1. When you think of a church, what comes to mind?
+                               2. What's the difference between that picture and what's described in the video as a "Simple Church"?
+                               3. Which one do you think would be easier to multiply and why?"
+			}
+			"video" : " "
+		}
+		"page4" : {
+			"single" : "empty"
+            "before" : {
+                "header" : "Watch"
+                "paragraph" : "We breathe in. We breathe out. We're alive. Spiritual Breathing is like that, too."
+            }
+            "after" : {
+                "header" : "Discuss"
+                "paragraph" : "1. Why is it essential to learn to hear and recognize God's voice?
+							   2. Is hearing and responding to the Lord really like breathing? Why or why not?"
+			}
+			"video" : " "
+		}
+        "page5" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Read"
+				"paragraph" : "S.O.A.P.S. BIBLE READING
+							   Hearing from God regularly is a key element in our personal relationship with Him, and in our ability to stay obediently engaged in what He is doing around us. Find the "S.O.A.P.S. Bible Reading" section in your Zúme Guidebook and listen to the audio overview."
+			}
+			"after" : "empty"
+			"video" : " "
+		}
+		"page6" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Read"
+				"paragraph" : "ACCOUNTABILITY GROUPS
+							   The Bible tells us that every follower of Jesus will one day be held accountable for what we do and say and think. Accountability Groups are a great way to get ready! Find the "Accountability Groups" section in your Zúme Guidebook, and listen to the audio below."
+			}
+			"after" : "empty"
+			"video" : " "
+		}
+		"page7" : {
+			"single" : {
+				"header1" : "Break Up"
+				"paragraph1" : "Break into groups of two or three people of the same gender."
+				"header2" : "Share"
+				"paragraph2" : "Spend the next 45 minutes working together through Accountability Questions - List 2 in the "Accountability Groups" section of your Zúme Guidebook."
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+		"page8" : {
+			"single" : {
+				"header1" : "Looking Forward"
+				"paragraph1" : "Congratulations! You've completed Session 1.Below are next steps to take in preparation for the next session." 
+				"header2" : "Obey"
+				"paragraph2" : "Begin practicing the S.O.A.P.S. Bible reading between now and your next meeting. Focus on Matthew 5-7, read it at least once a day. Keep a daily journal using the S.O.A.P.S. format."
+				"header3" : "Share"
+				"paragraph3" : "Spend time asking God who He might want you to start an Accountability Group with using the tools you've learned in this session. Share this person’s name with the group before you go. Reach out to that person about starting an Accountabilty Group and meeting with you weekly."
+				"header4" : "Pray"
+				"paragraph4" : "Pray that God helps you be obedient to Him and invite Him to work in you and those around you!"
+				"header5" : "#ZumeProject"
+				"paragraph5" : "Take a picture of your S.O.A.P.S. Bible study and share it on social media."
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+    }
+}
+{	"name" : "Session2"
+	"pages" : {
+		"page1" :{
+			"single"{
+				"header1" : "Check-In"
+				"paragraph1" : "Before getting started, take some time to check-in.
+								At the end of the last session, everyone in your group was challenged in two ways: 
+								1. You were asked to begin practicing the S.O.A.P.S. Bible reading method and keeping a daily journal.
+								2. You were encouraged to reach out to someone about starting an Accountability Group.
+								Take a few moments to see how your group did this week."
+				"header2" : "Pray"
+				"paragraph2" : "Ask if anyone in the group has specific needs they'd like the group to pray for. Ask someone to pray and ask God to help in the areas the group shared. Be sure to thank God that He promises in His Word to listen and act when His people pray. And, as always, ask God's Holy Spirit to lead your time, together."
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+		"page2" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "watch"
+				"paragraph" : "If we want to make disciples who multiply — spiritual producers and not just consumers — then we need to learn and share four main ways God makes everyday followers more like Jesus:
+							Prayer
+							Scripture
+							Body Life
+							Persecution and Suffering"
+			}
+			"after" : {
+				"header" : "Discuss"
+				"paragraph" : "1. Of the four areas detailed above (prayer, God's Word, etc.), which ones do you already practice?
+							   2. Which ones do you feel unsure about?
+							   3. How ready do you feel when it comes to training others?"
+				
+			}
+			"video" : ""
+		}
+		"page3" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Read"
+				"paragraph" : "ZÚME TOOLKIT - PRAYER CYCLE
+							   The Bible tells us that prayer is our chance to speak to and hear from the same God who created us!
+							   Find the "Prayer Cycle" section in your Zúme Guidebook, and listen to the audio below."
+			}
+			"after" : "empty"
+			"video" : ""
+		}
+		"page4" : {
+			"single" : {
+				"header1" : "Leave"
+				"paragraph1" : "Spend the next 60 minutes in prayer individually, using the exercises in "The Prayer Cycle" section of the Zúme Guidebook as a guide."
+				"header2" : "Return"
+				"paragraph2" : "Set a time for the group to return and reconnect. Be sure to add a few extra minutes for everyone to both find a quiet place to pray and to make their way back to the group."
+				"header3" : "Discuss"
+				"paragraph3" : "1. What is your reaction to spending an hour in prayer?
+								2. How do you feel?
+								3. Did you learn or hear anything?
+								4. What would life be like if you made this kind of prayer a regular habit?"
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+		"page5" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Read"
+				"paragraph" : "ZÚME TOOLKIT - LIST OF 100
+							   God has already given us the relationships we need to “Go and make disciples.” These are our family, friends, neighbors, co-workers and classmates — people we’ve known all our lives or maybe just met.
+							   Being good stewards of these relationships is the first step in multiplying disciples. Start by making a list.
+							   Find the "List of 100" section in your Zúme Guidebook, and listen to the audio below."
+			}
+			"after" : "empty"
+			"video" : ""
+		}
+		"page6" : {
+			"single" : {
+				"header" : "CREATE YOUR OWN LIST OF 100"
+				"paragraph" : "Have everyone in your group take the next 30 minutes to fill out their own inventory of relationships using the form in the "List of 100" section in your Zúme Guidebook."
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+		"page7" : {
+			"single" : {
+				"header1" : "Looking Forward"
+				"paragraph1" : "Congratulations on finishing Session 2! Below are next steps to take in preparation for the next session." 
+				"header2" : "Obey"
+				"paragraph2" : "Spend time this week praying for five people from your List of 100 that you marked as an "Unbeliever" or "Unknown." Ask God to prepare their hearts to be open to His story."
+				"header3" : "Share"
+				"paragraph3" : "Ask God who He wants you to share the List of 100 tool with. Share this person's name with the group before you go and reach out to them before the next session."
+				"header4" : "Pray"
+				"paragraph4" : "Pray that God help you be obedient to Him and invite Him to work in you and those around you!"
+				"header5" : "#ZumeProject"
+				"paragraph5" : "Think others could use the 60-minute prayer tool? Share about it on social media."
+				
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+	}
+}
+{   "name" : "Session3"
+	"pages" : {
+		"page1" : {
+			"single" : {
+				"header1" : "Check-In"
+				"paragraph1" : "Before getting started, take some time to check-in.
+								At the end of the last session, everyone in your group was challenged in two ways: 
+								1. You were asked to pray for five people from your List of 100 that you marked as an "Unbeliever" or "Unknown."
+								2. You were encouraged to share how to make a List of 100 with someone.
+								Take a few moments to see how your group did this week."
+				"header2" : "Pray"
+				"paragraph2" : "Pray and thank God for the results and invite His Holy Spirit to lead your time together."
+				"header3" : "Overview"
+				"paragraph3" : "In this session, you’ll learn how God’s Spiritual Economy works and how God invests more in those who are faithful with what they've already been given. You'll also learn two more tools for making disciples — sharing God’s Story from Creation to Judgement and Baptism. Then, when you're ready, get started!"
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+		"page2" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Watch"
+				"paragraph" : "In this broken world, people feel rewarded when they take, when they receive and when they gain more than those around them. But God's Spiritual Economy is different — God invests more in those who are faithful with what they've already been given."
+			}
+			"after" : {
+				"header" : "Discuss"
+				"paragraph" : "What are some differences you see between God's Spiritual Economy and our earthly way of getting things done?"
+				
+			}
+			"video" : ""
+		}
+		"page3" : {
+			"single" : {
+				"header1" : "Read"
+				"paragraph1" : "Jesus said, “You will receive power when the Holy Spirit comes upon you. And you will be my witnesses, telling people about me everywhere — in Jerusalem, throughout Judea, in Samaria, and to the ends of the earth.”
+								Jesus believed in His followers so much, He trusted them to tell His story. Then He sent them around the world to do it. Now, He’s sending us.
+								There’s no one “best way” to tell God’s story (also called The Gospel), because the best way will depend on who you’re sharing with. Every disciple should learn to tell God’s Story in a way that’s true to scripture and connects with the audience they’re sharing with."
+				"header2" : "Discuss"
+				"paragraph2" : "1. What comes to mind when you hear God's command to be His "witness" and to tell His story?
+								2. Why do you think Jesus chose ordinary people instead of some other way to share His Good News?
+								3. What would it take for you to feel more comfortable sharing God's Story?"
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+		"page4" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Watch"
+				"paragraph" : "One way to share God’s Good News is by telling God’s Story from Creation to Judgement — from the beginning of humankind all the way to the end of this age."
+			}
+			"after" : {
+				"header" : "Discuss"
+				"paragraph" : "1. What do you learn about mankind from this story?
+							   2. What do you learn about God?
+							   3. Do you think it would be easier or harder to share God's Story by telling a story like this?"
+				
+			}
+			"video" : ""
+		}
+		"page5" : {
+			"single" : {
+				"header" : "Breakout"
+				"paragraph" : "Break into groups of two or three people and spend the next 45 minutes practicing telling God's Story using the Activity instructions on page 13 of your Zúme Guidebook."
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+		"page6" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Read"
+				"paragraph" : "Jesus said, “Go and make disciples of all nations, BAPTIZING them in the name of the Father and of the Son and of the Holy Spirit…”
+							   Find the "Baptism" section in your Zúme Guidebook, and listen to the audio below."
+			}
+			"after" : {
+				"header1" : "Discuss"
+				"paragraph1" : "1. Have you ever baptized someone?
+							   2. Would you even consider it?
+							   3. If the Great Commission is for every follower of Jesus, does that mean every follower is allowed to baptize others? Why or why not?"
+				"header2" : "Important Reminder"
+				"paragraph2" : "Have you been baptized? If not, then we encourage you to plan this before even one more session of this training. Invite your group to be a part of this important day when you celebrate saying "yes" to Jesus."
+			}
+			"video" : ""
+		}
+		"page7" : {
+			"single" : {
+				"header1" : "Looking Forward"
+				"paragraph1" : "Congratulations on finishing Session 3! Below are next steps to take in preparation for the next session." 
+				"header2" : "Obey"
+				"paragraph2" : "Spend time this week practicing God's Story, and then share it with at least one person from your List of 100 that you marked as "Unbeliever" or "Unknown.""
+				"header3" : "Share"
+				"paragraph3" : "Ask God who He wants you to train to use the Creation to Judgment story (or some other way to share God's Story). Share this person's name with the group before you go."
+				"header4" : "Pray"
+				"paragraph4" : "Pray that God help you be obedient to Him and invite Him to work in you and those around you!"
+				"header5" : "#ZumeProject"
+				"paragraph5" : "What's been your Zúme highlight? Tell others about it on social media."
+				"header6" : "Important Reminder"
+				"paragraph6" : "Your group will be celebrating the Lord's Supper next session. Be sure to remember the supplies (bread and wine / juice)."
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+	}
+}

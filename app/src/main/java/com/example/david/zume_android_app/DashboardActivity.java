@@ -116,17 +116,20 @@ public class DashboardActivity extends AppCompatActivity {
         InputStreamReader isr = new InputStreamReader(fis);
         BufferedReader bufferedReader = new BufferedReader(isr);
         try {
-            bufferedReader.readLine();
-            bufferedReader.readLine();
+            Log.d("Test", bufferedReader.readLine());
+            Log.d("Test", bufferedReader.readLine());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         try {
             resultFromAPI = bufferedReader.readLine();
+            Log.d("Test", resultFromAPI);
+            Log.d("Test", bufferedReader.readLine());
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         Log.d("Test", "Passing saved data");
         setGroupList();
 

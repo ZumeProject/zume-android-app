@@ -483,11 +483,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 package com.example.david.zume_android_app;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -500,8 +499,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     private Button button_login_login;
@@ -541,10 +538,12 @@ public class LoginActivity extends AppCompatActivity {
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
+                    Log.d("Test", "Failed");
                     failed = true;
                 }
                 if (failed) {
                     try {
+                        Log.d("Test", "Making API call");
                         ApiAuthenticationClient apiAuthenticationClient =
                                 new ApiAuthenticationClient(
                                         baseUrl
@@ -554,6 +553,14 @@ public class LoginActivity extends AppCompatActivity {
 
                         AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
                         execute.execute();
+                        baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
+                        ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
+                                baseUrl
+                                , username
+                                , password
+                        );
+                        AsyncTask<Void, Void, String> execute2 = new ExecuteNetworkOperation(apiAuthenticationClient2);
+                        execute2.execute();
                     } catch (Exception ex) {
                         Log.d("Test", "Error getting dashboard data.");
                     }
@@ -588,6 +595,14 @@ public class LoginActivity extends AppCompatActivity {
                             );
                             AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
                             execute.execute();
+                            baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
+                            ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
+                                    baseUrl
+                                    , username
+                                    , password
+                            );
+                            AsyncTask<Void, Void, String> execute2 = new ExecuteNetworkOperation(apiAuthenticationClient2);
+                            execute2.execute();
                         } catch (Exception ex) {
                         }
                     }
@@ -642,19 +657,61 @@ public class LoginActivity extends AppCompatActivity {
 
             // Login Success
             if (isValidCredentials != null && !isValidCredentials.equals("")) {
-                String filename = "UserProfile.txt";
-                String fileContents = username+"\n"+password+"\n"+isValidCredentials+"\n";
-                FileOutputStream outputStream;
 
+                Boolean failed = false;
+                FileInputStream fis = null;
                 try {
-                    outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                    outputStream.write(fileContents.getBytes());
-                    outputStream.close();
-                    Log.d("Test", "Made the file");
-                } catch (Exception e) {
+                    fis = openFileInput("UserProfile.txt");
+                    Log.d("Test", "Opened the file");
+
+                } catch (FileNotFoundException e) {
                     e.printStackTrace();
+                    Log.d("Test", "Failed");
+                    failed = true;
                 }
-                goToDashboardActivity();
+                if(failed) {
+                    String filename = "UserProfile.txt";
+                    String fileContents = username + "\n" + password + "\n" + isValidCredentials + "\n";
+                    Log.d("Test", "Made first call");
+                    FileOutputStream outputStream;
+
+                    try {
+                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream.write(fileContents.getBytes());
+                        outputStream.close();
+                        Log.d("Test", "Made the file");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    Log.d("Test", "Made second call");
+                    InputStreamReader isr = new InputStreamReader(fis);
+                    BufferedReader bufferedReader = new BufferedReader(isr);
+                    String user = null, pass = null, info = null;
+                    try {
+                        user = bufferedReader.readLine();
+                        pass = bufferedReader.readLine();
+                        info = bufferedReader.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    String filename = "UserProfile.txt";
+                    String fileContents = user + "\n" + pass + "\n" + info + "\n" +isValidCredentials+ "\n";
+                    FileOutputStream outputStream;
+
+                    try {
+                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream.write(fileContents.getBytes());
+                        outputStream.close();
+                        Log.d("Test", "Made the file");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("Test", "Made final file");
+                    goToDashboardActivity();
+                }
             } else {
                 Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
             }
