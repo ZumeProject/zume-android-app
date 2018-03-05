@@ -28,12 +28,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DashboardActivity extends AppCompatActivity {
 
 
     //LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
-    ArrayList<String> listItems=new ArrayList<String>();
+    ArrayList<String[]> listItems=new ArrayList<String[]>();
 
 
     private String resultFromAPI = "";
@@ -310,7 +312,7 @@ public class DashboardActivity extends AppCompatActivity {
             JSONArray first = reader.getJSONArray("first_name");
             JSONArray last = reader.getJSONArray("last_name");
             JSONArray nickname = reader.getJSONArray("nickname");
-            JSONArray lastActive = reader.getJSONArray("zume_last_active");
+            //JSONArray lastActive = reader.getJSONArray("zume_last_active");
 
             TextView name = (TextView)findViewById(R.id.name);
             if(!first.get(0).equals("") || !last.get(0).equals("")){
@@ -327,17 +329,19 @@ public class DashboardActivity extends AppCompatActivity {
                     String[] thisGroup = new String[2];
                     thisGroup[0] = allFields.get(i).toString();
                     Log.d("Group ID", thisGroup[0]);
-                    listItems.add(thisGroup[0]);
                     JSONArray groupName = reader.getJSONArray(thisGroup[0]);
-                    thisGroup[1] = groupName.get(0).toString();
+                    thisGroup[1] = getGroupName(groupName.get(0).toString());
+                    //listItems.add(getGroupName(thisGroup[1]));
                     Log.d("Group Name", thisGroup[1]);
+                    listItems.add(thisGroup);
                     groups.add(thisGroup);
                 }
             }
 
-            GroupListAdapter adapter = new GroupListAdapter(listItems, this);
+            GroupListAdapter adapter = new GroupListAdapter(listItems, this, getIntent());
             ListView listView = (ListView)findViewById(R.id.listView);
             listView.setAdapter(adapter);
+            Log.d("Test", "Set listView adapter");
 /*
             adapter=new ArrayAdapter<TextView>(this, android.R.layout.simple_list_item_1, listItems);
             for(String[] group: groups){
@@ -367,7 +371,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         }
         catch(Exception e) {
-            Log.d("Test", e.getMessage());
+            Log.d("Test Error - listView", e.getMessage());
         }
 
     }
@@ -379,4 +383,49 @@ public class DashboardActivity extends AppCompatActivity {
         return true;
     }
 */
+
+    public String getGroupName(String data){
+        String groupName = "";
+        String pattern = "group_name";
+        boolean err = false;
+
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(data);
+        if(m.find()){
+            Log.d("Test", "Found the pattern in "+data);
+            String nameLength = "";
+            int i=4;
+            boolean found = false;
+            while(!found) {
+                String thisChar = ""+data.charAt(m.start() + pattern.length() + i);
+                if(!thisChar.equals(":")){
+                    nameLength = nameLength+thisChar;
+                    i++;
+                }
+                else{
+                    found = true;
+                }
+            }
+
+            int nameL = 0;
+            if(!nameLength.equals("")){
+                try{
+                    nameL = new Integer(nameLength).intValue();
+                }
+                catch(Exception e){
+                    err = true;
+                    Log.d("Test", "Length of group name not found.");
+                }
+            }
+
+            if(!err){
+                Log.d("Test", "Name Length is "+nameL);
+                for(int j=0; j<nameL; j++){
+                    groupName = groupName+data.charAt(m.start() + pattern.length() + i + 2 + j);
+                }
+            }
+        }
+
+        return groupName;
+    }
 }

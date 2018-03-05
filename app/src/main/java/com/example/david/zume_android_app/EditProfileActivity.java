@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,11 +28,12 @@ public class EditProfileActivity extends AppCompatActivity {
     private String baseUrl = "";
     private String username = "";
     private String password = "";
+    private String test = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_edit_profile);
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -90,7 +92,7 @@ public class EditProfileActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         Log.d("Test", "Passing saved data");
-        setProfileScreen();
+        setEditProfileScreen();
 /*
         baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
         try {
@@ -156,7 +158,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
             // Credentials correct
             if (resultFromAPI != null && !resultFromAPI.equals("")) {
-                setProfileScreen();
+                setEditProfileScreen();
             }
             // Login Failure
             else {
@@ -168,34 +170,21 @@ public class EditProfileActivity extends AppCompatActivity {
     /**
      * Open a new activity window.
      */
-    private void setProfileScreen() {
+    private void setEditProfileScreen() {
         try{
             JSONObject reader = new JSONObject(resultFromAPI);
             JSONArray first = reader.getJSONArray("first_name");
             JSONArray last = reader.getJSONArray("last_name");
-            JSONArray nickname = reader.getJSONArray("nickname");
-            JSONArray lastActive = reader.getJSONArray("zume_last_active");
 
-            TextView name = (TextView)findViewById(R.id.name);
-            if(!first.get(0).equals("") || !last.get(0).equals("")){
-                name.setText(first.get(0) + " " + last.get(0));
-            }
-            else{
-                name.setText(nickname.get(0).toString());
-            }
+            EditText firstName = (EditText)findViewById(R.id.firstName);
+            firstName.setText(first.get(0).toString());
 
-            TextView activity = (TextView)findViewById(R.id.lastActivity);
-            if(!lastActive.get(0).equals("")){
-                activity.setText("Last Active: " + lastActive.get(0));
-            }
-
+            EditText lastName = (EditText)findViewById(R.id.lastName);
+            lastName.setText(last.get(0).toString());
 
         }
         catch(Exception e) {
 
         }
-
-        TextView home = (TextView)findViewById(R.id.home);
     }
-
 }

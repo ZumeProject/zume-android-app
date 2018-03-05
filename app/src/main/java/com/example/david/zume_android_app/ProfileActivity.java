@@ -15,6 +15,12 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class ProfileActivity extends AppCompatActivity {
 
     private String resultFromAPI = "";
@@ -57,10 +63,55 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        Button editProfile = (Button)findViewById(R.id.editProfile);
+
+        editProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = getIntent();
+                String username = intent.getStringExtra("username");
+                String password = intent.getStringExtra("password");
+
+                Bundle bundle = new Bundle();
+                bundle.putString("username", username);
+                bundle.putString("password", password);
+
+                intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
         password = intent.getStringExtra("password");
 
+        FileInputStream fis= null;
+        try {
+            fis = openFileInput("UserProfile.txt");
+            Log.d("Test", "Opened the file");
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader bufferedReader = new BufferedReader(isr);
+        try {
+            bufferedReader.readLine();
+            bufferedReader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            resultFromAPI = bufferedReader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("Test", "Passing saved data");
+        setProfileScreen();
+/*
         baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
         try {
 
@@ -76,6 +127,7 @@ public class ProfileActivity extends AppCompatActivity {
         } catch (Exception ex){
             Log.d("Test","Error getting profile data.");
         }
+        */
 
     }
 
@@ -83,6 +135,7 @@ public class ProfileActivity extends AppCompatActivity {
      * This subclass handles the network operations in a new thread.
      * It starts the progress bar, makes the API call, and ends the progress bar.
      */
+
     public class ExecuteNetworkOperation extends AsyncTask<Void, Void, String> {
 
         private ApiAuthenticationClient apiAuthenticationClient;
