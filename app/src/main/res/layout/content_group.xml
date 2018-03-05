@@ -25,10 +25,10 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Group Name"
-            android:id="@+id/textView3"
+            android:id="@+id/groupName"
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.20"
-            android:textSize="75px" />
+            android:autoSizeTextType="uniform" />
 
         <Button
             android:layout_width="213dp"

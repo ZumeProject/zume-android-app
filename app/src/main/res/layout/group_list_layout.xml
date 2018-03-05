@@ -22,13 +22,5 @@
         android:layout_marginRight="5dp"
         android:text="View Group" />
 
-    <Button
-        android:id="@+id/startSession"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/viewGroup"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
-        android:text="Start Session" />
 
 </RelativeLayout>

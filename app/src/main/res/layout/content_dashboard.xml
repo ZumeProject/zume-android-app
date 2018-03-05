@@ -23,7 +23,7 @@
 
     <TableLayout
         android:layout_width="wrap_content"
-        android:layout_height="200dp"
+        android:layout_height="150dp"
         android:layout_below="@+id/listView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -32,18 +32,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true">
 
-        <TableRow
-            android:layout_width="120dp"
-            android:layout_height="100dp">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/emptySpace"
-                android:layout_column="0"
-                android:layout_span="6"
-                android:visibility="invisible" />
-        </TableRow>
 
 
         <TableRow
