@@ -509,6 +509,7 @@ public class LoginActivity extends AppCompatActivity {
     private String baseUrl;
     private String UserID;
     private String isValidCredentials;
+    private String endpoint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -533,7 +534,7 @@ public class LoginActivity extends AppCompatActivity {
                 FileInputStream fis = null;
 
                 try {
-                    fis = openFileInput("UserProfile.txt");
+                    fis = openFileInput("credntials.txt");
                     Log.d("Test", "Opened the file");
 
                 } catch (FileNotFoundException e) {
@@ -543,6 +544,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 if (failed) {
                     try {
+                        endpoint = "user_profile";
                         Log.d("Test", "Making API call");
                         ApiAuthenticationClient apiAuthenticationClient =
                                 new ApiAuthenticationClient(
@@ -554,6 +556,7 @@ public class LoginActivity extends AppCompatActivity {
                         AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
                         execute.execute();
                         baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
+                        endpoint = "user";
                         ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
                                 baseUrl
                                 , username
@@ -588,6 +591,7 @@ public class LoginActivity extends AppCompatActivity {
                         goToDashboardActivity();
                     } else {
                         try {
+                            endpoint = "user_profile";
                             ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
                                     baseUrl
                                     , username
@@ -595,6 +599,7 @@ public class LoginActivity extends AppCompatActivity {
                             );
                             AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
                             execute.execute();
+                            endpoint = "user";
                             baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
                             ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
                                     baseUrl
@@ -608,6 +613,15 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                 }
+
+                endpoint = "login";
+                baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
+                ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
+                        baseUrl
+                        , username
+                        , password
+                );
+                AsyncTask<Void, Void, String> execute2 = new ExecuteNetworkOperation(apiAuthenticationClient2);
             }
         });
     }
@@ -660,8 +674,97 @@ public class LoginActivity extends AppCompatActivity {
 
                 Boolean failed = false;
                 FileInputStream fis = null;
+
+                if(endpoint.equals("user_profile")) {
+                    /*try {
+                        fis = openFileInput("credentials.txt");
+                        Log.d("Test", "Opened the file");
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Log.d("Test", "Failed");
+                        failed = true;
+                    }*/
+                    String filename = "credentials.txt";
+                    String fileContents = username + "\n" + password + "\n";
+                    Log.d("Test", "Made first call");
+                    FileOutputStream outputStream;
+
+                    try {
+                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream.write(fileContents.getBytes());
+                        outputStream.close();
+                        Log.d("Test", "Made the file");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    filename = "user_profile.txt";
+                    fileContents = isValidCredentials + "\n";
+                    Log.d("Test", "Made first call");
+                    try {
+                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream.write(fileContents.getBytes());
+                        outputStream.close();
+                        Log.d("Test", "Made the file");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }else if(endpoint.equals("user")){
+                    String filename = "user.txt";
+                    String fileContents = isValidCredentials + "\n";
+                    Log.d("Test", "Made first call");
+                    FileOutputStream outputStream;
+
+                    try {
+                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream.write(fileContents.getBytes());
+                        outputStream.close();
+                        Log.d("Test", "Made the file");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }else if(endpoint.equals("login")){
+                    goToDashboardActivity();
+                }
+                    /*
+                    try {
+                        fis = openFileInput("user_profile.txt");
+                        Log.d("Test", "Opened the file");
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Log.d("Test", "Failed");
+                        failed = true;
+                    }*/
+                    /*
+                }else {
+                    try {
+                        fis = openFileInput("user_profile.txt");
+                        Log.d("Test", "Opened the file");
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Log.d("Test", "Failed");
+                        failed = true;
+                    }
+                    if (failed) {
+                        String filename = "user_profile.txt";
+                        String fileContents = isValidCredentials + "\n";
+                        Log.d("Test", "Made first call");
+                        FileOutputStream outputStream;
+
+                        try {
+                            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                            outputStream.write(fileContents.getBytes());
+                            outputStream.close();
+                            Log.d("Test", "Made the file");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+            }
+
                 try {
-                    fis = openFileInput("UserProfile.txt");
+                    fis = openFileInput("credentials.txt");
                     Log.d("Test", "Opened the file");
 
                 } catch (FileNotFoundException e) {
@@ -670,8 +773,8 @@ public class LoginActivity extends AppCompatActivity {
                     failed = true;
                 }
                 if(failed) {
-                    String filename = "UserProfile.txt";
-                    String fileContents = username + "\n" + password + "\n" + isValidCredentials + "\n";
+                    String filename = "credentials.txt";
+                    String fileContents = username + "\n" + password + "\n";
                     Log.d("Test", "Made first call");
                     FileOutputStream outputStream;
 
@@ -685,33 +788,58 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
                 else {
-                    Log.d("Test", "Made second call");
-                    InputStreamReader isr = new InputStreamReader(fis);
-                    BufferedReader bufferedReader = new BufferedReader(isr);
-                    String user = null, pass = null, info = null;
                     try {
-                        user = bufferedReader.readLine();
-                        pass = bufferedReader.readLine();
-                        info = bufferedReader.readLine();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                        fis = openFileInput("user_profile.txt");
+                        Log.d("Test", "Opened the file");
 
-                    String filename = "UserProfile.txt";
-                    String fileContents = user + "\n" + pass + "\n" + info + "\n" +isValidCredentials+ "\n";
-                    FileOutputStream outputStream;
-
-                    try {
-                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                        outputStream.write(fileContents.getBytes());
-                        outputStream.close();
-                        Log.d("Test", "Made the file");
-                    } catch (Exception e) {
+                    } catch (FileNotFoundException e) {
                         e.printStackTrace();
+                        Log.d("Test", "Failed");
+                        failed = true;
                     }
-                    Log.d("Test", "Made final file");
-                    goToDashboardActivity();
-                }
+                    if (failed) {
+                        String filename = "user_profile.txt";
+                        String fileContents = isValidCredentials + "\n";
+                        Log.d("Test", "Made first call");
+                        FileOutputStream outputStream;
+
+                        try {
+                            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                            outputStream.write(fileContents.getBytes());
+                            outputStream.close();
+                            Log.d("Test", "Made the file");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d("Test", "Made second call");
+                        InputStreamReader isr = new InputStreamReader(fis);
+                        BufferedReader bufferedReader = new BufferedReader(isr);
+                        String user = null, pass = null, info = null;
+                        try {
+                            user = bufferedReader.readLine();
+                            pass = bufferedReader.readLine();
+                            info = bufferedReader.readLine();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        String filename = "user_profile.txt";
+                        String fileContents = user + "\n" + pass + "\n" + info + "\n" + isValidCredentials + "\n";
+                        FileOutputStream outputStream;
+
+                        try {
+                            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                            outputStream.write(fileContents.getBytes());
+                            outputStream.close();
+                            Log.d("Test", "Made the file");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Log.d("Test", "Made final file");
+                        goToDashboardActivity();
+                    }
+                }*/
             } else {
                 Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
             }
