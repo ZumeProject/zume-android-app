@@ -493,6 +493,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -686,7 +690,14 @@ public class LoginActivity extends AppCompatActivity {
                         failed = true;
                     }*/
                     String filename = "credentials.txt";
-                    String fileContents = username + "\n" + password + "\n";
+                    try {
+                        JSONObject reader = new JSONObject(isValidCredentials);
+                        JSONArray id = reader.getJSONArray("id");
+                        UserID = id.get(0).toString();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    String fileContents = username + "\n" + password + "\n" + UserID+ "\n";
                     Log.d("Test", "Made first call");
                     FileOutputStream outputStream;
 
