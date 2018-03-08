@@ -498,6 +498,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -521,7 +522,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // TODO: Replace this with your own IP address or URL.
-        baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
+        //baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
 
         editText_login_username = (EditText) findViewById(R.id.editText_login_username);
         editText_login_password = (EditText) findViewById(R.id.editText_login_password);
@@ -538,7 +539,7 @@ public class LoginActivity extends AppCompatActivity {
                 FileInputStream fis = null;
 
                 try {
-                    fis = openFileInput("credntials.txt");
+                    fis = openFileInput("credentials.txt");
                     Log.d("Test", "Opened the file");
 
                 } catch (FileNotFoundException e) {
@@ -550,6 +551,9 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         endpoint = "user_profile";
                         Log.d("Test", "Making API call");
+                        Log.d("Test", username);
+                        Log.d("Test", password);
+                        baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
                         ApiAuthenticationClient apiAuthenticationClient =
                                 new ApiAuthenticationClient(
                                         baseUrl
@@ -559,8 +563,11 @@ public class LoginActivity extends AppCompatActivity {
 
                         AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
                         execute.execute();
-                        baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
                         endpoint = "user";
+                        baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
+                        Log.d("Test", "Making 2nd API call");
+                        Log.d("Test", username);
+                        Log.d("Test", password);
                         ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
                                 baseUrl
                                 , username
@@ -585,6 +592,9 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    Log.d("Test", user);
+                    Log.d("Test", pass);
+
                     if (user.equals(username) && pass.equals(password)) {
                         try {
                             isValidCredentials = bufferedReader.readLine();
@@ -596,22 +606,22 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         try {
                             endpoint = "user_profile";
-                            ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
+                            ApiAuthenticationClient apiAuthenticationClient4 = new ApiAuthenticationClient(
                                     baseUrl
                                     , username
                                     , password
                             );
-                            AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
-                            execute.execute();
+                            AsyncTask<Void, Void, String> execute4 = new ExecuteNetworkOperation(apiAuthenticationClient4);
+                            execute4.execute();
                             endpoint = "user";
                             baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
-                            ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
+                            ApiAuthenticationClient apiAuthenticationClient5 = new ApiAuthenticationClient(
                                     baseUrl
                                     , username
                                     , password
                             );
-                            AsyncTask<Void, Void, String> execute2 = new ExecuteNetworkOperation(apiAuthenticationClient2);
-                            execute2.execute();
+                            AsyncTask<Void, Void, String> execute5 = new ExecuteNetworkOperation(apiAuthenticationClient5);
+                            execute5.execute();
                         } catch (Exception ex) {
                         }
                     }
@@ -620,12 +630,13 @@ public class LoginActivity extends AppCompatActivity {
 
                 endpoint = "login";
                 baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
-                ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
+                ApiAuthenticationClient apiAuthenticationClient6 = new ApiAuthenticationClient(
                         baseUrl
                         , username
                         , password
                 );
-                AsyncTask<Void, Void, String> execute2 = new ExecuteNetworkOperation(apiAuthenticationClient2);
+                AsyncTask<Void, Void, String> execute6 = new ExecuteNetworkOperation(apiAuthenticationClient6);
+                execute6.execute();
             }
         });
     }
@@ -659,6 +670,7 @@ public class LoginActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
             try {
                 isValidCredentials = apiAuthenticationClient.execute();
+                Log.d("Test", isValidCredentials);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -674,12 +686,14 @@ public class LoginActivity extends AppCompatActivity {
             findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
             // Login Success
+            Log.d("Test", isValidCredentials);
             if (isValidCredentials != null && !isValidCredentials.equals("")) {
-
+                Log.d("Test", "logged in");
                 Boolean failed = false;
                 FileInputStream fis = null;
 
                 if(endpoint.equals("user_profile")) {
+                    Log.d("Test", "Made it to the creation of the file");
                     /*try {
                         fis = openFileInput("credentials.txt");
                         Log.d("Test", "Opened the file");
@@ -694,18 +708,25 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject reader = new JSONObject(isValidCredentials);
                         JSONArray id = reader.getJSONArray("id");
                         UserID = id.get(0).toString();
+                        Log.d("Test", UserID);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    Log.d("Test", username);
+                    Log.d("Test", password);
+                    Log.d("Test", UserID);
+
                     String fileContents = username + "\n" + password + "\n" + UserID+ "\n";
-                    Log.d("Test", "Made first call");
                     FileOutputStream outputStream;
 
                     try {
+                        File x = new File(filename);
+                        Log.d("Test", String.valueOf(x));
+                        x.delete();
                         outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                         outputStream.write(fileContents.getBytes());
                         outputStream.close();
-                        Log.d("Test", "Made the file");
+                        Log.d("Test", "Made the credentials file");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -716,25 +737,26 @@ public class LoginActivity extends AppCompatActivity {
                         outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                         outputStream.write(fileContents.getBytes());
                         outputStream.close();
-                        Log.d("Test", "Made the file");
+                        Log.d("Test", "Made the user_profile file");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }else if(endpoint.equals("user")){
                     String filename = "user.txt";
                     String fileContents = isValidCredentials + "\n";
-                    Log.d("Test", "Made first call");
+                    Log.d("Test", "Made second call");
                     FileOutputStream outputStream;
 
                     try {
                         outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                         outputStream.write(fileContents.getBytes());
                         outputStream.close();
-                        Log.d("Test", "Made the file");
+                        Log.d("Test", "Made the user file");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }else if(endpoint.equals("login")){
+                    Log.d("Test", "Going to dashboard");
                     goToDashboardActivity();
                 }
                     /*
