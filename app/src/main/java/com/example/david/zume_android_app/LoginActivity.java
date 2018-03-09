@@ -504,6 +504,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity {
     private Button button_login_login;
@@ -514,7 +515,8 @@ public class LoginActivity extends AppCompatActivity {
     private String baseUrl;
     private String UserID;
     private String isValidCredentials;
-    private String endpoint;
+    private String endpoint = "false";
+    private String endpoint2 = "false";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -563,7 +565,9 @@ public class LoginActivity extends AppCompatActivity {
 
                         AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
                         execute.execute();
-                        endpoint = "user";
+                        TimeUnit.SECONDS.sleep(5);
+                        endpoint = "false";
+                        endpoint2 = "user";
                         baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
                         Log.d("Test", "Making 2nd API call");
                         Log.d("Test", username);
@@ -606,28 +610,30 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         try {
                             endpoint = "user_profile";
-                            ApiAuthenticationClient apiAuthenticationClient4 = new ApiAuthenticationClient(
+                            ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
                                     baseUrl
                                     , username
                                     , password
                             );
-                            AsyncTask<Void, Void, String> execute4 = new ExecuteNetworkOperation(apiAuthenticationClient4);
-                            execute4.execute();
+                            AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
+                            execute.execute();
+                            TimeUnit.SECONDS.sleep(5);
+                            endpoint = "false";
                             endpoint = "user";
                             baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
-                            ApiAuthenticationClient apiAuthenticationClient5 = new ApiAuthenticationClient(
+                            ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
                                     baseUrl
                                     , username
                                     , password
                             );
-                            AsyncTask<Void, Void, String> execute5 = new ExecuteNetworkOperation(apiAuthenticationClient5);
-                            execute5.execute();
+                            AsyncTask<Void, Void, String> execute2 = new ExecuteNetworkOperation(apiAuthenticationClient2);
+                            execute2.execute();
                         } catch (Exception ex) {
                         }
                     }
 
                 }
-
+                /*
                 endpoint = "login";
                 baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
                 ApiAuthenticationClient apiAuthenticationClient6 = new ApiAuthenticationClient(
@@ -636,7 +642,13 @@ public class LoginActivity extends AppCompatActivity {
                         , password
                 );
                 AsyncTask<Void, Void, String> execute6 = new ExecuteNetworkOperation(apiAuthenticationClient6);
-                execute6.execute();
+                execute6.execute();*/
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                goToDashboardActivity();
             }
         });
     }
