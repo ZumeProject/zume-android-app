@@ -107,7 +107,7 @@ public class DashboardActivity extends AppCompatActivity {
         });
         FileInputStream fis= null;
         try {
-            fis = openFileInput("UserProfile.txt");
+            fis = openFileInput("user_profile.txt");
             Log.d("Test", "Opened the file");
 
         } catch (FileNotFoundException e) {
@@ -115,17 +115,17 @@ public class DashboardActivity extends AppCompatActivity {
         }
         InputStreamReader isr = new InputStreamReader(fis);
         BufferedReader bufferedReader = new BufferedReader(isr);
-        try {
+        /*try {
             Log.d("Test", bufferedReader.readLine());
             Log.d("Test", bufferedReader.readLine());
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
         try {
             resultFromAPI = bufferedReader.readLine();
             Log.d("Test", resultFromAPI);
-            Log.d("Test", bufferedReader.readLine());
+            //Log.d("Test", bufferedReader.readLine());
         } catch (IOException e) {
             e.printStackTrace();
         }
