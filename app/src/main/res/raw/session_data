@@ -300,3 +300,187 @@
 		}
 	}
 }
+{ 	"name" : Session4
+	"pages" : {
+		"page1" : {
+			"single" : {
+				"header1" : "Check-In"
+				"paragraph1" : "At the end of the last session, everyone in your group was challenged in two ways: 
+								1. You were asked to share God’s Story with at least one person from your List of 100 that you marked as "Unbeliever" or "Unknown."
+								2. You were encouraged to train someone to use the Creation to Judgement story (or some other way to share God’s Story) with someone.
+								Take a few moments to see how your group did this week."
+				"header2" : "Pray"
+				"paragraph2" : "Pray and thank God for the results and invite His Holy Spirit to lead your time together."
+				"header3" : "Overview"
+				"paragraph3" : "In this session, you'll learn how God's plan is for every follower to multiply! You’ll discover how disciples multiply far and fast when they start to see where God’s Kingdom isn’t. And, you'll learn another great tool for inviting others into God's family is as simple as telling our story. Then, when you're ready, get started!"
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+		"page2" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Read"
+				"paragraph" : "3-MINUTE TESTIMONY
+							   As followers of Jesus, we are “witnesses" for Him, because we “testify” about the impact Jesus has had on our lives. Your story of your relationship with God is called your Testimony. It's powerful, and it's something no one can share better than you.
+							   Find the "3-Minute Testimony" section in your Zúme Guidebook, and listen to the audio below."
+			}
+			"after" : "empty"
+			"video" : ""
+		}
+		"page3" : {
+			"single" : {
+				"header" : "PRACTICE SHARING YOUR TESTIMONY (45MIN)"
+				"paragraph" : "Break into groups of two or three and and spend the next 45 minutes practicing sharing your Testimony using the Activity instructions on page 15 of your Zúme Guidebook."
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+		"page4" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Watch"
+				"paragraph" : "What is God's greatest blessing for His children? Making disciples who multiply! 
+							   What if you could learn a simple pattern for making not just one follower of Jesus but entire spiritual families who multiply for generations to come?"
+			}
+			"after" : {
+				"header" : "Discuss"
+				"paragraph" : "1. Is this the pattern you were taught when you first began to follow Jesus? If not, what was different?
+							   2. After you came to faith, how long was it before you began to disciple others?
+							   3. What do you think would happen if new followers started sharing and discipling others, immediately?"
+			}
+			"video" : ""
+		}
+		"page5" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Watch"
+				"paragraph" : "What do ducklings have to do with disciple making? They lead and follow at the same time."
+			}
+			"after" : {
+				"header" : "Discuss"
+				"paragraph" : "1. What is one area of discipleship (reading/understanding the Bible, praying, sharing God's Story, etc.) that you want to learn more about? Who is someone that could help you learn?
+							   2. What is one area of discipleship that you feel you could share with others? Who is someone that you could share with?"
+			}
+			"video" : ""
+		}
+		"page6" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Watch"
+				"paragraph" : "Have you ever stopped to think about where God's Kingdom... isn't? 
+							   Have you ever visited a home or a neighborhood or even a city where it seemed as if God was just... missing? These are usually the places where God wants to work the most."
+			}
+			"after" : {
+				"header" : "Discuss"
+				"paragraph" : "1. Who are you more comfortable sharing with -- people you already know or people you haven't met, yet?
+							   2. Why do you think that is?
+							   3. How could you get better at sharing with people you're less comfortable with?"
+			}
+			"video" : ""
+		}
+		"page7" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Read"
+				"paragraph" : "THE LORD'S SUPPER
+							   Jesus said, “I am the living bread that came down from heaven. Whoever eats this bread will live forever. This bread is my flesh, which I will give for the life of the world.”
+							   Find "The Lord's Supper" section in your Zúme Guidebook, and listen to the audio below."
+			}
+			"after" : "empty"
+			"video" : ""
+		}
+		"page8" : {
+			"single" : {
+				"header" : "PRACTICE THE LORD'S SUPPER (10MIN)"
+				"paragraph" : "Spend the next 10 minutes celebrating The Lord's Supper with your group using the pattern on page 15 of your Zúme Guidebook."
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+		"page9" : {
+			"single" : {
+				"header1" : "Looking Forward"
+				"paragraph1" : "Congratulations on finishing Session 4! Below are next steps to take in preparation for the next session."
+				"header2" : "Obey"
+				"paragraph2" : "Spend time this week practicing your 3-Minute Testimony, and then share it with at least one person from your List of 100 that you marked as "Unbeliever" or "Unknown.""
+				"header3" : "Share"
+				"paragraph3" : "Ask God who He wants you to train with the 3-Minute Testimony tool. Share this person's name with the group before you go."
+				"header4" : "Pray"
+				"paragraph4" : "Pray that God help you be obedient to Him and invite Him to work in you and those around you!"
+			}
+			"before" : "empty"
+			"after" : "empty"
+			
+		}
+	}
+}
+{	"name" : Session5
+	"pages" : {
+		"page1" : {
+			"single" : {
+				"header1" : "Check-In"
+				"paragraph1" : "At the end of the last session, everyone in your group in two ways: 
+								1. You were asked to share your 3-Minute Testimony with at least one person on your List of 100.
+								2. You were encouraged to train someone else with the 3-Minute Testimony tool.
+								3. Take a few moments to see how your group did this week."
+				"header2" : "Pray"
+				"paragraph2" : "Pray and thank God for the results and invite His Holy Spirit to lead your time together."
+				"header3" : "Overview"
+				"paragraph3" : "In this session, you’ll learn how Prayer Walking is a powerful way to prepare a neighborhood for Jesus, and you'll learn a simple but powerful pattern for prayer that will help you meet and make new disciples along the way."
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+		"page2" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Read"
+				"paragraph" : "PRAYER WALKING
+							   Prayer Walking is a simple way to obey God’s command to pray for others. And it's just what it sounds like - praying to God while walking around!
+							   Find the "Prayer Walking" section in your Zúme Guidebook, and listen to the audio below."
+			}
+			"after" : "empty"
+			"video" : ""
+		}
+		"page3" : {
+			"single" : "empty"
+			"before" : {
+				"header" : "Watch"
+				"paragraph" : "Disciple-making can be rapidly advanced by finding a person of peace, even in a place where followers of Jesus are few and far between. How do you know when you have found a person of peace and what do you when you find them?"
+			}
+			"after" : {
+				"header" : "Discuss"
+				"paragraph" : "1.Can someone who has a "bad reputation" (like the Samaritan woman or the demon-possessed man in the Gadarenes) really be a Person of Peace? Why or why not?
+							   2. What is a community or segment of society near you that seems to have little (or no) Kingdom presence? How could a Person of Peace (someone who is OPEN, HOSPITABLE, KNOWS OTHERS and SHARES) accelerate the spread of the Gospel in that community?"
+			}
+			"video" : ""
+		}
+		"page4" : {
+			"single" : {
+				"header" : "PRACTICE THE B.L.E.S.S. PRAYER (15MIN)"
+				"paragraph" : "Break into groups of two or three and practicing the B.L.E.S.S. Prayer. The prayer pattern can be found in the Zúme Guidebook. Practice praying the five areas of the B.L.E.S.S. Prayer."
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+		"page5" : {
+			"single" : {
+				"header1" : "PRAYER WALKING (60-90MIN)"
+				"paragraph1" : "1. Break into groups of two or three and go out into the community to practice Prayer Walking.
+								2. Choosing a location can be as simple as walking outside from where you are now, or you could plan to go to a specific destination.
+								3. Go as God leads, and plan on spending 60-90 minutes on this activity.
+								The session ends with a prayer walking activity.
+								Read through the Obey, Share, and Pray sections, below, before you head out!"
+				"header2" : "Obey"
+				"paragraph2" : "Spend time this week practicing Prayer Walking by going out alone or with a small group at least once."
+				"header3" : "Share"
+				"paragraph3" : "Spend time asking God who He might want you to share the Prayer Walking tool with before your group meets again. Share this person’s name with the group before you go."
+				"header4" : "Pray"
+				"paragraph4" : "Before you go out on your Prayer Walking activity, be sure to pray with your group to end your time together. Thank God that He loves the lost, the last and the least - including us! Ask Him to prepare your heart and the heart of those you'll meet during your walk to be open to His work."
+			}
+			"before" : "empty"
+			"after" : "empty"
+		}
+	}
+}

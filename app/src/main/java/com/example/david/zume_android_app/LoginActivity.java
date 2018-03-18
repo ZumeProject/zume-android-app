@@ -493,12 +493,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity {
     private Button button_login_login;
@@ -506,7 +512,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editText_login_password;
     private String username;
     private String password;
-    private String baseUrl;
+    private String baseUrlUserProfile = "false";
+    private String baseUrlUser = "false";
     private String UserID;
     private String isValidCredentials;
 
@@ -516,7 +523,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // TODO: Replace this with your own IP address or URL.
-        baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
+        baseUrlUserProfile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
 
         editText_login_username = (EditText) findViewById(R.id.editText_login_username);
         editText_login_password = (EditText) findViewById(R.id.editText_login_password);
@@ -532,8 +539,9 @@ public class LoginActivity extends AppCompatActivity {
                 Boolean failed = false;
                 FileInputStream fis = null;
 
+                //Checks to see if the user information exists
                 try {
-                    fis = openFileInput("UserProfile.txt");
+                    fis = openFileInput("credentials.txt");
                     Log.d("Test", "Opened the file");
 
                 } catch (FileNotFoundException e) {
@@ -541,30 +549,28 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d("Test", "Failed");
                     failed = true;
                 }
+
+                //Creates new files with the user information if the credentials are correct.
                 if (failed) {
                     try {
                         Log.d("Test", "Making API call");
                         ApiAuthenticationClient apiAuthenticationClient =
                                 new ApiAuthenticationClient(
-                                        baseUrl
+                                        baseUrlUserProfile
                                         , username
                                         , password
                                 );
 
                         AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
                         execute.execute();
-                        baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
-                        ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
-                                baseUrl
-                                , username
-                                , password
-                        );
-                        AsyncTask<Void, Void, String> execute2 = new ExecuteNetworkOperation(apiAuthenticationClient2);
-                        execute2.execute();
                     } catch (Exception ex) {
                         Log.d("Test", "Error getting dashboard data.");
                     }
-                } else {
+                }
+                //Checks to see if it is the same user loging in.
+                //If it is it will go to the next page.
+                //Otherwise it will create new files for the new user.
+                else {
                     InputStreamReader isr = new InputStreamReader(fis);
                     BufferedReader bufferedReader = new BufferedReader(isr);
                     String user = null, pass = null;
@@ -578,6 +584,9 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    Log.d("Test", user);
+                    Log.d("Test", pass);
+                    //Checking if its the same user loging in.
                     if (user.equals(username) && pass.equals(password)) {
                         try {
                             isValidCredentials = bufferedReader.readLine();
@@ -589,20 +598,12 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         try {
                             ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
-                                    baseUrl
+                                    baseUrlUserProfile
                                     , username
                                     , password
                             );
                             AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient);
                             execute.execute();
-                            baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
-                            ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
-                                    baseUrl
-                                    , username
-                                    , password
-                            );
-                            AsyncTask<Void, Void, String> execute2 = new ExecuteNetworkOperation(apiAuthenticationClient2);
-                            execute2.execute();
                         } catch (Exception ex) {
                         }
                     }
@@ -645,7 +646,7 @@ public class LoginActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            return null;
+            return isValidCredentials;
         }
 
         @Override
@@ -657,59 +658,89 @@ public class LoginActivity extends AppCompatActivity {
 
             // Login Success
             if (isValidCredentials != null && !isValidCredentials.equals("")) {
+                //Creating te credentials file and user_profile file
+                //Also makes a call for the second Api call
+                if(!baseUrlUserProfile.equals("false")) {
+                    /*try {
+                        fis = openFileInput("credentials.txt");
+                        Log.d("Test", "Opened the file");
 
-                Boolean failed = false;
-                FileInputStream fis = null;
-                try {
-                    fis = openFileInput("UserProfile.txt");
-                    Log.d("Test", "Opened the file");
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Log.d("Test", "Failed");
+                        failed = true;
+                    }
+                    String filename = "credentials.txt";
 
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    Log.d("Test", "Failed");
-                    failed = true;
-                }
-                if(failed) {
-                    String filename = "UserProfile.txt";
-                    String fileContents = username + "\n" + password + "\n" + isValidCredentials + "\n";
+                    Log.d("Test", username);
+                    Log.d("Test", password);
+                    String fileContents = username + "\n" + password + "\n" + UserID+ "\n";
+                    FileOutputStream outputStream;
+
+                    try {
+                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream.write(fileContents.getBytes());
+                        outputStream.close();
+                        Log.d("Test", "Made the credentials file");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }*/
+                    FileOutputStream outputStream;
+                    String filename = "user_profile.txt";
+                    String fileContents = isValidCredentials + "\n";
                     Log.d("Test", "Made first call");
-                    FileOutputStream outputStream;
-
                     try {
                         outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                         outputStream.write(fileContents.getBytes());
                         outputStream.close();
-                        Log.d("Test", "Made the file");
+                        Log.d("Test", "Made the user_profile file");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    makeSecondApiCall();
+                    //goToDashboardActivity();
                 }
-                else {
-                    Log.d("Test", "Made second call");
-                    InputStreamReader isr = new InputStreamReader(fis);
-                    BufferedReader bufferedReader = new BufferedReader(isr);
-                    String user = null, pass = null, info = null;
+                //Makes the user file and calls the goToDashboardActivity method
+                else if(!baseUrlUser.equals("false")){
+
+                    String filename = "credentials.txt";
+
+                    Log.d("Test", username);
+                    Log.d("Test", password);
+                    //Mess with this after the endpoint is fixed
                     try {
-                        user = bufferedReader.readLine();
-                        pass = bufferedReader.readLine();
-                        info = bufferedReader.readLine();
-                    } catch (IOException e) {
+                        JSONObject reader = new JSONObject(isValidCredentials);
+                        int id = reader.getInt("user_id");
+                        UserID = String.valueOf(id);
+                        Log.d("Test", UserID);
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-                    String filename = "UserProfile.txt";
-                    String fileContents = user + "\n" + pass + "\n" + info + "\n" +isValidCredentials+ "\n";
+                    String fileContents = username + "\n" + password + "\n" + UserID+ "\n";
                     FileOutputStream outputStream;
 
                     try {
                         outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                         outputStream.write(fileContents.getBytes());
                         outputStream.close();
-                        Log.d("Test", "Made the file");
+                        Log.d("Test", "Made the credentials file");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    Log.d("Test", "Made final file");
+
+
+
+                    filename = "user.txt";
+                    fileContents = isValidCredentials + "\n";
+                    Log.d("Test", "Made second call");
+                    try {
+                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream.write(fileContents.getBytes());
+                        outputStream.close();
+                        Log.d("Test", "Made the user file");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     goToDashboardActivity();
                 }
             } else {
@@ -719,17 +750,32 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Open a new activity window.
+     * Open the Dashboard window.
      */
     private void goToDashboardActivity() {
         Bundle bundle = new Bundle();
         bundle.putString("username", username);
         bundle.putString("password", password);
-        bundle.putString("baseUrl", baseUrl);
+        bundle.putString("baseUrl", baseUrlUserProfile);
 
         Intent intent = new Intent(this, DashboardActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+    /**
+    * Makes a call to get the info from the endpoint http://zume.hsutx.edu/wp-json/zume/v1/android/user/1"
+     */
+    private void makeSecondApiCall() {
+        baseUrlUser = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
+        Log.d("Test", "Making 2nd API call");
+        ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
+                baseUrlUser
+                , username
+                , password
+        );
+        AsyncTask<Void, Void, String> execute2 = new ExecuteNetworkOperation(apiAuthenticationClient2);
+        baseUrlUserProfile = "false";
+        execute2.execute();
     }
 }
 
