@@ -669,21 +669,11 @@ public class LoginActivity extends AppCompatActivity {
                         e.printStackTrace();
                         Log.d("Test", "Failed");
                         failed = true;
-                    }*/
+                    }
                     String filename = "credentials.txt";
-                    //Mess with this after the endpoint is fixed
-                    /* try {
-                        JSONObject reader = new JSONObject(isValidCredentials);
-                        JSONArray id = reader.getJSONArray("id");
-                        UserID = id.get(0).toString();
-                        Log.d("Test", UserID);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }*/
+
                     Log.d("Test", username);
                     Log.d("Test", password);
-                    //Log.d("Test", UserID);
-
                     String fileContents = username + "\n" + password + "\n" + UserID+ "\n";
                     FileOutputStream outputStream;
 
@@ -694,9 +684,10 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d("Test", "Made the credentials file");
                     } catch (Exception e) {
                         e.printStackTrace();
-                    }
-                    filename = "user_profile.txt";
-                    fileContents = isValidCredentials + "\n";
+                    }*/
+                    FileOutputStream outputStream;
+                    String filename = "user_profile.txt";
+                    String fileContents = isValidCredentials + "\n";
                     Log.d("Test", "Made first call");
                     try {
                         outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
@@ -711,11 +702,37 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 //Makes the user file and calls the goToDashboardActivity method
                 else if(!baseUrlUser.equals("false")){
-                    String filename = "user.txt";
-                    String fileContents = isValidCredentials + "\n";
-                    Log.d("Test", "Made second call");
+
+                    String filename = "credentials.txt";
+
+                    Log.d("Test", username);
+                    Log.d("Test", password);
+                    //Mess with this after the endpoint is fixed
+                    try {
+                        JSONObject reader = new JSONObject(isValidCredentials);
+                        int id = reader.getInt("user_id");
+                        UserID = String.valueOf(id);
+                        Log.d("Test", UserID);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    String fileContents = username + "\n" + password + "\n" + UserID+ "\n";
                     FileOutputStream outputStream;
 
+                    try {
+                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream.write(fileContents.getBytes());
+                        outputStream.close();
+                        Log.d("Test", "Made the credentials file");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+
+                    filename = "user.txt";
+                    fileContents = isValidCredentials + "\n";
+                    Log.d("Test", "Made second call");
                     try {
                         outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
                         outputStream.write(fileContents.getBytes());
@@ -746,7 +763,7 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
     /**
-    * Makes a call to ge the info from the endpoint http://zume.hsutx.edu/wp-json/zume/v1/android/user/1"
+    * Makes a call to get the info from the endpoint http://zume.hsutx.edu/wp-json/zume/v1/android/user/1"
      */
     private void makeSecondApiCall() {
         baseUrlUser = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
