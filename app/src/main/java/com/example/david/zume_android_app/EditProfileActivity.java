@@ -24,11 +24,15 @@ import java.io.InputStreamReader;
 
 public class EditProfileActivity extends AppCompatActivity {
 
-    private String resultFromAPI = "";
+    private String resultFromUserProfile = "";
+    private String resultFromUser = "";
     private String baseUrl = "";
     private String username = "";
     private String password = "";
     private String test = "";
+    String prevFirstName = "";
+    String prevLastName = "";
+    String prevEmail = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,20 +69,60 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
+        Button update = (Button)findViewById(R.id.save);
+
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = getIntent();
+                String username = intent.getStringExtra("username");
+                String password = intent.getStringExtra("password");
+                int userID = intent.getIntExtra("user_id", 0);
+
+                final EditText first =  (EditText) findViewById(R.id.firstName);
+                final EditText last =  (EditText) findViewById(R.id.lastName);
+                final EditText email =  (EditText) findViewById(R.id.email);
+
+                try{
+                    String first_name = first.getText().toString();
+                    String last_name = last.getText().toString();
+                    String email_address = email.getText().toString();
+
+                    if((first_name == null || first_name.equals("")) || (last_name == null || last_name.equals(""))){
+
+                    }
+
+                    UpdateUser user = new UpdateUser(userID, username, password, first_name, last_name, email_address);
+                }
+                catch(Exception e){
+                    Toast.makeText(getApplicationContext(), "Error updating profile", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
         password = intent.getStringExtra("password");
 
         FileInputStream fis= null;
         try {
-            fis = openFileInput("UserProfile.txt");
+            fis = openFileInput("user_profile.txt");
             Log.d("Test", "Opened the file");
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            GetUser user = new GetUser(username, password);
+            this.onCreate(savedInstanceState);
         }
         InputStreamReader isr = new InputStreamReader(fis);
         BufferedReader bufferedReader = new BufferedReader(isr);
+
+        try {
+            resultFromUserProfile = bufferedReader.readLine();
+            Log.d("UserProfile", resultFromUserProfile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         try {
             bufferedReader.readLine();
             bufferedReader.readLine();
@@ -87,100 +131,64 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         try {
-            resultFromAPI = bufferedReader.readLine();
+            fis = openFileInput("user.txt");
+            Log.d("Test", "Opened the file");
+
+        } catch (FileNotFoundException e) {
+            GetUser user = new GetUser(username, password);
+            this.onCreate(savedInstanceState);
+        }
+        isr = new InputStreamReader(fis);
+        bufferedReader = new BufferedReader(isr);
+
+        try {
+            resultFromUser = bufferedReader.readLine();
+            Log.d("User", resultFromUser);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        try {
+            bufferedReader.readLine();
+            bufferedReader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         Log.d("Test", "Passing saved data");
         setEditProfileScreen();
-/*
-        baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
-        try {
-
-            ApiAuthenticationClient apiAuthenticationClient =
-                    new ApiAuthenticationClient(
-                            baseUrl
-                            , username
-                            , password
-                    );
-
-            AsyncTask<Void, Void, String> execute = new ProfileActivity.ExecuteNetworkOperation(apiAuthenticationClient);
-            execute.execute();
-        } catch (Exception ex){
-            Log.d("Test","Error getting profile data.");
-        }
-        */
 
     }
 
-    /**
-     * This subclass handles the network operations in a new thread.
-     * It starts the progress bar, makes the API call, and ends the progress bar.
-     */
 
-    public class ExecuteNetworkOperation extends AsyncTask<Void, Void, String> {
-
-        private ApiAuthenticationClient apiAuthenticationClient;
-
-        /**
-         * Overload the constructor to pass objects to this class.
-         */
-        public ExecuteNetworkOperation(ApiAuthenticationClient apiAuthenticationClient) {
-            this.apiAuthenticationClient = apiAuthenticationClient;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            // Display the progress bar.
-            //findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                Log.d("Test", "Made to the execute method");
-                resultFromAPI = apiAuthenticationClient.execute();
-            } catch (Exception e) {
-                Log.d("Test", "Error making it to execute method");
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            // Hide the progress bar.
-            //findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-
-            // Credentials correct
-            if (resultFromAPI != null && !resultFromAPI.equals("")) {
-                setEditProfileScreen();
-            }
-            // Login Failure
-            else {
-                Toast.makeText(getApplicationContext(), "Error opening profile: Invalid Credentials", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
 
     /**
      * Open a new activity window.
      */
     private void setEditProfileScreen() {
         try{
-            JSONObject reader = new JSONObject(resultFromAPI);
+            JSONObject reader = new JSONObject(resultFromUserProfile);
             JSONArray first = reader.getJSONArray("first_name");
             JSONArray last = reader.getJSONArray("last_name");
 
             EditText firstName = (EditText)findViewById(R.id.firstName);
             firstName.setText(first.get(0).toString());
+            this.prevFirstName = first.get(0).toString();
 
             EditText lastName = (EditText)findViewById(R.id.lastName);
             lastName.setText(last.get(0).toString());
+            this.prevLastName = last.get(0).toString();
+
+        }
+        catch(Exception e) {
+
+        }
+        try{
+            JSONObject reader = new JSONObject(resultFromUser);
+            JSONObject email = reader.getJSONObject("email");
+
+            EditText emailText = (EditText)findViewById(R.id.email);
+            emailText.setText(email.toString());
+            this.prevEmail = email.toString();
 
         }
         catch(Exception e) {

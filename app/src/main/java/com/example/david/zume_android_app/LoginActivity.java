@@ -514,7 +514,7 @@ public class LoginActivity extends AppCompatActivity {
     private String password;
     private String baseUrlUserProfile = "false";
     private String baseUrlUser = "false";
-    private String UserID;
+    private int UserID;
     private String isValidCredentials;
 
     @Override
@@ -711,8 +711,8 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         JSONObject reader = new JSONObject(isValidCredentials);
                         int id = reader.getInt("user_id");
-                        UserID = String.valueOf(id);
-                        Log.d("Test", UserID);
+                        UserID = id;
+                        Log.d("Test", String.valueOf(UserID));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -756,6 +756,7 @@ public class LoginActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString("username", username);
         bundle.putString("password", password);
+        bundle.putInt("user_id", UserID);
         bundle.putString("baseUrl", baseUrlUserProfile);
 
         Intent intent = new Intent(this, DashboardActivity.class);
