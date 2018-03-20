@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private String password;
     private String baseUrlUserProfile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     private String baseUrlUser = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
-    private String getBaseUrlSessionData = "http://zume.hsutx.edu/wp-json/zume/v1/android/lessons/all";
+    private String getBaseUrlSessionData = "http://zume.hsutx.edu/wp-json/zume/v1/android/lessons";
     private String baseUrl;
     private AsyncTask<Void, Void, String> execute;
     private String UserID;
@@ -207,7 +207,7 @@ public class LoginActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     makeApiCall(getBaseUrlSessionData);
-                }else if(baseUrl.equals("http://zume.hsutx.edu/wp-json/zume/v1/android/lessons/all")){
+                }else if(baseUrl.equals("http://zume.hsutx.edu/wp-json/zume/v1/android/lessons")){
                     FileOutputStream outputStream;
                     String filename = "session_data.txt";
                     String fileContents = isValidCredentials + "\n";
@@ -257,6 +257,3 @@ public class LoginActivity extends AppCompatActivity {
         execute.execute();
     }
 }
-
-
-
