@@ -68,10 +68,12 @@ public class DashboardActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 String username = intent.getStringExtra("username");
                 String password = intent.getStringExtra("password");
+                int userID = intent.getIntExtra("user_id", 0);
 
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
                 bundle.putString("password", password);
+                bundle.putInt("user_id", userID);
 
                 intent = new Intent(DashboardActivity.this, ProfileActivity.class);
                 intent.putExtras(bundle);
@@ -133,175 +135,9 @@ public class DashboardActivity extends AppCompatActivity {
         Log.d("Test", "Passing saved data");
         setGroupList();
 
-        /*Intent intent = getIntent();
-        username = intent.getStringExtra("username");
-        password = intent.getStringExtra("password");
-        Log.d("Test", username);
-        Log.d("Test", password);
-
-        baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
-        Log.d("Test", "Made it to the new code");
-        Boolean failed = false;
-        FileInputStream fis= null;
-        if(username.equals(null) && password.equals(null)){
-            try {
-                fis = openFileInput("UserProfile.txt");
-                Log.d("Test", "Opened the file");
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            String user = null, pass = null;
-            try {
-                user = bufferedReader.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                pass = bufferedReader.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                resultFromAPI = bufferedReader.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Log.d("Test", "Passing saved data");
-            setGroupList();
-        }
-        else {
-            try {
-                fis = openFileInput("UserProfile.txt");
-                Log.d("Test", "Opened the file");
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                failed = true;
-            }
-            if (failed) {
-                try {
-                    ApiAuthenticationClient apiAuthenticationClient =
-                            new ApiAuthenticationClient(
-                                    baseUrl
-                                    , username
-                                    , password
-                            );
-
-                    AsyncTask<Void, Void, String> execute = new DashboardActivity.ExecuteNetworkOperation(apiAuthenticationClient);
-                    execute.execute();
-                } catch (Exception ex) {
-                    Log.d("Test", "Error getting dashboard data.");
-                }
-            } else {
-                InputStreamReader isr = new InputStreamReader(fis);
-                BufferedReader bufferedReader = new BufferedReader(isr);
-                StringBuilder sb = new StringBuilder();
-                String user = null, pass = null;
-                try {
-                    user = bufferedReader.readLine();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    pass = bufferedReader.readLine();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (user.equals(username) && pass.equals(password)) {
-                    try {
-                        resultFromAPI = bufferedReader.readLine();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Log.d("Test", "Passing saved data");
-                    setGroupList();
-                } else {
-                    try {
-
-                        ApiAuthenticationClient apiAuthenticationClient =
-                                new ApiAuthenticationClient(
-                                        baseUrl
-                                        , username
-                                        , password
-                                );
-
-                        AsyncTask<Void, Void, String> execute = new DashboardActivity.ExecuteNetworkOperation(apiAuthenticationClient);
-                        execute.execute();
-                    } catch (Exception ex) {
-                        Log.d("Test", "Error getting dashboard data.");
-                    }
-                }
-            }
-        }*/
-
     }
 
-    /**
-     * This subclass handles the network operations in a new thread.
-     * It starts the progress bar, makes the API call, and ends the progress bar.
-     */
-    /*
-    public class ExecuteNetworkOperation extends AsyncTask<Void, Void, String> {
 
-        private ApiAuthenticationClient apiAuthenticationClient;
-        public ExecuteNetworkOperation(ApiAuthenticationClient apiAuthenticationClient) {
-            this.apiAuthenticationClient = apiAuthenticationClient;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            // Display the progress bar.
-            //findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                Log.d("Test", "Made to the execute method");
-                resultFromAPI = apiAuthenticationClient.execute();
-            } catch (Exception e) {
-                Log.d("Test", "Error making it to execute method");
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            // Hide the progress bar.
-            //findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-
-            // Credentials correct
-            if (resultFromAPI != null && !resultFromAPI.equals("")) {
-                String filename = "UserProfile.txt";
-                String fileContents = username+"\n"+password+"\n"+resultFromAPI+"\n";
-                FileOutputStream outputStream;
-
-                try {
-                    outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                    outputStream.write(fileContents.getBytes());
-                    outputStream.close();
-                    Log.d("Test", "Made the file");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                setGroupList();
-            }
-            // Login Failure
-            else {
-                Toast.makeText(getApplicationContext(), "Error opening dashboard: Invalid Credentials", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-*/
     /**
      * Open a new activity window.
      */
