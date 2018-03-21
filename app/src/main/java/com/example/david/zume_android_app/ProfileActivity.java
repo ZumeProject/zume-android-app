@@ -89,7 +89,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         FileInputStream fis= null;
         try {
-            fis = openFileInput("UserProfile.txt");
+            fis = openFileInput("user_profile.txt");
             Log.d("Test", "Opened the file");
 
         } catch (FileNotFoundException e) {
@@ -97,12 +97,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
         InputStreamReader isr = new InputStreamReader(fis);
         BufferedReader bufferedReader = new BufferedReader(isr);
-        try {
-            bufferedReader.readLine();
-            bufferedReader.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         try {
             resultFromAPI = bufferedReader.readLine();
@@ -212,7 +206,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         }
         catch(Exception e) {
-
+            e.printStackTrace();
         }
 
         TextView home = (TextView)findViewById(R.id.home);
