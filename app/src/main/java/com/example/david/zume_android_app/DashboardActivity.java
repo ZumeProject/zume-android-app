@@ -1,22 +1,15 @@
 package com.example.david.zume_android_app;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,7 +17,6 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -326,12 +318,18 @@ public class DashboardActivity extends AppCompatActivity {
             ArrayList<String[]> groups = new ArrayList<String[]>();
             for(int i=0; i<allFields.length(); i++){
                 if(allFields.get(i).toString().contains("zume_group_")){
-                    String[] thisGroup = new String[2];
+                    String[] thisGroup = new String[3];
                     thisGroup[0] = allFields.get(i).toString();
                     Log.d("Group ID", thisGroup[0]);
                     JSONArray groupName = reader.getJSONArray(thisGroup[0]);
                     thisGroup[1] = getGroupName(groupName.get(0).toString());
                     //listItems.add(getGroupName(thisGroup[1]));
+                    JSONArray sessionReader = reader.getJSONArray(thisGroup[0]);
+                    Log.d("Test", String.valueOf(sessionReader));
+                    JSONObject groupInfo = sessionReader.getJSONObject(0);
+                    int sessionNum = groupInfo.getInt("next_session");
+                    Log.d("Session" , String.valueOf(sessionNum));
+                    thisGroup[2] = String.valueOf(sessionNum);
                     Log.d("Group Name", thisGroup[1]);
                     listItems.add(thisGroup);
                     groups.add(thisGroup);

@@ -5,29 +5,23 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GroupActivity extends AppCompatActivity {
 
     private String resultFromAPI = "";
+    private String next_session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +40,14 @@ public class GroupActivity extends AppCompatActivity {
         });
 
         Button startSession = (Button)findViewById(R.id.startSession);
-
+        Intent intent = getIntent();
+        next_session = intent.getStringExtra("next_session");
+        startSession.setText("Start Session "+next_session);
         startSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString("session_number", next_session);
                 startActivity(new Intent(GroupActivity.this, Session.class));
             }
         });
@@ -74,7 +72,7 @@ public class GroupActivity extends AppCompatActivity {
 
         FileInputStream fis= null;
         try {
-            fis = openFileInput("UserProfile.txt");
+            fis = openFileInput("user_profile.txt");
             Log.d("Test", "Opened the file");
 
         } catch (FileNotFoundException e) {
@@ -82,13 +80,6 @@ public class GroupActivity extends AppCompatActivity {
         }
         InputStreamReader isr = new InputStreamReader(fis);
         BufferedReader bufferedReader = new BufferedReader(isr);
-        try {
-            bufferedReader.readLine();
-            bufferedReader.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         try {
             resultFromAPI = bufferedReader.readLine();
         } catch (IOException e) {
