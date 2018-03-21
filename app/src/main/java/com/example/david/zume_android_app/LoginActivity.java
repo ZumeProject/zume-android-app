@@ -196,7 +196,11 @@ public class LoginActivity extends AppCompatActivity {
 
 
                     filename = "user.txt";
-                    fileContents = isValidCredentials + "\n";
+                    String [] user;
+                    user = isValidCredentials.split(",");
+                    user[1] = "{"+user[1];
+                    fileContents = user[1] + "\n";
+                    Log.d("Test" , user[1]);
                     Log.d("Test", "Made second call");
                     try {
                         outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
@@ -207,7 +211,7 @@ public class LoginActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     makeApiCall(getBaseUrlSessionData);
-                }else if(baseUrl.equals("http://zume.hsutx.edu/wp-json/zume/v1/android/lessons")){
+                }else if(baseUrl.equals(getBaseUrlSessionData)){
                     FileOutputStream outputStream;
                     String filename = "session_data.txt";
                     String fileContents = isValidCredentials + "\n";
