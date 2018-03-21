@@ -1,6 +1,7 @@
 package com.example.david.zume_android_app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +21,7 @@ public class UpdateUser {
     protected String isValidCredentials = "";
     String baseURL = "http://zume.hsutx.edu/wp-json/zume/v1/android/user";
 
-    public UpdateUser(int user_id, String username, String password, String first_name, String last_name, String email){
+    public UpdateUser(int user_id, String username, String password, String first_name, String last_name, String email, String phone_number) {
         try {
             Log.d("Test", "Making API call");
             ApiAuthenticationClient apiAuthenticationClient =
@@ -34,6 +35,7 @@ public class UpdateUser {
             apiAuthenticationClient.setParameter("first_name", first_name);
             apiAuthenticationClient.setParameter("last_name", last_name);
             apiAuthenticationClient.setParameter("email", email);
+            apiAuthenticationClient.setParameter("user_phone", phone_number);
             AsyncTask<Void, Void, String> execute = new UpdateUser.ExecuteNetworkOperation(apiAuthenticationClient);
             execute.execute();
         } catch (Exception ex) {
@@ -73,10 +75,7 @@ public class UpdateUser {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            // Login Success
-            if (isValidCredentials != null && !isValidCredentials.equals("")) {
 
-            }
         }
     }
 }

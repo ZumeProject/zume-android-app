@@ -1,7 +1,9 @@
 package com.example.david.zume_android_app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +26,7 @@ import java.io.InputStreamReader;
 
 public class GetUser extends AppCompatActivity {
 
+    private Context context;
     protected String isValidCredentials = "";
     protected String username = "";
     protected String password = "";
@@ -31,7 +34,8 @@ public class GetUser extends AppCompatActivity {
     String user_profile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     String user = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
 
-    public GetUser(String username, String password){
+    public GetUser(String username, String password, Context context){
+        this.context = context;
         this.username = username;
         this.password = password;
         try {
@@ -40,18 +44,7 @@ public class GetUser extends AppCompatActivity {
                     , username
                     , password
             );
-            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "user_profile");
-            execute.execute();
-        } catch (Exception ex) {
-        }
-
-        try {
-            ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
-                    user_profile
-                    , username
-                    , password
-            );
-            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "user");
+            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "user_profile", context);
             execute.execute();
         } catch (Exception ex) {
         }
@@ -64,14 +57,17 @@ public class GetUser extends AppCompatActivity {
     public class ExecuteNetworkOperation extends AsyncTask<Void, Void, String> {
 
         private ApiAuthenticationClient apiAuthenticationClient;
+        private Context context;
         private String type = "user_profile"; // user_profile or user GET type?
 
 
         /**
          * Overload the constructor to pass objects to this class.
          */
-        public ExecuteNetworkOperation(ApiAuthenticationClient apiAuthenticationClient, String type) {
+        public ExecuteNetworkOperation(ApiAuthenticationClient apiAuthenticationClient, String type, Context context) {
+            this.context = context;
             this.apiAuthenticationClient = apiAuthenticationClient;
+            this.type = type;
         }
 
         @Override
@@ -104,13 +100,22 @@ public class GetUser extends AppCompatActivity {
                     String fileContents = isValidCredentials + "\n";
                     Log.d("Test", "Made first call");
                     try {
-                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream = context.openFileOutput(filename, context.MODE_PRIVATE);
                         outputStream.write(fileContents.getBytes());
                         outputStream.close();
                         Log.d("Test", "Made the user_profile file");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    // Now make the call to rewrite the user file
+                    ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
+                            user
+                            , username
+                            , password
+                    );
+                    AsyncTask<Void, Void, String> execute2 = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient2, "user", context);
+                    execute2.execute();
+
                 }
                 else if(type.equals("user")){
 
@@ -131,7 +136,7 @@ public class GetUser extends AppCompatActivity {
                     FileOutputStream outputStream;
 
                     try {
-                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream = context.openFileOutput(filename, context.MODE_PRIVATE);
                         outputStream.write(fileContents.getBytes());
                         outputStream.close();
                         Log.d("Test", "Made the credentials file");
@@ -145,7 +150,7 @@ public class GetUser extends AppCompatActivity {
                     fileContents = isValidCredentials + "\n";
                     Log.d("Test", "Made second call");
                     try {
-                        outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream = context.openFileOutput(filename, context.MODE_PRIVATE);
                         outputStream.write(fileContents.getBytes());
                         outputStream.close();
                         Log.d("Test", "Made the user file");

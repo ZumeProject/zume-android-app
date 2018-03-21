@@ -18,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,7 @@ public class ApiAuthenticationClient {
     private String urlPath;
     private String lastResponse;
     private String payload;
-    private HashMap<String, String> parameters;
+    private LinkedHashMap<String, String> parameters;
     private Map<String, List<String>> headerFields;
 
     /**
@@ -51,7 +52,7 @@ public class ApiAuthenticationClient {
         this.urlResource = "";
         this.urlPath = "";
         this.httpMethod = "GET";
-        parameters = new HashMap<>();
+        parameters = new LinkedHashMap<>();
         lastResponse = "";
         payload = "";
         headerFields = new HashMap<>();
@@ -124,7 +125,7 @@ public class ApiAuthenticationClient {
      * @param parameters
      * @return this
      */
-    public ApiAuthenticationClient setParameters(HashMap<String, String> parameters) {
+    public ApiAuthenticationClient setParameters(LinkedHashMap<String, String> parameters) {
         this.parameters = parameters;
         return this;
     }
@@ -235,11 +236,15 @@ public class ApiAuthenticationClient {
         try {
             StringBuilder urlString = new StringBuilder(baseUrl + urlResource);
 
-            if (!urlPath.equals("")) {
+            if (!urlPath.equals("") && httpMethod.equals("GET")) {
                 urlString.append("/" + urlPath);
             }
 
             if (parameters.size() > 0 && httpMethod.equals("GET")) {
+                payload = getPayloadAsString();
+                urlString.append("?" + payload);
+            }
+            else if (parameters.size() > 0 && httpMethod.equals("POST")) {
                 payload = getPayloadAsString();
                 urlString.append("?" + payload);
             }
@@ -248,6 +253,7 @@ public class ApiAuthenticationClient {
 
             String encoding = Base64Encoder.encode(username + ":" + password);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            Log.d("Request_Method", httpMethod);
             connection.setRequestMethod(httpMethod);
             connection.setRequestProperty("Authorization", "Basic " + encoding);
             connection.setRequestProperty("Accept", "application/json");
@@ -260,18 +266,22 @@ public class ApiAuthenticationClient {
 
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
-
+                Log.d("URL", connection.getURL().toString());
                 try {
                     OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
                     writer.write(payload);
+                    Log.d("Payload", payload);
 
                     headerFields = connection.getHeaderFields();
+                    Log.d("HeaderFields", headerFields.toString());
 
                     BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     while ((line = br.readLine()) != null) {
                         outputStringBuilder.append(line);
                     }
-                } catch (Exception ex) {}
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 connection.disconnect();
             }
             else {
