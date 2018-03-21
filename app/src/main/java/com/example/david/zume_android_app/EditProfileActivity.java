@@ -329,7 +329,6 @@ public class EditProfileActivity extends AppCompatActivity {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-
                     // Get all parameters from intent
                     Intent intent = getIntent();
                     String username = intent.getStringExtra("username");
