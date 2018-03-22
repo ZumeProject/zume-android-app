@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -125,15 +126,15 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         Log.d("Test", "Passing saved data");
-        setGroupList();
+        setScreen();
 
     }
 
 
     /**
-     * Open a new activity window.
+     * Set the screen.
      */
-    private void setGroupList() {
+    private void setScreen() {
         try{
             JSONObject reader = new JSONObject(resultFromAPI);
 
@@ -150,16 +151,19 @@ public class DashboardActivity extends AppCompatActivity {
                 name.setText(nickname.get(0).toString());
             }
 
+            // Get information about each of the user's groups.
             JSONArray allFields = reader.names();
             ArrayList<String[]> groups = new ArrayList<String[]>();
             for(int i=0; i<allFields.length(); i++){
                 if(allFields.get(i).toString().contains("zume_group_")){
                     String[] thisGroup = new String[3];
+                    // Set group ID
                     thisGroup[0] = allFields.get(i).toString();
                     Log.d("Group ID", thisGroup[0]);
                     JSONArray groupName = reader.getJSONArray(thisGroup[0]);
+                    // Set group name
                     thisGroup[1] = getGroupName(groupName.get(0).toString());
-                    //listItems.add(getGroupName(thisGroup[1]));
+                    // Get sessino information
                     JSONArray sessionReader = reader.getJSONArray(thisGroup[0]);
                     Log.d("Test", String.valueOf(sessionReader));
                     JSONObject groupInfo = sessionReader.getJSONObject(0);
@@ -176,32 +180,6 @@ public class DashboardActivity extends AppCompatActivity {
             ListView listView = (ListView)findViewById(R.id.listView);
             listView.setAdapter(adapter);
             Log.d("Test", "Set listView adapter");
-/*
-            adapter=new ArrayAdapter<TextView>(this, android.R.layout.simple_list_item_1, listItems);
-            for(String[] group: groups){
-                TextView clickableGroup = new TextView(this);
-                clickableGroup.setText(group[1]);
-                clickableGroup.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = getIntent();
-                        String username = intent.getStringExtra("username");
-                        String password = intent.getStringExtra("password");
-
-                        Bundle bundle = new Bundle();
-                        bundle.putString("username", username);
-                        bundle.putString("password", password);
-
-                        intent = new Intent(DashboardActivity.this, GroupActivity.class);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                    }
-                });
-                listItems.add(clickableGroup);
-                adapter.notifyDataSetChanged();
-
-            }
-*/
 
         }
         catch(Exception e) {
@@ -218,48 +196,19 @@ public class DashboardActivity extends AppCompatActivity {
     }
 */
 
+    /**
+     * Get the group name from the group JSON object.
+     * @param data JSON String
+     * @return String group name
+     */
     public String getGroupName(String data){
         String groupName = "";
-        String pattern = "group_name";
-        boolean err = false;
-
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(data);
-        if(m.find()){
-            Log.d("Test", "Found the pattern in "+data);
-            String nameLength = "";
-            int i=4;
-            boolean found = false;
-            while(!found) {
-                String thisChar = ""+data.charAt(m.start() + pattern.length() + i);
-                if(!thisChar.equals(":")){
-                    nameLength = nameLength+thisChar;
-                    i++;
-                }
-                else{
-                    found = true;
-                }
-            }
-
-            int nameL = 0;
-            if(!nameLength.equals("")){
-                try{
-                    nameL = new Integer(nameLength).intValue();
-                }
-                catch(Exception e){
-                    err = true;
-                    Log.d("Test", "Length of group name not found.");
-                }
-            }
-
-            if(!err){
-                Log.d("Test", "Name Length is "+nameL);
-                for(int j=0; j<nameL; j++){
-                    groupName = groupName+data.charAt(m.start() + pattern.length() + i + 2 + j);
-                }
-            }
+        try{
+            JSONObject group = new JSONObject(data);
+            groupName = group.getString("group_name");
+        }catch(JSONException e){
+            e.printStackTrace();
         }
-
         return groupName;
     }
 }
