@@ -23,6 +23,12 @@ public class Session extends AppCompatActivity {
 
     private String resultFromAPI;
     private int sessionNumber;
+    private JSONObject empty = new JSONObject("{\"empty\":\"\"}");
+    private JSONArray emptyArray = new JSONArray("[{\"empty1\":\"\"},{\"empty2\":\"\"}]");
+
+    public Session() throws JSONException {
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,11 +87,209 @@ public class Session extends AppCompatActivity {
             Log.d("Test" , String.valueOf(session));
             JSONArray sessionSteps = session.getJSONArray("steps");
             Log.d("Test" , String.valueOf(sessionSteps));
-
+            for (int i=0;i<sessionSteps.length();i++){
+                JSONObject step = sessionSteps.getJSONObject(i);
+                String title = step.getString("title");
+                //addToContentList(title)
+                JSONArray content = step.getJSONArray("content");
+                contentParser(empty,content);
+            }
+            //contentParser(empty ,sessionSteps);
+            //sessionSteps.length();
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+    private void contentParser(JSONObject text, JSONArray parse) {
+        boolean object = false;
+        if (!(String.valueOf(text)).equals(String.valueOf(empty))){
+            Log.d("Test" , String.valueOf(text));
+            //call Brandi's text display
+            //addToContentList()
+            return;
+        }
+        else{
+            for(int i=0;i<parse.length();i++){
+                JSONArray stillParse = null;// = emptyArray;
+                try{
+                    stillParse= parse.getJSONArray(i);
 
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                    object = true;
+                }
+                if(object){
+                    JSONObject doneParsing = empty;
+                    try{
+                        doneParsing= parse.getJSONObject(i);
+                    }catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    object = false;
+                    JSONArray activityDescription = null;
+                    try{
+                       activityDescription = doneParsing.getJSONArray("activity-description");
+                    }catch (JSONException e) {
+                        e.printStackTrace();
+                        object = true;
+                    }
+                    if(object){
+                        contentParser(doneParsing,emptyArray);
+                    }
+                    else{
+                        activityParser(empty,activityDescription);
+                    }
+                }
+                else{
+                    contentParser(empty,stillParse);
+                }
+            }
+            return;
+        }
+    }
+    private void activityParser(JSONObject text, JSONArray parse) {
+        boolean object = false;
+        if (!(String.valueOf(text)).equals(String.valueOf(empty))) {
+            Log.d("Test", String.valueOf(text));
+            //call Brandi's text display
+            //addToContentList()
+            return;
+        } else {
+            for (int i = 0; i < parse.length(); i++) {
+                JSONArray stillParse = null;// = emptyArray;
+                try {
+                    stillParse = parse.getJSONArray(i);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    object = true;
+                }
+                if (object) {
+                    JSONObject doneParsing = empty;
+                    try {
+                        doneParsing = parse.getJSONObject(i);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    object = false;
+                    JSONArray ol = null;
+                    try{
+                        ol = doneParsing.getJSONArray("ol");
+                    }catch (JSONException e) {
+                        e.printStackTrace();
+                        object = true;
+                    }
+                    if(object){
+                        activityParser(doneParsing,emptyArray);
+                    }
+                    else{
+                        olParser(empty,ol);
+                    }
+                    //activityParser(doneParsing, emptyArray);
+                } else {
+                    activityParser(empty, stillParse);
+                }
+            }
+            return;
+        }
+    }
+    private void olParser(JSONObject text, JSONArray parse) {
+        boolean object = false;
+        if (!(String.valueOf(text)).equals(String.valueOf(empty))) {
+            Log.d("Test", String.valueOf(text));
+            //call Brandi's text display
+            //addToContentList()
+            return;
+        } else {
+            for (int i = 0; i < parse.length(); i++) {
+                JSONArray stillParse = null;// = emptyArray;
+                try {
+                    stillParse = parse.getJSONArray(i);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    object = true;
+                }
+                if (object) {
+                    JSONObject doneParsing = empty;
+                    try {
+                        doneParsing = parse.getJSONObject(i);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    object = false;
+                    JSONArray li = null;
+                    try{
+                        li = doneParsing.getJSONArray("li");
+                    }catch (JSONException e) {
+                        e.printStackTrace();
+                        object = true;
+                    }
+                    if(object){
+                        olParser(doneParsing,emptyArray);
+                    }
+                    else{
+                        liParser(empty,li,i+1);
+                    }
+                    //activityParser(doneParsing, emptyArray);
+                } else {
+                    olParser(empty, stillParse);
+                }
+            }
+            return;
+        }
+    }
+    private void liParser(JSONObject text, JSONArray parse, int listIndex) {
+        boolean object = false;
+        if (!(String.valueOf(text)).equals(String.valueOf(empty))) {
+            //String message = text+" "+listIndex;
+            Log.d("Test", String.valueOf(text));
+            Log.d("Test", String.valueOf(listIndex));
+            //call Brandi's text display
+            //addToContentList()
+            return;
+        } else {
+            for (int i = 0; i < parse.length(); i++) {
+                JSONArray stillParse = null;// = emptyArray;
+                try {
+                    stillParse = parse.getJSONArray(i);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    object = true;
+                }
+                if (object) {
+                    JSONObject doneParsing = empty;
+                    try {
+                        doneParsing = parse.getJSONObject(i);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    object = false;
+                    /*
+                    JSONArray ol = null;
+                    try{
+                        JSONArray ol = doneParsing.getJSONArray("ol");
+                    }catch (JSONException e) {
+                        e.printStackTrace();
+                        object = true;
+                    }
+                    if(object){
+                        olParser(doneParsing,emptyArray);
+                    }
+                    else{
+                        activityParser(empty,ol);
+                    }*/
+                    liParser(doneParsing, emptyArray,listIndex);
+                } else {
+                    liParser(empty, stillParse,listIndex);
+                }
+            }
+            return;
+        }
+    }
 }
