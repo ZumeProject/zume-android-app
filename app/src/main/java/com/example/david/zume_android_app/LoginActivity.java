@@ -39,6 +39,18 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+         /*
+        * Bypass button to help with debugging. So I don't have to type in a login
+         */
+        Button bypass = (Button) findViewById(R.id.bypass_button);
+        bypass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                username = "daoffner";
+                password = "Astra2008";
+                goToDashboardActivity();
+            }
+        });
         editText_login_username = (EditText) findViewById(R.id.editText_login_username);
         editText_login_password = (EditText) findViewById(R.id.editText_login_password);
         button_login_login = (Button) findViewById(R.id.button_login_login);

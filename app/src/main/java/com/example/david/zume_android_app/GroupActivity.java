@@ -48,7 +48,9 @@ public class GroupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putString("session_number", next_session);
-                startActivity(new Intent(GroupActivity.this, Session.class));
+                Intent intent = new Intent(GroupActivity.this, Session.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
