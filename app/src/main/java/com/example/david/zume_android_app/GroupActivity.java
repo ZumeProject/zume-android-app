@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class GroupActivity extends AppCompatActivity {
 
     private String resultFromAPI = "";
-    private String next_session;
+    private String next_session = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,9 @@ public class GroupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putString("session_number", next_session);
-                startActivity(new Intent(GroupActivity.this, Session.class));
+                Intent intent = new Intent(GroupActivity.this, Session.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
@@ -92,8 +94,12 @@ public class GroupActivity extends AppCompatActivity {
     public void setScreen(){
         try{
             Intent intent = getIntent();
-            String groupName = intent.getStringExtra("groupName");
+
+            String username = intent.getStringExtra("username");
+            String password = intent.getStringExtra("password");
             String groupID = intent.getStringExtra("groupID");
+            String groupName = intent.getStringExtra("groupName");
+            String nextSession = intent.getStringExtra("next_session");
 
             TextView groupNameView = (TextView)findViewById(R.id.groupName);
             groupNameView.setText(groupName);
