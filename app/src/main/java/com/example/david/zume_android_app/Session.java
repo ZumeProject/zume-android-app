@@ -45,6 +45,7 @@ public class Session extends AppCompatActivity {
         setSession();
 
         Button Home = (Button) findViewById(R.id.Home);
+        /*
         Intent intent = getIntent();
         sessionNumber= Integer.parseInt(intent.getStringExtra("session_number"));
         Log.d("Test" , String.valueOf(sessionNumber));
@@ -69,7 +70,7 @@ public class Session extends AppCompatActivity {
         }
 
         Log.d("Test", "Passing saved data");
-        sessionParser();
+        sessionParser();*/
 
         Home.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -92,7 +93,8 @@ public class Session extends AppCompatActivity {
             reader = new JSONObject(resultFromAPI);
             Log.d("Test" , resultFromAPI);
             JSONArray sessionData = reader.getJSONArray("course");
-            JSONObject session = sessionData.getJSONObject(sessionNumber-1);
+            int sessionNum = Integer.parseInt(session_number);
+            JSONObject session = sessionData.getJSONObject(sessionNum-1);
             Log.d("Test" , String.valueOf(sessionData));
             Log.d("Test" , String.valueOf(session));
             JSONArray sessionSteps = session.getJSONArray("steps");
@@ -100,7 +102,8 @@ public class Session extends AppCompatActivity {
             for (int i=0;i<sessionSteps.length();i++){
                 JSONObject step = sessionSteps.getJSONObject(i);
                 String title = step.getString("title");
-                //addToContentList(title)
+                addToContentList(title,false);
+                Log.d("PrintStatement",title);
                 JSONArray content = step.getJSONArray("content");
                 contentParser(empty,content);
             }
@@ -116,6 +119,7 @@ public class Session extends AppCompatActivity {
         if (!(String.valueOf(text)).equals(String.valueOf(empty))){
             Log.d("Test" , String.valueOf(text));
             //call Brandi's text display
+            JSONObjectParser(text);
             //addToContentList()
             return;
         }
@@ -145,7 +149,25 @@ public class Session extends AppCompatActivity {
                         object = true;
                     }
                     if(object){
-                        contentParser(doneParsing,emptyArray);
+                        object = false;
+                        JSONArray center = null;
+                        try{
+                            center = doneParsing.getJSONArray("center");
+                        }catch (JSONException e) {
+                            e.printStackTrace();
+                            object = true;
+                        }
+                        if(object){
+                            contentParser(doneParsing,emptyArray);
+                        }
+                        else{
+                            try {
+                                JSONObject centerText = center.getJSONObject(0);
+                                JSONObjectParser(centerText);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                     else{
                         activityParser(empty,activityDescription);
@@ -163,7 +185,9 @@ public class Session extends AppCompatActivity {
         if (!(String.valueOf(text)).equals(String.valueOf(empty))) {
             Log.d("Test", String.valueOf(text));
             //call Brandi's text display
+            JSONObjectParser(text);
             //addToContentList()
+
             return;
         } else {
             for (int i = 0; i < parse.length(); i++) {
@@ -211,6 +235,7 @@ public class Session extends AppCompatActivity {
             Log.d("Test", String.valueOf(text));
             //call Brandi's text display
             //addToContentList()
+            JSONObjectParser(text);
             return;
         } else {
             for (int i = 0; i < parse.length(); i++) {
@@ -259,6 +284,15 @@ public class Session extends AppCompatActivity {
             Log.d("Test", String.valueOf(text));
             Log.d("Test", String.valueOf(listIndex));
             //call Brandi's text display
+            String index = String.valueOf(listIndex);
+            String para = "";
+            try {
+                 para = text.getString("text");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            addToContentList(index+"."+para,false);
+            Log.d("PrintStatement",index+"."+para);
             //addToContentList()
             return;
         } else {
@@ -302,7 +336,84 @@ public class Session extends AppCompatActivity {
             return;
         }
     }
+    private void JSONObjectParser(JSONObject text){
 
+        boolean check = true;
+        int breaks = 0;
+        try {
+            breaks = text.getInt("br");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            check = false;
+        }
+        if(check){
+            addToContentList(breaks);
+            Log.d("PrintStatement", String.valueOf(breaks));
+
+        }
+        else{
+            String video = "";
+            check = true;
+            try {
+                video = text.getString("video");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                check = false;
+            }
+            if(check){
+                addToContentList(video,true);
+                Log.d("PrintStatement",video);
+            }
+            else{
+                String json = String.valueOf(text);
+                String[] data = json.split(":");
+                data[1] = data[1].substring(0, data[1].length() - 1);
+                addToContentList(data[1],false);
+                Log.d("PrintStatement",data[1]);
+
+            }
+
+
+        }
+
+        /*
+        boolean check = true;
+        String para = "";
+        try {
+            para = text.getString("text");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            check = false;
+        }
+        if(check){
+            addToContentList(para,false);
+        }
+        else{
+            check = true;
+            int breaks = 0;
+            try {
+                breaks = text.getInt("br");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                check = false;
+            }
+            if(check){
+                addToContentList(breaks);
+            }
+            else{
+                String video = "";
+                try {
+                    video = text.getString("video");
+                    addToContentList(video,true);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    //check = false;
+                }
+            }
+        }*/
+
+
+    }
     /*
      * Sets the screen for the current session.
      */
@@ -314,6 +425,33 @@ public class Session extends AppCompatActivity {
         sessionNumber.setText("Session "+session_number);
 
         // David's code for parsing session data here
+        //Intent intent = getIntent();
+        //sessionNumber= Integer.parseInt(intent.getStringExtra("session_number"));
+       // Log.d("Test" , String.valueOf(sessionNumber));
+
+        FileInputStream fis= null;
+        try {
+            fis = openFileInput("session_data.txt");
+            Log.d("Test", "Opened the file");
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader bufferedReader = new BufferedReader(isr);
+
+        try {
+            resultFromAPI = bufferedReader.readLine();
+            Log.d("Test", resultFromAPI);
+            //Log.d("Test", bufferedReader.readLine());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("Test", "Passing saved data");
+        sessionParser();
+
+
         // Upon grabbing a data item, call addToContentList for that item
         // Examples of how you'll use addToContentList() methods
         addToContentList("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget massa lobortis, efficitur justo at, fermentum elit. Donec consectetur nisl eu leo cursus tincidunt. Phasellus tellus mauris, eleifend ut massa in, ultrices ornare neque. Mauris ut dictum erat. Proin finibus eleifend neque, eget blandit neque elementum at. Quisque ac libero justo. Vestibulum lacinia tincidunt finibus. Vivamus vitae congue erat, id fringilla mauris.", false);
