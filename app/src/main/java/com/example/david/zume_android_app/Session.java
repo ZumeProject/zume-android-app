@@ -368,6 +368,8 @@ public class Session extends AppCompatActivity {
                 String json = String.valueOf(text);
                 String[] data = json.split(":");
                 data[1] = data[1].substring(0, data[1].length() - 1);
+                data[1] = data[1].substring(0, data[1].length() - 1);
+                data[1] = data[1].replaceFirst("\"","");
                 addToContentList(data[1],false);
                 Log.d("PrintStatement",data[1]);
 
