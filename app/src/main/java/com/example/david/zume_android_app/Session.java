@@ -520,14 +520,14 @@ public class Session extends AppCompatActivity {
             int sessionNum = Integer.parseInt(session_number);
             JSONObject session = sessionData.getJSONObject(sessionNum-1);
             JSONArray sessionSteps = session.getJSONArray("steps");
-            findRoot("steps", sessionSteps);
+            findRoot("steps", sessionSteps,0);
         }
         catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    public void findRoot(String name, Object data){
+    public void findRoot(String name, Object data, int listIndex){
         if(name.equals("link")){
             return;
         }
@@ -535,29 +535,43 @@ public class Session extends AppCompatActivity {
             if (data instanceof JSONArray) {
                 JSONArray array = (JSONArray) data;
                 for (int i = 0; i < array.length(); i++) {
-                    findRoot(name, array.get(i));
+                    if(name.equals("ol") || name.equals("ul")){
+                        findRoot(name, array.get(i),i+1);
+                    }
+                    else{
+                        findRoot(name, array.get(i),listIndex);
+                    }
                 }
             } else if (data instanceof JSONObject) {
                 JSONObject object = (JSONObject) data;
                 Iterator<String> keys = object.keys();
                 while(keys.hasNext()){
                     String key = keys.next();
-                    findRoot(key, object.get(key));
+                    findRoot(key, object.get(key), listIndex);
                 }
             } else {
                 if(name.equals("video")){
                     String text = (String)data;
                     addToContentList(text, true);
+                    Log.d("PRINTT", text);
                     return;
                 }
                 else if(name.equals("br")){
                     Integer num = (Integer)data;
                     addToContentList(num.intValue());
+                    Log.d("PRINTT", String.valueOf(num));
                     return;
                 }
                 else{
                     String text = (String)data;
-                    addToContentList(text, false);
+                    if(listIndex > 0){
+                        text = listIndex+". "+text;
+                        addToContentList(text, false);
+                    }
+                    else{
+                        addToContentList(text, false);
+                    }
+                    Log.d("PRINTT", text);
                     return;
                 }
             }
