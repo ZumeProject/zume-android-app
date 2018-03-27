@@ -50,7 +50,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        if (view == null) {
+        //if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             //Choose view based on if this row contains a video
@@ -105,10 +105,12 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                 view = inflater.inflate(R.layout.session_list_text_layout, null);
                 TextView listItemText = (TextView)view.findViewById(R.id.session_item_text);
                 listItemText.setText(list.get(position).getText());
+                Log.d("ListViewDebug", list.get(position).getText());
             }
 
-        }
+        //}
 
+        
         return view;
     }
 

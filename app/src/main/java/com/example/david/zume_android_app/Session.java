@@ -373,6 +373,8 @@ public class Session extends AppCompatActivity {
                 String json = String.valueOf(text);
                 String[] data = json.split(":");
                 data[1] = data[1].substring(0, data[1].length() - 1);
+                data[1] = data[1].substring(0, data[1].length() - 1);
+                data[1] = data[1].replaceFirst("\"","");
                 addToContentList(data[1],false);
                 Log.d("PrintStatement",data[1]);
 
@@ -480,6 +482,7 @@ public class Session extends AppCompatActivity {
         SessionListAdapter adapter = new SessionListAdapter(contentList, this, getIntent());
         ListView listView = (ListView)findViewById(R.id.listViewSession);
         listView.setAdapter(adapter);
+
     }
 
     /**
@@ -516,16 +519,18 @@ public class Session extends AppCompatActivity {
             Log.d("Test" , resultFromAPI);
             JSONArray sessionData = reader.getJSONArray("course");
             int sessionNum = Integer.parseInt(session_number);
-            JSONObject session = sessionData.getJSONObject(sessionNum-1);
+            //JSONObject session = sessionData.getJSONObject(sessionNum-1);
+            JSONObject session = sessionData.getJSONObject(9);
+
             JSONArray sessionSteps = session.getJSONArray("steps");
-            findRoot("steps", sessionSteps);
+            findRoot("steps", sessionSteps,0,0);
         }
         catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    public void findRoot(String name, Object data){
+    public void findRoot(String name, Object data, int listIndex, int nestedList){
         if(name.equals("link")){
             return;
         }
@@ -533,29 +538,46 @@ public class Session extends AppCompatActivity {
             if (data instanceof JSONArray) {
                 JSONArray array = (JSONArray) data;
                 for (int i = 0; i < array.length(); i++) {
-                    findRoot(name, array.get(i));
+                    if(name.equals("ol") || name.equals("ul")){
+                        findRoot(name, array.get(i),i+1, listIndex+1);
+                    }
+                    else{
+                        findRoot(name, array.get(i),listIndex,nestedList);
+                    }
                 }
             } else if (data instanceof JSONObject) {
                 JSONObject object = (JSONObject) data;
                 Iterator<String> keys = object.keys();
                 while(keys.hasNext()){
                     String key = keys.next();
-                    findRoot(key, object.get(key));
+                    findRoot(key, object.get(key), listIndex,nestedList);
                 }
             } else {
                 if(name.equals("video")){
                     String text = (String)data;
                     addToContentList(text, true);
+                    Log.d("PRINTT", text);
                     return;
                 }
                 else if(name.equals("br")){
                     Integer num = (Integer)data;
                     addToContentList(num.intValue());
+                    Log.d("PRINTT", String.valueOf(num));
                     return;
                 }
                 else{
                     String text = (String)data;
-                    addToContentList(text, false);
+                    if(listIndex > 0){
+                        text = listIndex+". "+text;
+                        if(nestedList > 1){
+                            text = text+" (nested!!!!!)";
+                        }
+                        addToContentList(text, false);
+                    }
+                    else{
+                        addToContentList(text, false);
+                    }
+                    Log.d("PRINTT", text);
                     return;
                 }
             }
