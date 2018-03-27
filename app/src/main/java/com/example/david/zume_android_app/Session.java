@@ -482,6 +482,7 @@ public class Session extends AppCompatActivity {
         SessionListAdapter adapter = new SessionListAdapter(contentList, this, getIntent());
         ListView listView = (ListView)findViewById(R.id.listViewSession);
         listView.setAdapter(adapter);
+
     }
 
     /**
@@ -518,16 +519,18 @@ public class Session extends AppCompatActivity {
             Log.d("Test" , resultFromAPI);
             JSONArray sessionData = reader.getJSONArray("course");
             int sessionNum = Integer.parseInt(session_number);
-            JSONObject session = sessionData.getJSONObject(sessionNum-1);
+            //JSONObject session = sessionData.getJSONObject(sessionNum-1);
+            JSONObject session = sessionData.getJSONObject(9);
+
             JSONArray sessionSteps = session.getJSONArray("steps");
-            findRoot("steps", sessionSteps,0);
+            findRoot("steps", sessionSteps,0,0);
         }
         catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    public void findRoot(String name, Object data, int listIndex){
+    public void findRoot(String name, Object data, int listIndex, int nestedList){
         if(name.equals("link")){
             return;
         }
@@ -536,10 +539,10 @@ public class Session extends AppCompatActivity {
                 JSONArray array = (JSONArray) data;
                 for (int i = 0; i < array.length(); i++) {
                     if(name.equals("ol") || name.equals("ul")){
-                        findRoot(name, array.get(i),i+1);
+                        findRoot(name, array.get(i),i+1, listIndex+1);
                     }
                     else{
-                        findRoot(name, array.get(i),listIndex);
+                        findRoot(name, array.get(i),listIndex,nestedList);
                     }
                 }
             } else if (data instanceof JSONObject) {
@@ -547,7 +550,7 @@ public class Session extends AppCompatActivity {
                 Iterator<String> keys = object.keys();
                 while(keys.hasNext()){
                     String key = keys.next();
-                    findRoot(key, object.get(key), listIndex);
+                    findRoot(key, object.get(key), listIndex,nestedList);
                 }
             } else {
                 if(name.equals("video")){
@@ -566,6 +569,9 @@ public class Session extends AppCompatActivity {
                     String text = (String)data;
                     if(listIndex > 0){
                         text = listIndex+". "+text;
+                        if(nestedList > 1){
+                            text = text+" (nested!!!!!)";
+                        }
                         addToContentList(text, false);
                     }
                     else{
