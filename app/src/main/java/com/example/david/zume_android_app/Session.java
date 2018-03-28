@@ -11,8 +11,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Session extends AppCompatActivity {
@@ -89,6 +88,170 @@ public class Session extends AppCompatActivity {
             }
         });
     }
+    /*
+     * Sets the screen for the current session.
+     */
+    public void setSession(){
+        // Set session number.
+        Intent intent = getIntent();
+        session_number = intent.getStringExtra("session_number");
+        TextView sessionNumber = (TextView) findViewById(R.id.session_number);
+        sessionNumber.setText("Session "+session_number);
+
+        // David's code for parsing session data here
+        //Intent intent = getIntent();
+        //sessionNumber= Integer.parseInt(intent.getStringExtra("session_number"));
+       // Log.d("Test" , String.valueOf(sessionNumber));
+
+        FileInputStream fis= null;
+        try {
+            fis = openFileInput("session_data.txt");
+            Log.d("Test", "Opened the file");
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader bufferedReader = new BufferedReader(isr);
+
+        try {
+            resultFromAPI = bufferedReader.readLine();
+            Log.d("Test", resultFromAPI);
+            //Log.d("Test", bufferedReader.readLine());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("Test", "Passing saved data");
+        parseSessionData();
+       // sessionParser();
+
+/*
+        // Upon grabbing a data item, call addToContentList for that item
+        // Examples of how you'll use addToContentList() methods
+        addToContentList("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget massa lobortis, efficitur justo at, fermentum elit. Donec consectetur nisl eu leo cursus tincidunt. Phasellus tellus mauris, eleifend ut massa in, ultrices ornare neque. Mauris ut dictum erat. Proin finibus eleifend neque, eget blandit neque elementum at. Quisque ac libero justo. Vestibulum lacinia tincidunt finibus. Vivamus vitae congue erat, id fringilla mauris.", false);
+        addToContentList( 3);
+        addToContentList("https://www.lipsum.com/feed/html", true);
+        addToContentList("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget massa lobortis, efficitur justo at, fermentum elit. Donec consectetur nisl eu leo cursus tincidunt. Phasellus tellus mauris, eleifend ut massa in, ultrices ornare neque. Mauris ut dictum erat. Proin finibus eleifend neque, eget blandit neque elementum at. Quisque ac libero justo. Vestibulum lacinia tincidunt finibus. Vivamus vitae congue erat, id fringilla mauris.", false);
+
+        // The code below this point is required for SessionListAdapter to work
+        addToContentList(true);
+        SessionListAdapter adapter = new SessionListAdapter(contentList, this, getIntent());
+        ListView listView = (ListView)findViewById(R.id.listViewSession);
+        listView.setAdapter(adapter);
+*/
+
+    }
+
+    public void endList(){
+        addToContentList(true);
+        SessionListAdapter adapter = new SessionListAdapter(contentList, this, getIntent());
+        ListView listView = (ListView)findViewById(R.id.listViewSession);
+        listView.setAdapter(adapter);
+
+    }
+
+    /**
+     * Add video or text SessionRow to the contentList
+     * @param value text/video
+     * @param isVideo
+     */
+    public void addToContentList(String value, boolean isVideo){
+        SessionRow row = new SessionRow(value, isVideo);
+        this.contentList.add(row);
+    }
+
+    /**
+     * Add space SessionRow to the contentList.
+     * @param numSpaces number of spaces
+     */
+    public void addToContentList(int numSpaces){
+        SessionRow row = new SessionRow(numSpaces);
+        this.contentList.add(row);
+    }
+
+    /**
+     * Add the last SessionRow to the contentList.
+     * @param isEnd
+     */
+    public void addToContentList(boolean isEnd){
+        SessionRow row = new SessionRow(isEnd);
+        this.contentList.add(row);
+    }
+
+    public void parseSessionData(){
+        try{
+            JSONObject reader = new JSONObject(resultFromAPI);
+            Log.d("Test" , resultFromAPI);
+            JSONArray sessionData = reader.getJSONArray("course");
+            int sessionNum = Integer.parseInt(session_number);
+            JSONObject session = sessionData.getJSONObject(sessionNum-1);
+            JSONArray sessionSteps = session.getJSONArray("steps");
+            findRoot("steps", sessionSteps,0,0);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void findRoot(String name, Object data, int listIndex, int nestedList){
+        if(name.equals("link")){
+            return;
+        }
+        try {
+            if (data instanceof JSONArray) {
+                JSONArray array = (JSONArray) data;
+                for (int i = 0; i < array.length(); i++) {
+                    if(name.equals("ol") || name.equals("ul")){
+                        findRoot(name, array.get(i),i+1, listIndex+1);
+                    }
+                    else{
+                        findRoot(name, array.get(i),listIndex,nestedList);
+                    }
+                }
+            } else if (data instanceof JSONObject) {
+                JSONObject object = (JSONObject) data;
+                Iterator<String> keys = object.keys();
+                while(keys.hasNext()){
+                    String key = keys.next();
+                    findRoot(key, object.get(key), listIndex,nestedList);
+                }
+            } else {
+                if(name.equals("video")){
+                    String text = (String)data;
+                    addToContentList(text, true);
+                    Log.d("PRINTT", text);
+                    return;
+                }
+                else if(name.equals("br")){
+                    Integer num = (Integer)data;
+                    addToContentList(num.intValue());
+                    Log.d("PRINTT", String.valueOf(num));
+                    return;
+                }
+                else{
+                    String text = (String)data;
+                    if(listIndex > 0){
+                        text = listIndex+". "+text;
+                        if(nestedList > 1){
+                            text = text+" (nested!!!!!)";
+                        }
+                        addToContentList(text, false);
+                    }
+                    else{
+                        addToContentList(text, false);
+                    }
+                    Log.d("PRINTT", text);
+                    return;
+                }
+            }
+        }
+        catch(JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+    /*
     private void sessionParser() {
         JSONObject reader = null;
         try {
@@ -331,6 +494,7 @@ public class Session extends AppCompatActivity {
                     else{
                         activityParser(empty,ol);
                     }*/
+    /*
                     liParser(doneParsing, emptyArray,listIndex);
                 } else {
                     liParser(empty, stillParse,listIndex);
@@ -420,171 +584,7 @@ public class Session extends AppCompatActivity {
             }
         }*/
 
-
-    }
-    /*
-     * Sets the screen for the current session.
-     */
-    public void setSession(){
-        // Set session number.
-        Intent intent = getIntent();
-        session_number = intent.getStringExtra("session_number");
-        TextView sessionNumber = (TextView) findViewById(R.id.session_number);
-        sessionNumber.setText("Session "+session_number);
-
-        // David's code for parsing session data here
-        //Intent intent = getIntent();
-        //sessionNumber= Integer.parseInt(intent.getStringExtra("session_number"));
-       // Log.d("Test" , String.valueOf(sessionNumber));
-
-        FileInputStream fis= null;
-        try {
-            fis = openFileInput("session_data.txt");
-            Log.d("Test", "Opened the file");
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        InputStreamReader isr = new InputStreamReader(fis);
-        BufferedReader bufferedReader = new BufferedReader(isr);
-
-        try {
-            resultFromAPI = bufferedReader.readLine();
-            Log.d("Test", resultFromAPI);
-            //Log.d("Test", bufferedReader.readLine());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Log.d("Test", "Passing saved data");
-        parseSessionData();
-       // sessionParser();
-
 /*
-        // Upon grabbing a data item, call addToContentList for that item
-        // Examples of how you'll use addToContentList() methods
-        addToContentList("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget massa lobortis, efficitur justo at, fermentum elit. Donec consectetur nisl eu leo cursus tincidunt. Phasellus tellus mauris, eleifend ut massa in, ultrices ornare neque. Mauris ut dictum erat. Proin finibus eleifend neque, eget blandit neque elementum at. Quisque ac libero justo. Vestibulum lacinia tincidunt finibus. Vivamus vitae congue erat, id fringilla mauris.", false);
-        addToContentList( 3);
-        addToContentList("https://www.lipsum.com/feed/html", true);
-        addToContentList("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget massa lobortis, efficitur justo at, fermentum elit. Donec consectetur nisl eu leo cursus tincidunt. Phasellus tellus mauris, eleifend ut massa in, ultrices ornare neque. Mauris ut dictum erat. Proin finibus eleifend neque, eget blandit neque elementum at. Quisque ac libero justo. Vestibulum lacinia tincidunt finibus. Vivamus vitae congue erat, id fringilla mauris.", false);
-
-        // The code below this point is required for SessionListAdapter to work
-        addToContentList(true);
-        SessionListAdapter adapter = new SessionListAdapter(contentList, this, getIntent());
-        ListView listView = (ListView)findViewById(R.id.listViewSession);
-        listView.setAdapter(adapter);
-*/
-
-    }
-
-    public void endList(){
-        addToContentList(true);
-        SessionListAdapter adapter = new SessionListAdapter(contentList, this, getIntent());
-        ListView listView = (ListView)findViewById(R.id.listViewSession);
-        listView.setAdapter(adapter);
-
-    }
-
-    /**
-     * Add video or text SessionRow to the contentList
-     * @param value text/video
-     * @param isVideo
-     */
-    public void addToContentList(String value, boolean isVideo){
-        SessionRow row = new SessionRow(value, isVideo);
-        this.contentList.add(row);
-    }
-
-    /**
-     * Add space SessionRow to the contentList.
-     * @param numSpaces number of spaces
-     */
-    public void addToContentList(int numSpaces){
-        SessionRow row = new SessionRow(numSpaces);
-        this.contentList.add(row);
-    }
-
-    /**
-     * Add the last SessionRow to the contentList.
-     * @param isEnd
-     */
-    public void addToContentList(boolean isEnd){
-        SessionRow row = new SessionRow(isEnd);
-        this.contentList.add(row);
-    }
-
-    public void parseSessionData(){
-        try{
-            JSONObject reader = new JSONObject(resultFromAPI);
-            Log.d("Test" , resultFromAPI);
-            JSONArray sessionData = reader.getJSONArray("course");
-            int sessionNum = Integer.parseInt(session_number);
-            //JSONObject session = sessionData.getJSONObject(sessionNum-1);
-            JSONObject session = sessionData.getJSONObject(9);
-
-            JSONArray sessionSteps = session.getJSONArray("steps");
-            findRoot("steps", sessionSteps,0,0);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    public void findRoot(String name, Object data, int listIndex, int nestedList){
-        if(name.equals("link")){
-            return;
-        }
-        try {
-            if (data instanceof JSONArray) {
-                JSONArray array = (JSONArray) data;
-                for (int i = 0; i < array.length(); i++) {
-                    if(name.equals("ol") || name.equals("ul")){
-                        findRoot(name, array.get(i),i+1, listIndex+1);
-                    }
-                    else{
-                        findRoot(name, array.get(i),listIndex,nestedList);
-                    }
-                }
-            } else if (data instanceof JSONObject) {
-                JSONObject object = (JSONObject) data;
-                Iterator<String> keys = object.keys();
-                while(keys.hasNext()){
-                    String key = keys.next();
-                    findRoot(key, object.get(key), listIndex,nestedList);
-                }
-            } else {
-                if(name.equals("video")){
-                    String text = (String)data;
-                    addToContentList(text, true);
-                    Log.d("PRINTT", text);
-                    return;
-                }
-                else if(name.equals("br")){
-                    Integer num = (Integer)data;
-                    addToContentList(num.intValue());
-                    Log.d("PRINTT", String.valueOf(num));
-                    return;
-                }
-                else{
-                    String text = (String)data;
-                    if(listIndex > 0){
-                        text = listIndex+". "+text;
-                        if(nestedList > 1){
-                            text = text+" (nested!!!!!)";
-                        }
-                        addToContentList(text, false);
-                    }
-                    else{
-                        addToContentList(text, false);
-                    }
-                    Log.d("PRINTT", text);
-                    return;
-                }
-            }
-        }
-        catch(JSONException e){
-            e.printStackTrace();
-        }
-    }
+    }*/
 
 }

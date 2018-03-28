@@ -1,24 +1,14 @@
 package com.example.david.zume_android_app;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 /**
  * Created by Brandi on 3/18/2018.
@@ -33,6 +23,7 @@ public class GetUser extends AppCompatActivity {
     protected int UserID = 0;
     String user_profile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     String user = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
+    private boolean failed = true;
 
     public GetUser(String username, String password, Context context){
         this.context = context;
@@ -49,7 +40,7 @@ public class GetUser extends AppCompatActivity {
         } catch (Exception ex) {
         }
     }
-
+    public boolean getFailed(){ return failed;}
     /**
      * This subclass handles the network operations in a new thread.
      * It starts the progress bar, makes the API call, and ends the progress bar.
@@ -95,6 +86,8 @@ public class GetUser extends AppCompatActivity {
                 //Creating te credentials file and user_profile file
                 //Also makes a call for the second Api call
                 if(type.equals("user_profile")) {
+                    failed = false;
+                    Log.d("What!", String.valueOf(failed));
                     FileOutputStream outputStream;
                     String filename = "user_profile.txt";
                     String fileContents = isValidCredentials + "\n";
@@ -118,6 +111,8 @@ public class GetUser extends AppCompatActivity {
 
                 }
                 else if(type.equals("user")){
+                    failed = false;
+                    Log.d("What!", String.valueOf(failed));
 
                     String filename = "credentials.txt";
 
