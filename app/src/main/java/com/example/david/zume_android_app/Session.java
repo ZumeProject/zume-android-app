@@ -161,6 +161,11 @@ public class Session extends AppCompatActivity {
         this.contentList.add(row);
     }
 
+    public void addToContentList(String url, String title){
+        SessionRow row = new SessionRow(url, title);
+        this.contentList.add(row);
+    }
+
     /**
      * Add space SessionRow to the contentList.
      * @param numSpaces number of spaces
@@ -196,6 +201,26 @@ public class Session extends AppCompatActivity {
 
     public void findRoot(String name, Object data, int listIndex, int nestedList){
         if(name.equals("link")){
+            JSONObject pdf = (JSONObject) data;
+            Iterator<String> ids = pdf.keys();
+            String url = "";
+            String title = "";
+            int i = 0;
+            try {
+                while (ids.hasNext()) {
+                    String key = ids.next();
+                    if (i == 0) {
+                        url = (String) pdf.get(key);
+                    } else if (i == 1) {
+                        title = (String) pdf.get(key);
+                    }
+                    i++;
+                }
+                addToContentList(url, title);
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+            }
             return;
         }
         try {

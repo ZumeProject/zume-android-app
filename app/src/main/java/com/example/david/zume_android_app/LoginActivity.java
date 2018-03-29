@@ -25,12 +25,6 @@ public class LoginActivity extends AppCompatActivity {
     private String username;
     private String password;
     private String baseUrlUserProfile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
-    private String baseUrlUser = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
-    private String getBaseUrlSessionData = "http://zume.hsutx.edu/wp-json/zume/v1/android/lessons";
-    private String baseUrl;
-    private AsyncTask<Void, Void, String> execute;
-    private String UserID;
-    private String isValidCredentials;
     private GetUser auth;
 
     @Override
@@ -97,11 +91,6 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d("Test", pass);
                     //Checking if its the same user loging in.
                     if (user.equals(username) && pass.equals(password)) {
-                        try {
-                            isValidCredentials = bufferedReader.readLine();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
                         Log.d("Test", "Passing saved data");
                         goToDashboardActivity();
                     } else {
@@ -140,9 +129,10 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
+                    Log.d("Testing" , String.valueOf(auth.getFailed()));
                 }
             }
-        }, 200);
+        }, 500);
 
     }
 }

@@ -59,6 +59,12 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                 TextView listItemText = (TextView)view.findViewById(R.id.session_item_text);
                 listItemText.setText(list.get(position).getVideo());
             }
+            //Handle pdf link
+            else if(list.get(position).isPdf()){
+                view = inflater.inflate(R.layout.session_list_text_layout, null);
+                TextView listItemText = (TextView)view.findViewById(R.id.session_item_text);
+                listItemText.setText(list.get(position).getPdfTitle()+" "+list.get(position).getPdfUrl());
+            }
             //Handle line break
             else if(list.get(position).isSpace()){
                 view = inflater.inflate(R.layout.session_list_space_layout, null);
