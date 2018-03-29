@@ -11,6 +11,9 @@ public class SessionRow {
     private boolean isVideo = false;
     private String text = "";
     private String video = "";
+    private String pdfUrl = "";
+    private String pdfTitle = "";
+    private boolean isPdf = false;
 
     /**
      * Creates a row for text or video.
@@ -44,6 +47,19 @@ public class SessionRow {
         this.isEnd = true;
     }
 
+    /**
+     * Creates a row with a pdf link.
+     * @param url pdf url
+     * @param title pdf title
+     */
+    public SessionRow(String url, String title){
+        this.pdfUrl = url;
+        this.pdfTitle = title;
+        this.isPdf = true;
+    }
+
+
+
     public boolean isVideo(){
         return this.isVideo;
     }
@@ -55,6 +71,8 @@ public class SessionRow {
     public boolean isEnd(){
         return this.isEnd;
     }
+
+    public boolean isPdf(){return this.isPdf;}
 
     public void setIsSpace(boolean isSpace){
         this.isSpace = isSpace;
@@ -91,4 +109,8 @@ public class SessionRow {
     public void setVideo(String video){
         this.video = video;
     }
+
+    public String getPdfUrl(){return this.pdfUrl;}
+
+    public String getPdfTitle(){return this.pdfTitle;}
 }
