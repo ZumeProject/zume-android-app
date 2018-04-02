@@ -1,5 +1,6 @@
 package com.example.david.zume_android_app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +24,9 @@ public class GroupActivity extends AppCompatActivity {
 
     private String resultFromAPI = "";
     private String next_session = "0";
+    private String group_id = "";
+    private String username = "";
+    private String password = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +47,18 @@ public class GroupActivity extends AppCompatActivity {
         Button startSession = (Button)findViewById(R.id.startSession);
         Intent intent = getIntent();
         next_session = intent.getStringExtra("next_session");
+        group_id = intent.getStringExtra("groupID");
+        username = intent.getStringExtra("username");
+        password = intent.getStringExtra("password");
         startSession.setText("Start Session "+next_session);
         startSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putString("session_number", next_session);
+                bundle.putString("group_id", group_id);
+                bundle.putString("username", username);
+                bundle.putString("password", password);
                 Intent intent = new Intent(GroupActivity.this, Session.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -68,7 +79,14 @@ public class GroupActivity extends AppCompatActivity {
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(GroupActivity.this, DashboardActivity.class));
+                Bundle bundle = new Bundle();
+                bundle.putString("session_number", next_session);
+                bundle.putString("group_id", group_id);
+                bundle.putString("username", username);
+                bundle.putString("password", password);
+                Intent intent = new Intent(GroupActivity.this, DashboardActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
@@ -89,6 +107,7 @@ public class GroupActivity extends AppCompatActivity {
         }
         Log.d("Test", "Passing saved data");
         setScreen();
+
     }
 
     public void setScreen(){
@@ -153,4 +172,5 @@ public class GroupActivity extends AppCompatActivity {
 
         return groupName;
     }
+
 }

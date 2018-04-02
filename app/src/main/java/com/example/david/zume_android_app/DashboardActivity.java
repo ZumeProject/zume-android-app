@@ -32,9 +32,11 @@ public class DashboardActivity extends AppCompatActivity {
 
 
     private String resultFromAPI = "";
+    private String userString = "";
     private String baseUrl = "";
     private String username = "";
     private String password = "";
+    private Integer user_id = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,33 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
+
+        FileInputStream fi= null;
+        try {
+            fi = openFileInput("user.txt");
+            Log.d("Test", "Opened the file");
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        InputStreamReader ir = new InputStreamReader(fi);
+        BufferedReader br = new BufferedReader(ir);
+        /*try {
+            Log.d("Test", bufferedReader.readLine());
+            Log.d("Test", bufferedReader.readLine());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+        try {
+            userString = br.readLine();
+            Log.d("User", userString);
+            JSONObject user = new JSONObject(userString);
+            this.user_id = new Integer(user.get("user_id").toString());
+            //Log.d("Test", bufferedReader.readLine());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -61,12 +90,12 @@ public class DashboardActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 String username = intent.getStringExtra("username");
                 String password = intent.getStringExtra("password");
-                int userID = intent.getIntExtra("user_id", 0);
+                Log.d("Username", username);
 
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
                 bundle.putString("password", password);
-                bundle.putInt("user_id", userID);
+                bundle.putInt("user_id", user_id);
 
                 intent = new Intent(DashboardActivity.this, ProfileActivity.class);
                 intent.putExtras(bundle);

@@ -1,6 +1,9 @@
 package com.example.david.zume_android_app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -87,6 +90,8 @@ public class Session extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        Log.d("Internet", "Session "+new Boolean(isNetworkAvailable()).toString());
     }
     /*
      * Sets the screen for the current session.
@@ -145,7 +150,7 @@ public class Session extends AppCompatActivity {
 
     public void endList(){
         addToContentList(true);
-        SessionListAdapter adapter = new SessionListAdapter(contentList, this, getIntent());
+        SessionListAdapter adapter = new SessionListAdapter(contentList, this, getIntent(), isNetworkAvailable());
         ListView listView = (ListView)findViewById(R.id.listViewSession);
         listView.setAdapter(adapter);
 
@@ -612,4 +617,16 @@ public class Session extends AppCompatActivity {
 /*
     }*/
 
+
+    /**
+     * Check to see if we can connect to the network.
+     * @return true if we can, false otherwise
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
+        Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
 }
