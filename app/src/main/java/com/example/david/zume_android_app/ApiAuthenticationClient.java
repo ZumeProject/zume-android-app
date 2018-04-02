@@ -246,6 +246,7 @@ public class ApiAuthenticationClient {
             }
             else if (parameters.size() > 0 && httpMethod.equals("POST")) {
                 payload = getPayloadAsString();
+                urlString.replace(urlString.length()-1, urlString.length(), "");
                 urlString.append("?" + payload);
             }
 

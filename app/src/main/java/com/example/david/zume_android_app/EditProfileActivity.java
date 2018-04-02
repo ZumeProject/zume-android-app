@@ -87,6 +87,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 // Set credentials
                 Intent intent = getIntent();
                 String username = intent.getStringExtra("username");
+                Log.d("Username", username);
                 String password = intent.getStringExtra("password");
                 int userID = intent.getIntExtra("user_id", 0);
 
@@ -155,6 +156,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 }
                 catch(Exception e){
+                    e.printStackTrace();
                     Toast.makeText(getApplicationContext(), "Error updating profile", Toast.LENGTH_LONG).show();
                 }
             }

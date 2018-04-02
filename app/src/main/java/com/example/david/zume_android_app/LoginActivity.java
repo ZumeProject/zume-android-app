@@ -24,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editText_login_password;
     private String username;
     private String password;
+    private Integer user_id;
     private String baseUrlUserProfile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     private GetUser auth;
 

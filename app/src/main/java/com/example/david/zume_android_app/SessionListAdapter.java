@@ -12,7 +12,12 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.TimeZone;
 
 /**
  * Created by Brandi on 3/22/2018.
@@ -22,13 +27,21 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
     private ArrayList<SessionRow> list = new ArrayList<SessionRow>();
     private Context context;
     private Intent intent;
+    private boolean internet;
 
 
 
-    public SessionListAdapter(ArrayList<SessionRow> list, Context context, Intent intent) {
+    public SessionListAdapter(ArrayList<SessionRow> list, Context context, Intent intent, Boolean internet) {
         this.list = list;
         this.context = context;
         this.intent = intent;
+        this.internet = internet;
+        if(this.internet){
+            Log.d("Internet", "true for sessionListAdapter");
+        }
+        else{
+            Log.d("Internet", "false for sessionListAdapter");
+        }
     }
 
     @Override
@@ -86,11 +99,31 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                         Intent intent = getIntent();
                         String username = intent.getStringExtra("username");
                         String password = intent.getStringExtra("password");
-                        String groupID = intent.getStringExtra("groupID");
+                        String groupID = intent.getStringExtra("group_id");
+                        Log.d("Group_id", groupID);
                         String groupName = intent.getStringExtra("groupName");
                         String session_number = intent.getStringExtra("session_number");
 
-                        next_session = session_number;
+                        // Get next_session
+                        next_session = new Integer(new Integer(session_number)+1).toString();
+                        // Create arg keys
+                        session_number = "session_"+session_number;
+                        String session_complete = session_number+"_complete";
+
+                        // Set the completed date and time
+                        Date complete = new Date();
+                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        format.setTimeZone(TimeZone.getTimeZone("US/Central"));
+                        String session_complete_date = format.format(complete);
+
+                        // Add argument keys and values to args for sessionPostHandler
+                        LinkedHashMap<String, String> args = new LinkedHashMap<>();
+                        args.put(session_number, "true");
+                        args.put(session_complete, session_complete_date);
+
+
+                        SessionPostHandler handler = new SessionPostHandler(context ,username, password, groupID, args, internet);
+
 
                         Bundle bundle = new Bundle();
                         bundle.putString("username", username);
@@ -111,7 +144,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                 view = inflater.inflate(R.layout.session_list_text_layout, null);
                 TextView listItemText = (TextView)view.findViewById(R.id.session_item_text);
                 listItemText.setText(list.get(position).getText());
-                Log.d("ListViewDebug", list.get(position).getText());
+                //Log.d("ListViewDebug", list.get(position).getText());
             }
 
         //}
