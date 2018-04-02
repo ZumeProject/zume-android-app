@@ -79,7 +79,14 @@ public class GroupActivity extends AppCompatActivity {
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(GroupActivity.this, DashboardActivity.class));
+                Bundle bundle = new Bundle();
+                bundle.putString("session_number", next_session);
+                bundle.putString("group_id", group_id);
+                bundle.putString("username", username);
+                bundle.putString("password", password);
+                Intent intent = new Intent(GroupActivity.this, DashboardActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
