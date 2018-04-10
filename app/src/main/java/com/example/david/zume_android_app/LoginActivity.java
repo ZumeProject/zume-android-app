@@ -196,7 +196,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
 
                         InputStream input = new BufferedInputStream(url.openStream());
-                        File file = new File(getFilesDir(), thisUrl[1].replace(" ", "_"));
+                        File file = new File(getFilesDir(), thisUrl[1].replace(" ", "_").replace("/", "_"));
                         OutputStream output = new FileOutputStream(file);
 
                         byte data[] = new byte[1024];
