@@ -3,7 +3,6 @@ package com.example.david.zume_android_app;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,55 +94,62 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                     public void onClick(View v) {
 
                         //Make post for session here (or add to pending posts if no internet) Maybe handle that in session posting class
-                        String next_session = "0";
-
                         Intent intent = getIntent();
-                        String username = intent.getStringExtra("username");
-                        Log.d("Username", "SessionListAdapter "+username);
-                        String password = intent.getStringExtra("password");
-                        String groupID = intent.getStringExtra("group_id");
-                        Log.d("Group_id", groupID);
-                        String groupName = intent.getStringExtra("groupName");
-                        String session_number = intent.getStringExtra("session_number");
+                        Boolean recordCompletion = intent.getBooleanExtra("Has_a_Group", false);
+                        if(recordCompletion) {
+                            String next_session = "0";
+                            String username = intent.getStringExtra("username");
+                            Log.d("Username", "SessionListAdapter " + username);
+                            String password = intent.getStringExtra("password");
+                            String groupID = intent.getStringExtra("group_id");
+                            Log.d("Group_id", groupID);
+                            String groupName = intent.getStringExtra("groupName");
+                            String session_number = intent.getStringExtra("session_number");
 
-                        // Get next_session
-                        next_session = new Integer(new Integer(session_number)+1).toString();
-                        // Create arg keys
-                        session_number = "session_"+session_number;
-                        String session_complete = session_number+"_complete";
-                        String next_session_key = "next_session";
+                            // Get next_session
+                            next_session = new Integer(new Integer(session_number) + 1).toString();
+                            // Create arg keys
+                            session_number = "session_" + session_number;
+                            String session_complete = session_number + "_complete";
+                            String next_session_key = "next_session";
 
-                        // Set the completed date and time
-                        Date complete = new Date();
-                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        format.setTimeZone(TimeZone.getTimeZone("US/Central"));
-                        String session_complete_date = format.format(complete);
-                        session_complete_date = session_complete_date.replace(" ", "%20");
+                            // Set the completed date and time
+                            Date complete = new Date();
+                            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            format.setTimeZone(TimeZone.getTimeZone("US/Central"));
+                            String session_complete_date = format.format(complete);
+                            session_complete_date = session_complete_date.replace(" ", "%20");
 
-                        // Add argument keys and values to args for sessionPostHandler
-                        LinkedHashMap<String, String> args = new LinkedHashMap<>();
-                        args.put(session_number, "true");
-                        args.put(session_complete, session_complete_date);
-                        args.put(next_session_key, next_session);
-
-
-                        SessionPostHandler handler = new SessionPostHandler(context ,username, password, groupID, args, internet);
-
-
-                        Bundle bundle = new Bundle();
-                        bundle.putString("username", username);
-                        bundle.putString("password", password);
-                        bundle.putString("groupID", groupID);
-                        bundle.putString("groupName", groupName);
-                        bundle.putString("next_session", next_session);
+                            // Add argument keys and values to args for sessionPostHandler
+                            LinkedHashMap<String, String> args = new LinkedHashMap<>();
+                            args.put(session_number, "true");
+                            args.put(session_complete, session_complete_date);
+                            args.put(next_session_key, next_session);
 
 
-                        final Intent i = new Intent(context, GroupActivity.class);
-                        i.putExtras(bundle);
-                        GetUser gu = new GetUser(username, password, context);
+                            SessionPostHandler handler = new SessionPostHandler(context, username, password, groupID, args, internet);
 
-                        context.startActivity(i);
 
+                            Bundle bundle = new Bundle();
+                            bundle.putString("username", username);
+                            bundle.putString("password", password);
+                            bundle.putString("groupID", groupID);
+                            bundle.putString("groupName", groupName);
+                            bundle.putString("next_session", next_session);
+
+
+                            final Intent i = new Intent(context, GroupActivity.class);
+                            i.putExtras(bundle);
+                            GetUser gu = new GetUser(username, password, context);
+
+                            context.startActivity(i);
+                        }
+                        else{
+                            final Intent i = new Intent(context, SessionList.class);
+                            Bundle bundle = new Bundle();
+                            i.putExtras(bundle);
+                            context.startActivity(i);
+                        }
                     }
                 });
             }
