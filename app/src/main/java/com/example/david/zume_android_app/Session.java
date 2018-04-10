@@ -14,13 +14,19 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -78,7 +84,20 @@ public class Session extends AppCompatActivity {
 
         Home.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(Session.this, DashboardActivity.class));
+                Intent intent = getIntent();
+                String next_session = intent.getStringExtra("next_session");
+                String group_id = intent.getStringExtra("groupID");
+                String username = intent.getStringExtra("username");
+                String password = intent.getStringExtra("password");
+
+                Bundle bundle = new Bundle();
+                bundle.putString("session_number", next_session);
+                bundle.putString("group_id", group_id);
+                bundle.putString("username", username);
+                bundle.putString("password", password);
+                intent = new Intent(Session.this, DashboardActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
@@ -167,8 +186,32 @@ public class Session extends AppCompatActivity {
     }
 
     public void addToContentList(String url, String title){
-        SessionRow row = new SessionRow(url, title);
-        this.contentList.add(row);
+        FileInputStream fis = null;
+
+        try {
+            fis = openFileInput(title.replace(" ", "_"));
+
+            try {
+                String parsedText="";
+                PdfReader reader = new PdfReader(getFilesDir().getAbsolutePath()+"/"+title.replace(" ", "_"));
+                int n = reader.getNumberOfPages();
+                for (int i = 0; i <n ; i++) {
+                    parsedText   = parsedText+ PdfTextExtractor.getTextFromPage(reader, i+1).trim()+"\n"; //Extracting the content from the different pages
+                }
+                Log.d("URL-Content", parsedText);
+                reader.close();
+                addToContentList(parsedText, false);
+                return;
+            } catch (Exception e) {
+               e.printStackTrace();
+            }
+            //SessionRow row = new SessionRow(url, title);
+            //this.contentList.add(row);
+            Log.d("PDFFile", "File exists!");
+        }
+        catch(FileNotFoundException E){
+            E.printStackTrace();
+        }
     }
 
     /**
