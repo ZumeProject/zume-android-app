@@ -82,6 +82,9 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <activity
+            android:name=".SessionList"
+            android:label="@string/title_activity_session_list"></activity>
     </application>
 
 </manifest>

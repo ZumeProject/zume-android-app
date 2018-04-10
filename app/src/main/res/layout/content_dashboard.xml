@@ -100,8 +100,8 @@
         <Button
             android:layout_width="232dp"
             android:layout_height="wrap_content"
-            android:text="Downloads"
-            android:id="@+id/downloads"
+            android:text="View Sessions"
+            android:id="@+id/view_sessions"
             android:layout_gravity="center_vertical" />
 
         <Button

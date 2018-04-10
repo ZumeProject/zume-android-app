@@ -1,6 +1,5 @@
 package com.example.david.zume_android_app;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,7 +15,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,6 +57,7 @@ public class GroupActivity extends AppCompatActivity {
                 bundle.putString("group_id", group_id);
                 bundle.putString("username", username);
                 bundle.putString("password", password);
+                bundle.putBoolean("Has_a_Group", true);
                 Intent intent = new Intent(GroupActivity.this, Session.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
