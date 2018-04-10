@@ -71,6 +71,26 @@ public class SessionList extends Activity {
             btn[i].setOnClickListener(btnClicked);
             linear.addView(btn[i]);
         }
+
+        Button home = (Button)findViewById(R.id.home);
+
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = getIntent();
+                String username = intent.getStringExtra("username");
+                String password = intent.getStringExtra("password");
+
+                Bundle bundle = new Bundle();
+                bundle.putString("username", username);
+                bundle.putString("password", password);
+
+                intent = new Intent(SessionList.this, DashboardActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
     }
     View.OnClickListener btnClicked = new View.OnClickListener() {
         @Override

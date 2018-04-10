@@ -51,7 +51,18 @@ public class Session extends AppCompatActivity {
         Button Home = (Button) findViewById(R.id.Home);
         Home.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(Session.this, DashboardActivity.class));
+
+                Intent intent = getIntent();
+                String username = intent.getStringExtra("username");
+                String password = intent.getStringExtra("password");
+
+                Bundle bundle = new Bundle();
+                bundle.putString("username", username);
+                bundle.putString("password", password);
+
+                intent = new Intent(Session.this, DashboardActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
