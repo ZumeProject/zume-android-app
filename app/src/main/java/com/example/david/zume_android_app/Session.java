@@ -243,4 +243,58 @@ public class Session extends AppCompatActivity {
         Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
+
+    private void JSONObjectParser(JSONObject text){
+
+        boolean check = true;
+        int breaks = 0;
+        try {
+            breaks = text.getInt("br");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            check = false;
+        }
+        if(check){
+            addToContentList(breaks);
+            Log.d("PrintStatement", String.valueOf(breaks));
+
+        }
+        else{
+            String video = "";
+            check = true;
+            try {
+                video = text.getString("video");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                check = false;
+            }
+            if(check){
+                addToContentList(video,true);
+                Log.d("PrintStatement",video);
+            }
+            else{
+                String json = String.valueOf(text);
+                String[] data = json.split(":");
+                data[1] = data[1].substring(0, data[1].length() - 1);
+                data[1] = data[1].substring(0, data[1].length() - 1);
+                data[1] = data[1].replaceFirst("\"","");
+                addToContentList(data[1],false);
+                Log.d("PrintStatement",data[1]);
+
+            }
+
+
+        }
+
+    /**
+     * Check to see if we can connect to the network.
+     * @return true if we can, false otherwise
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
+        Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
 }
