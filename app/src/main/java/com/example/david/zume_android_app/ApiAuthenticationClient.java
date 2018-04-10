@@ -238,6 +238,9 @@ public class ApiAuthenticationClient {
 
             if (!urlPath.equals("") && httpMethod.equals("GET")) {
                 urlString.append("/" + urlPath);
+                if(new Character(urlString.charAt(urlString.length()-1)).equals("/")){
+                    urlString = urlString.replace(urlString.length()-1, urlString.length(), "");
+                }
             }
 
             if (parameters.size() > 0 && httpMethod.equals("GET")) {
@@ -246,6 +249,7 @@ public class ApiAuthenticationClient {
             }
             else if (parameters.size() > 0 && httpMethod.equals("POST")) {
                 payload = getPayloadAsString();
+                urlString.replace(urlString.length()-1, urlString.length(), "");
                 urlString.append("?" + payload);
             }
 

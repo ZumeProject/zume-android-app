@@ -1,6 +1,9 @@
 package com.example.david.zume_android_app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -46,33 +49,6 @@ public class Session extends AppCompatActivity {
         endList();
 
         Button Home = (Button) findViewById(R.id.Home);
-        /*
-        Intent intent = getIntent();
-        sessionNumber= Integer.parseInt(intent.getStringExtra("session_number"));
-        Log.d("Test" , String.valueOf(sessionNumber));
-
-        FileInputStream fis= null;
-        try {
-            fis = openFileInput("session_data.txt");
-            Log.d("Test", "Opened the file");
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        InputStreamReader isr = new InputStreamReader(fis);
-        BufferedReader bufferedReader = new BufferedReader(isr);
-
-        try {
-            resultFromAPI = bufferedReader.readLine();
-            Log.d("Test", resultFromAPI);
-            //Log.d("Test", bufferedReader.readLine());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Log.d("Test", "Passing saved data");
-        sessionParser();*/
-
         Home.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(new Intent(Session.this, DashboardActivity.class));
@@ -87,6 +63,8 @@ public class Session extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        Log.d("Internet", "Session "+new Boolean(isNetworkAvailable()).toString());
     }
     /*
      * Sets the screen for the current session.
@@ -97,11 +75,6 @@ public class Session extends AppCompatActivity {
         session_number = intent.getStringExtra("session_number");
         TextView sessionNumber = (TextView) findViewById(R.id.session_number);
         sessionNumber.setText("Session "+session_number);
-
-        // David's code for parsing session data here
-        //Intent intent = getIntent();
-        //sessionNumber= Integer.parseInt(intent.getStringExtra("session_number"));
-       // Log.d("Test" , String.valueOf(sessionNumber));
 
         FileInputStream fis= null;
         try {
@@ -124,28 +97,11 @@ public class Session extends AppCompatActivity {
 
         Log.d("Test", "Passing saved data");
         parseSessionData();
-       // sessionParser();
-
-/*
-        // Upon grabbing a data item, call addToContentList for that item
-        // Examples of how you'll use addToContentList() methods
-        addToContentList("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget massa lobortis, efficitur justo at, fermentum elit. Donec consectetur nisl eu leo cursus tincidunt. Phasellus tellus mauris, eleifend ut massa in, ultrices ornare neque. Mauris ut dictum erat. Proin finibus eleifend neque, eget blandit neque elementum at. Quisque ac libero justo. Vestibulum lacinia tincidunt finibus. Vivamus vitae congue erat, id fringilla mauris.", false);
-        addToContentList( 3);
-        addToContentList("https://www.lipsum.com/feed/html", true);
-        addToContentList("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget massa lobortis, efficitur justo at, fermentum elit. Donec consectetur nisl eu leo cursus tincidunt. Phasellus tellus mauris, eleifend ut massa in, ultrices ornare neque. Mauris ut dictum erat. Proin finibus eleifend neque, eget blandit neque elementum at. Quisque ac libero justo. Vestibulum lacinia tincidunt finibus. Vivamus vitae congue erat, id fringilla mauris.", false);
-
-        // The code below this point is required for SessionListAdapter to work
-        addToContentList(true);
-        SessionListAdapter adapter = new SessionListAdapter(contentList, this, getIntent());
-        ListView listView = (ListView)findViewById(R.id.listViewSession);
-        listView.setAdapter(adapter);
-*/
-
     }
 
     public void endList(){
         addToContentList(true);
-        SessionListAdapter adapter = new SessionListAdapter(contentList, this, getIntent());
+        SessionListAdapter adapter = new SessionListAdapter(contentList, this, getIntent(), isNetworkAvailable());
         ListView listView = (ListView)findViewById(R.id.listViewSession);
         listView.setAdapter(adapter);
 
@@ -275,6 +231,8 @@ public class Session extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+<<<<<<< HEAD
+=======
 
     /*
     private void sessionParser() {
@@ -612,4 +570,17 @@ public class Session extends AppCompatActivity {
 /*
     }*/
 
+
+    /**
+     * Check to see if we can connect to the network.
+     * @return true if we can, false otherwise
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
+        Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+>>>>>>> 0e5468a0c85768c6c823a2b30cab9d10bbdd4fe9
 }

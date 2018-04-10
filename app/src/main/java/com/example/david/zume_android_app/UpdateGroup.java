@@ -1,29 +1,34 @@
 package com.example.david.zume_android_app;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 /**
- * Created by Brandi on 3/18/2018.
+ * Created by Brandi on 3/25/2018.
+ *
+ * Updates a group's information.
  */
 
-public class UpdateUser {
-
+public class UpdateGroup {
     protected String isValidCredentials = "";
-    String baseURL = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
+    String baseURL = "http://zume.hsutx.edu/wp-json/zume/v1/android/group/1";
 
-    public UpdateUser(int user_id, String username, String password, String first_name, String last_name, String email, String phone_number) {
-        Log.d("Userame", username);
-        Log.d("Password", password);
+    /**
+     * Constructor initializes and makes call to ApiAuthenticationClient
+     * @param username
+     * @param password
+     * @param group_id the id of the group
+     * @param args a LinkedHashMap of group field names and values
+     */
+    public UpdateGroup(String username, String password, String group_id, LinkedHashMap<String, String> args) {
         try {
             Log.d("Test", "Making API call");
             ApiAuthenticationClient apiAuthenticationClient =
@@ -32,15 +37,23 @@ public class UpdateUser {
                             , username
                             , password
                     );
+            // Set type to POST
             apiAuthenticationClient.setHttpMethod("POST");
-            apiAuthenticationClient.setParameter("user_id", String.valueOf(user_id));
-            apiAuthenticationClient.setParameter("first_name", first_name);
-            apiAuthenticationClient.setParameter("last_name", last_name);
-            apiAuthenticationClient.setParameter("user_email", email);
-            apiAuthenticationClient.setParameter("user_phone", phone_number);
-            AsyncTask<Void, Void, String> execute = new UpdateUser.ExecuteNetworkOperation(apiAuthenticationClient);
+            apiAuthenticationClient.setParameter("group", group_id);
+            // Get the field names
+            Set<String> keys = args.keySet();
+            Iterator<String> itr = keys.iterator();
+            while(itr.hasNext()){
+                // Set each parameter from args
+                String key = itr.next();
+                String name = "args["+key+"]";
+                apiAuthenticationClient.setParameter(name, args.get(key));
+            }
+
+            AsyncTask<Void, Void, String> execute = new UpdateGroup.ExecuteNetworkOperation(apiAuthenticationClient);
             execute.execute();
         } catch (Exception ex) {
+            Log.d("Test", "Error posting group data.");
             ex.printStackTrace();
         }
     }
@@ -77,7 +90,13 @@ public class UpdateUser {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    return;
+                }
+            }, 200);
         }
     }
 }
