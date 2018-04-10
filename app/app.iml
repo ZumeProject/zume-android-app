@@ -158,6 +158,7 @@
     <orderEntry type="library" name="com.google.android.gms:play-services-nearby-8.4.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-appinvite-8.4.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-fragment-27.0.2" level="project" />
+    <orderEntry type="library" name="com.itextpdf:itextg:5.5.10@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-ads-8.4.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-media-compat-27.0.2" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-location-8.4.0" level="project" />

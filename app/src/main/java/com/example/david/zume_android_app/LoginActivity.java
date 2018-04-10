@@ -1,5 +1,7 @@
 package com.example.david.zume_android_app;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,11 +14,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
     private Button button_login_login;
@@ -27,6 +39,9 @@ public class LoginActivity extends AppCompatActivity {
     private Integer user_id;
     private String baseUrlUserProfile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     private GetUser auth;
+    public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
+    private Button startBtn;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,10 +117,28 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DIALOG_DOWNLOAD_PROGRESS:
+                mProgressDialog = new ProgressDialog(this);
+                mProgressDialog.setMessage("Downloading files..");
+                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.show();
+                return mProgressDialog;
+            default:
+                return null;
+        }
+    }
+
     /**
      * Open the Dashboard window.
      */
     private void goToDashboardActivity() {
+        AsyncTask<Void, String, String> download = new DownloadFileAsync().execute();
+
         Bundle bundle = new Bundle();
         bundle.putString("username", username);
         bundle.putString("password", password);
@@ -135,5 +168,67 @@ public class LoginActivity extends AppCompatActivity {
             }
         }, 500);
 
+    }
+
+    class DownloadFileAsync extends AsyncTask<Void, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showDialog(DIALOG_DOWNLOAD_PROGRESS);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            PdfDownloader downloader = new PdfDownloader(getApplicationContext());
+            ArrayList<String[]> urls = downloader.execute();
+            int count;
+            if(urls!=null) {
+                for(String[] thisUrl: urls) {
+                    try {
+
+                        URL url = new URL(thisUrl[0]);
+                        URLConnection conexion = url.openConnection();
+                        conexion.connect();
+
+                        int lenghtOfFile = conexion.getContentLength();
+                        Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
+
+                        InputStream input = new BufferedInputStream(url.openStream());
+                        File file = new File(getFilesDir(), thisUrl[1].replace(" ", "_"));
+                        OutputStream output = new FileOutputStream(file);
+
+                        byte data[] = new byte[1024];
+
+                        long total = 0;
+
+                        while ((count = input.read(data)) != -1) {
+                            total += count;
+                            publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+                            output.write(data, 0, count);
+                        }
+
+                        output.flush();
+                        output.close();
+                        input.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            return null;
+
+        }
+        protected void onProgressUpdate(String... progress) {
+            Log.d("ANDRO_ASYNC",progress[0]);
+            mProgressDialog.setProgress(Integer.parseInt(progress[0]));
+        }
+
+        @Override
+        protected void onPostExecute(String unused) {
+            dismissDialog(DIALOG_DOWNLOAD_PROGRESS);
+        }
     }
 }
