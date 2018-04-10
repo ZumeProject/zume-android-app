@@ -21,8 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -121,12 +119,12 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-        Button downloads = (Button)findViewById(R.id.downloads);
+        Button viewSessions = (Button)findViewById(R.id.view_sessions);
 
-        downloads.setOnClickListener(new View.OnClickListener() {
+        viewSessions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(DashboardActivity.this, Downloads.class));
+                startActivity(new Intent(DashboardActivity.this, SessionList.class));
             }
         });
         FileInputStream fis= null;

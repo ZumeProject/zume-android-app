@@ -24,4 +24,5 @@
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_test_basic_auth">TestBasicAuth</string>
     <string name="title_activity_edit_profile">EditProfileActivity</string>
+    <string name="title_activity_session_list">SessionList</string>
 </resources>
