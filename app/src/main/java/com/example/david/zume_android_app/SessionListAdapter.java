@@ -1,7 +1,9 @@
 package com.example.david.zume_android_app;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +13,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -77,6 +81,24 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                 view = inflater.inflate(R.layout.session_list_text_layout, null);
                 TextView listItemText = (TextView)view.findViewById(R.id.session_item_text);
                 listItemText.setText(list.get(position).getPdfTitle()+" "+list.get(position).getPdfUrl());
+                listItemText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v){
+                        File file = new File(context.getFilesDir(), list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_"));
+                        Uri path = Uri.fromFile(file);
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(path, "application/pdf");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        try {
+                            context.startActivity(intent);
+                        }
+                        catch(ActivityNotFoundException e){
+                            e.printStackTrace();
+                            Toast.makeText(context,"No Application available to viewPDF",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
             //Handle line break
             else if(list.get(position).isSpace()){

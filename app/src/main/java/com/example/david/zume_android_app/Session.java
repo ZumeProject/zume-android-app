@@ -138,32 +138,8 @@ public class Session extends AppCompatActivity {
     }
 
     public void addToContentList(String url, String title){
-        FileInputStream fis = null;
-
-        try {
-            fis = openFileInput(title.replace(" ", "_").replace("/", "_"));
-
-            try {
-                String parsedText="";
-                PdfReader reader = new PdfReader(getFilesDir().getAbsolutePath()+"/"+title.replace(" ", "_").replace("/", "_"));
-                int n = reader.getNumberOfPages();
-                for (int i = 0; i <n ; i++) {
-                    parsedText   = parsedText+ PdfTextExtractor.getTextFromPage(reader, i+1).trim()+"\n"; //Extracting the content from the different pages
-                }
-                Log.d("URL-Content", parsedText);
-                reader.close();
-                addToContentList(parsedText, false);
-                return;
-            } catch (Exception e) {
-               e.printStackTrace();
-            }
-            SessionRow row = new SessionRow(url, title);
-            this.contentList.add(row);
-            Log.d("PDFFile", "File exists!");
-        }
-        catch(FileNotFoundException E){
-            E.printStackTrace();
-        }
+        SessionRow row = new SessionRow(url, title);
+        this.contentList.add(row);
     }
 
     /**
