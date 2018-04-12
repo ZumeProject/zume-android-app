@@ -84,6 +84,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                 listItemText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v){
+                        // Open the pdf in a pdf reader installed on the device if possible
                         File file = new File(context.getFilesDir(), list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_"));
                         Uri path = Uri.fromFile(file);
                         Intent intent = new Intent(Intent.ACTION_VIEW);
