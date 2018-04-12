@@ -119,6 +119,9 @@ public class Session extends AppCompatActivity {
         parseSessionData();
     }
 
+    /**
+     * Initialize our SessionListAdapter and check for internet
+     */
     public void endList(){
         addToContentList(true);
         SessionListAdapter adapter = new SessionListAdapter(contentList, this, getIntent(), isNetworkAvailable());
@@ -138,32 +141,8 @@ public class Session extends AppCompatActivity {
     }
 
     public void addToContentList(String url, String title){
-        FileInputStream fis = null;
-
-        try {
-            fis = openFileInput(title.replace(" ", "_").replace("/", "_"));
-
-            try {
-                String parsedText="";
-                PdfReader reader = new PdfReader(getFilesDir().getAbsolutePath()+"/"+title.replace(" ", "_").replace("/", "_"));
-                int n = reader.getNumberOfPages();
-                for (int i = 0; i <n ; i++) {
-                    parsedText   = parsedText+ PdfTextExtractor.getTextFromPage(reader, i+1).trim()+"\n"; //Extracting the content from the different pages
-                }
-                Log.d("URL-Content", parsedText);
-                reader.close();
-                addToContentList(parsedText, false);
-                return;
-            } catch (Exception e) {
-               e.printStackTrace();
-            }
-            SessionRow row = new SessionRow(url, title);
-            this.contentList.add(row);
-            Log.d("PDFFile", "File exists!");
-        }
-        catch(FileNotFoundException E){
-            E.printStackTrace();
-        }
+        SessionRow row = new SessionRow(url, title);
+        this.contentList.add(row);
     }
 
     /**
@@ -199,7 +178,15 @@ public class Session extends AppCompatActivity {
         }
     }
 
+    /**
+     * This function sorts through a JSON object to try and find the roots of the object
+     * @param name The name of the current index
+     * @param data The data of the current index
+     * @param listIndex The index for a list
+     * @param nestedList The nestedList
+     */
     public void findRoot(String name, Object data, int listIndex, int nestedList){
+        // If we are looking at a link, then we know this is a pdf, so we want to save it in our list as a pdf
         if(name.equals("link")){
             JSONObject pdf = (JSONObject) data;
             Iterator<String> ids = pdf.keys();
@@ -224,23 +211,29 @@ public class Session extends AppCompatActivity {
             return;
         }
         try {
+            // If it is an array, then we will proceed to traverse the array
             if (data instanceof JSONArray) {
                 JSONArray array = (JSONArray) data;
                 for (int i = 0; i < array.length(); i++) {
+                    // Check if this is a list item
                     if(name.equals("ol") || name.equals("ul")){
                         findRoot(name, array.get(i),i+1, listIndex+1);
                     }
+                    // This is a regular array
                     else{
                         findRoot(name, array.get(i),listIndex,nestedList);
                     }
                 }
+                // If this is a JSON object, then traverse the object
             } else if (data instanceof JSONObject) {
                 JSONObject object = (JSONObject) data;
                 Iterator<String> keys = object.keys();
+                // Move through the object
                 while(keys.hasNext()){
                     String key = keys.next();
                     findRoot(key, object.get(key), listIndex,nestedList);
                 }
+                // Add video to list if this is a video
             } else {
                 if(name.equals("video")){
                     String text = (String)data;
@@ -248,12 +241,14 @@ public class Session extends AppCompatActivity {
                     Log.d("PRINTT", text);
                     return;
                 }
+                // Add space to list if this is a space
                 else if(name.equals("br")){
                     Integer num = (Integer)data;
                     addToContentList(num.intValue());
                     Log.d("PRINTT", String.valueOf(num));
                     return;
                 }
+                // Add text to list if this is text
                 else{
                     String text = (String)data;
                     if(listIndex > 0){
