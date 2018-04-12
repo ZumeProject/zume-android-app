@@ -32,10 +32,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Downloads"
-            android:label="@string/title_activity_downloads"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".Session"
             android:label="@string/title_activity_session"
             android:theme="@style/AppTheme.NoActionBar" />
