@@ -60,8 +60,9 @@ public class SessionPostHandler extends AppCompatActivity {
         }
     }
 
-    public SessionPostHandler(Context context){
+    public SessionPostHandler(Context context, boolean internet){
         this.context = context;
+        this.internet = internet;
         if(internet){
             for(String row: resultFromFile){
                 try {
