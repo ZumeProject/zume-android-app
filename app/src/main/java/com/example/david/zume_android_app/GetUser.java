@@ -21,17 +21,31 @@ public class GetUser extends AppCompatActivity {
     protected String username = "";
     protected String password = "";
     protected int UserID = 0;
+    String jwtAuth = "http://zume.hsutx.edu/wp-json/jwt-auth/v1/token";
     String user_profile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     String user = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
     private boolean failed = true;
 
     public GetUser(String username, String password, Context context){
-        this.context = context;
+        /*this.context = context;
         this.username = username;
         this.password = password;
         try {
             ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
                     user_profile
+                    , username
+                    , password
+            );
+            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "user_profile", context);
+            execute.execute();
+        } catch (Exception ex) {
+        }*/
+        this.context = context;
+        this.username = username;
+        this.password = password;
+        try {
+            ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
+                    jwtAuth
                     , username
                     , password
             );
