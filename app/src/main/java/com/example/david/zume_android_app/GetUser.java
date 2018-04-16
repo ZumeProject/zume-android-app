@@ -21,7 +21,9 @@ public class GetUser extends AppCompatActivity {
     protected String username = "";
     protected String password = "";
     protected int UserID = 0;
+    protected  String token = "";
     String jwtAuth = "http://zume.hsutx.edu/wp-json/jwt-auth/v1/token";
+    String jwtToken = "http://zume.hsutx.edu/wp-json/jwt-auth/v1/token/validate";
     String user_profile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     String user = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
     private boolean failed = true;
@@ -48,13 +50,33 @@ public class GetUser extends AppCompatActivity {
                     jwtAuth
                     , username
                     , password
+                    , true
             );
+            apiAuthenticationClient.setHttpMethod("POST");
             AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "user_profile", context);
             execute.execute();
         } catch (Exception ex) {
         }
     }
+    public GetUser(String token, Context context){
+        this.context = context;
+        try {
+            ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
+                    jwtToken
+                    ,  token
+            );
+            apiAuthenticationClient.setHttpMethod("POST");
+            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "check_token", context);
+            execute.execute();
+        } catch (Exception ex) {
+        }
+    }
     public boolean getFailed(){ return failed;}
+
+    public String getToken() {
+        return token;
+    }
+
     /**
      * This subclass handles the network operations in a new thread.
      * It starts the progress bar, makes the API call, and ends the progress bar.
@@ -90,7 +112,6 @@ public class GetUser extends AppCompatActivity {
 
             return isValidCredentials;
         }
-
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
@@ -99,7 +120,24 @@ public class GetUser extends AppCompatActivity {
             if (isValidCredentials != null && !isValidCredentials.equals("")) {
                 //Creating te credentials file and user_profile file
                 //Also makes a call for the second Api call
-                if(type.equals("user_profile")) {
+                if(isValidCredentials.substring(2,7).equals("token")){
+                    failed = false;
+                    String [] tokenArray = isValidCredentials.split(":");
+                    tokenArray = tokenArray[1].split(",");
+                    tokenArray[0] = tokenArray[0].substring(1,tokenArray[0].length()-1);
+                    Log.d("Test", tokenArray[0]);
+                    token = tokenArray[0];
+                    Log.d("Test", token);
+                    ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
+                            user_profile
+                            , token
+                    );
+                    apiAuthenticationClient2.setHttpMethod("GET");
+                    AsyncTask<Void, Void, String> execute2 = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient2, "user_profile", context);
+                    execute2.execute();
+
+                }
+                else if(type.equals("user_profile")) {
                     failed = false;
                     Log.d("What!", String.valueOf(failed));
                     FileOutputStream outputStream;
@@ -117,9 +155,9 @@ public class GetUser extends AppCompatActivity {
                     // Now make the call to rewrite the user file
                     ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
                             user
-                            , username
-                            , password
+                            , token
                     );
+                    apiAuthenticationClient2.setHttpMethod("GET");
                     AsyncTask<Void, Void, String> execute2 = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient2, "user", context);
                     execute2.execute();
 
@@ -141,7 +179,7 @@ public class GetUser extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    String fileContents = username + "\n" + password + "\n" + UserID+ "\n";
+                    String fileContents = username + "\n" + password + "\n" + UserID+ "\n"+ token+"\n";
                     FileOutputStream outputStream;
 
                     try {
@@ -166,6 +204,9 @@ public class GetUser extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }else if(type.equals("check_token")){
+
+                    Log.d("Test", isValidCredentials);
                 }
             }
         }
