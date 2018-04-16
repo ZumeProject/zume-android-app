@@ -25,6 +25,7 @@ public class GroupActivity extends AppCompatActivity {
     private String group_id = "";
     private String username = "";
     private String password = "";
+    private String groupName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class GroupActivity extends AppCompatActivity {
         group_id = intent.getStringExtra("groupID");
         username = intent.getStringExtra("username");
         password = intent.getStringExtra("password");
+        groupName= intent.getStringExtra("groupName");
         startSession.setText("Start Session "+next_session);
         startSession.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +59,7 @@ public class GroupActivity extends AppCompatActivity {
                 bundle.putString("group_id", group_id);
                 bundle.putString("username", username);
                 bundle.putString("password", password);
+                bundle.putString("groupName", groupName);
                 bundle.putBoolean("Has_a_Group", true);
                 Intent intent = new Intent(GroupActivity.this, Session.class);
                 intent.putExtras(bundle);

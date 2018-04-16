@@ -63,8 +63,10 @@ public class SessionList extends Activity {
         linear = (LinearLayout) findViewById(R.id.linear);
         for (int i = 0; i < btn.length; i++) {
             btn[i] = new Button(this);
-            btn[i].setHeight(50);
-            btn[i].setWidth(50);
+            //btn[i].setHeight(50);
+            LinearLayout.LayoutParams buttonparam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 50,1.0f);
+            btn[i].setLayoutParams(buttonparam);
+            //btn[i].setWidth(match_parent);
             btn[i].setTag(i);
             String name = "Start Session "+(i+1);
             btn[i].setText(name);
