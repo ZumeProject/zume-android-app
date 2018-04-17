@@ -91,11 +91,32 @@ public class DashboardActivity extends AppCompatActivity {
                     Intent intent = getIntent();
                     String username = intent.getStringExtra("username");
                     String password = intent.getStringExtra("password");
-                    Log.d("Username", username);
+
+                    String token = intent.getStringExtra("token");
+                    FileInputStream fis = null;
+                    try {
+                        fis = openFileInput("credentials.txt");
+                        Log.d("Test", "Opened the file");
+                        InputStreamReader isr = new InputStreamReader(fis);
+                        BufferedReader bufferedReader = new BufferedReader(isr);
+                        try {
+                            bufferedReader.readLine();
+                            bufferedReader.readLine();
+                            user_id = Integer.parseInt(bufferedReader.readLine());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Log.d("Test", "Failed");
+                    }
+                    //Log.d("Username", username);
 
                     Bundle bundle = new Bundle();
                     bundle.putString("username", username);
                     bundle.putString("password", password);
+                    bundle.putString("token", token);
                     bundle.putInt("user_id", user_id);
 
                     intent = new Intent(DashboardActivity.this, ProfileActivity.class);

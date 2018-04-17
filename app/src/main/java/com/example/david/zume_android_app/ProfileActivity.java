@@ -57,10 +57,15 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 String username = intent.getStringExtra("username");
                 String password = intent.getStringExtra("password");
+                Integer user_id = intent.getIntExtra("user_id", 0);
+                String token = intent.getStringExtra("token");
+
 
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
                 bundle.putString("password", password);
+                bundle.putInt("user_id", user_id);
+                bundle.putString("token", token);
 
                 intent = new Intent(ProfileActivity.this, DashboardActivity.class);
                 intent.putExtras(bundle);
@@ -78,12 +83,16 @@ public class ProfileActivity extends AppCompatActivity {
                     Intent intent = getIntent();
                     String username = intent.getStringExtra("username");
                     String password = intent.getStringExtra("password");
-                    Integer user_id = intent.getIntExtra("user_id", 0);
 
+                    Integer userID = intent.getIntExtra("user_id", 0);
+                    String token = intent.getStringExtra("token");
+					
                     Bundle bundle = new Bundle();
                     bundle.putString("username", username);
                     bundle.putString("password", password);
-                    bundle.putInt("user_id", user_id);
+
+                    bundle.putInt("user_id", userID);
+                    bundle.putString("token", token);
 
                     intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
                     intent.putExtras(bundle);
