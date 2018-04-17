@@ -2,6 +2,8 @@ package com.example.david.zume_android_app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -149,7 +151,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         }
 
                         // If the data is valid, then update the user's information
-                        if(validData){
+                        if(validData && isNetworkAvailable()){
                             updateUser(userID, username, password, first_name, last_name, email_address, phone_number);
                         }
                     }
@@ -323,7 +325,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
             // Update the user_profile, credentials, and user text files after updating data
             // in database
-            GetUser getUser = new GetUser(username, password, context);
+            if(isNetworkAvailable()) {
+                GetUser getUser = new GetUser(username, password, context);
+            }
 
             // Wait a couple of seconds for the user_profile and user text files to update before
             // returning to the ProfileActivity
@@ -348,6 +352,18 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             }, 200);
         }
+    }
+
+    /**
+     * Check to see if we can connect to the network.
+     * @return true if we can, false otherwise
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+    //    Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
+     //   Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
 }
