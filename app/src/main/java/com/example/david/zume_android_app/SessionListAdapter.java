@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.TimeZone;
 
+
+
 /**
  * Created by Brandi on 3/22/2018.
  */
@@ -120,6 +122,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                         Intent intent = getIntent();
                         Boolean recordCompletion = intent.getBooleanExtra("Has_a_Group", false);
                         if(recordCompletion) {
+                            String token = intent.getStringExtra("token");
                             String next_session = "0";
                             String username = intent.getStringExtra("username");
                             Log.d("Username", "SessionListAdapter " + username);
@@ -149,8 +152,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             args.put(session_complete, session_complete_date);
                             args.put(next_session_key, next_session);
 
-
-                            SessionPostHandler handler = new SessionPostHandler(context, username, password, groupID, args, internet);
+                            SessionPostHandler handler = new SessionPostHandler(context, username, password, groupID, token, args, internet);
 
 
                             Bundle bundle = new Bundle();

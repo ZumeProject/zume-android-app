@@ -81,10 +81,12 @@ public class SessionList extends Activity {
                 Intent intent = getIntent();
                 String username = intent.getStringExtra("username");
                 String password = intent.getStringExtra("password");
+                int user_id = intent.getIntExtra("user_id", 0);
 
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
                 bundle.putString("password", password);
+                bundle.putInt("user_id", user_id);
 
                 intent = new Intent(SessionList.this, DashboardActivity.class);
                 intent.putExtras(bundle);

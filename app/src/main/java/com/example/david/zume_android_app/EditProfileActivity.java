@@ -36,6 +36,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private String resultFromUser = ""; // JSON from user.txt or user endpoint
     private String username = ""; // Username
     private String password = ""; // Password
+    private String token = "";
     String prevFirstName = ""; // The user's first name before attempting to update
     String prevLastName = ""; // The user's last name before attempting to update
     String prevEmail = ""; // The user's email before attempting to update
@@ -266,11 +267,29 @@ public class EditProfileActivity extends AppCompatActivity {
     public void updateUser(int user_id, String username, String password, String first_name, String last_name, String email, String phone_number) {
         try {
             Log.d("Test", "Making API call");
+            FileInputStream fis = null;
+            try {
+                fis = openFileInput("credentials.txt");
+                Log.d("Test", "Opened the file");
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader bufferedReader = new BufferedReader(isr);
+                try {
+                    bufferedReader.readLine();
+                    bufferedReader.readLine();
+                    bufferedReader.readLine();
+                    token = bufferedReader.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Log.d("Test", "Failed");
+            }
             ApiAuthenticationClient apiAuthenticationClient =
                     new ApiAuthenticationClient(
                             baseURL
-                            , username
-                            , password
+                            , token
                     );
             // Set Http Method type to POST
             apiAuthenticationClient.setHttpMethod("POST");
@@ -326,7 +345,7 @@ public class EditProfileActivity extends AppCompatActivity {
             // Update the user_profile, credentials, and user text files after updating data
             // in database
             if(isNetworkAvailable()) {
-                GetUser getUser = new GetUser(username, password, context);
+                GetUser getUser = new GetUser(token, context);
             }
 
             // Wait a couple of seconds for the user_profile and user text files to update before
