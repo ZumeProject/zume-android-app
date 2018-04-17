@@ -359,11 +359,13 @@ public class EditProfileActivity extends AppCompatActivity {
                     String username = intent.getStringExtra("username");
                     String password = intent.getStringExtra("password");
                     int userID = intent.getIntExtra("user_id", 0);
+                    String token = intent.getStringExtra("token");
                     // Save parameters to bundle
                     Bundle bundle = new Bundle();
                     bundle.putString("username", username);
                     bundle.putString("password", password);
                     bundle.putInt("user_id", userID);
+                    bundle.putString("token", token);
                     // Return to ProfileActivity
                     intent = new Intent(EditProfileActivity.this, ProfileActivity.class);
                     intent.putExtras(bundle);

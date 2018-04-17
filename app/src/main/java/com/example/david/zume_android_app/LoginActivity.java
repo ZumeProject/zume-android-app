@@ -127,9 +127,9 @@ public class LoginActivity extends AppCompatActivity {
                         else{
                             //get token from file.
                             token = oldToken;
-                            //goToDashboardActivity();
+                            goToDashboardActivity();
                         }
-                        goToDashboardActivity();
+                        //goToDashboardActivity();
                     } else {
                         if(isNetworkAvailable()) {
                             makeApiCall(getApplicationContext());

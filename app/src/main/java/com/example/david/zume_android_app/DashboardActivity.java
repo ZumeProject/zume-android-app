@@ -91,7 +91,7 @@ public class DashboardActivity extends AppCompatActivity {
                     Intent intent = getIntent();
                     String username = intent.getStringExtra("username");
                     String password = intent.getStringExtra("password");
-
+                    String token = intent.getStringExtra("token");
                     FileInputStream fis = null;
                     try {
                         fis = openFileInput("credentials.txt");
@@ -116,6 +116,7 @@ public class DashboardActivity extends AppCompatActivity {
                     Bundle bundle = new Bundle();
                     bundle.putString("username", username);
                     bundle.putString("password", password);
+                    bundle.putString("token", token);
                     bundle.putInt("user_id", user_id);
 
                     intent = new Intent(DashboardActivity.this, ProfileActivity.class);
