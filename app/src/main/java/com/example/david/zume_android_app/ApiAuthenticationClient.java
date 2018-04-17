@@ -4,18 +4,27 @@ package com.example.david.zume_android_app;
  * Created by David on 2/15/2018.
  */
 
+import android.app.DownloadManager;
+import android.media.session.MediaSession;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
+
+import com.google.android.gms.appdatasearch.GetRecentContextCall;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -31,6 +40,8 @@ public class ApiAuthenticationClient {
     private String baseUrl;
     private String username;
     private String password;
+    private String token;
+    private Boolean getToken = false;
     private String urlResource;
     private String httpMethod; // GET, POST, PUT, DELETE
     private String urlPath;
@@ -59,6 +70,37 @@ public class ApiAuthenticationClient {
         // This is important. The application may break without this line.
         System.setProperty("jsse.enableSNIExtension", "false");
     }
+    public ApiAuthenticationClient(String  baseUrl, String username, String password, Boolean getToken) {
+        //setBaseUrl(baseUrl);
+        this.baseUrl = baseUrl;
+        this.getToken = getToken;
+        this.username = username;
+        this.password = password;
+        this.urlResource = "";
+        this.urlPath = "";
+        this.httpMethod = "POST";
+        parameters = new LinkedHashMap<>();
+        lastResponse = "";
+        payload = "";
+        headerFields = new HashMap<>();
+        // This is important. The application may break without this line.
+        System.setProperty("jsse.enableSNIExtension", "false");
+    }
+    public ApiAuthenticationClient(String  baseUrl, String token) {
+        setBaseUrl(baseUrl);
+        this.urlResource = "";
+        this.token = token;
+        this.username = "";
+        this.password = "";
+        this.urlPath = "";
+        this.httpMethod = "POST";
+        parameters = new LinkedHashMap<>();
+        lastResponse = "";
+        payload = "";
+        headerFields = new HashMap<>();
+        // This is important. The application may break without this line.
+        System.setProperty("jsse.enableSNIExtension", "false");
+    }
 
     /**
      * --&gt;http://BASE_URL.COM&lt;--/resource/path
@@ -67,7 +109,10 @@ public class ApiAuthenticationClient {
      */
     public ApiAuthenticationClient setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
-        if (!baseUrl.substring(baseUrl.length() - 1).equals("/")) {
+        if(baseUrl.equals("http://zume.hsutx.edu/wp-json/jwt-auth/v1/token/validate")){
+            return this;
+        }
+        else if (!baseUrl.substring(baseUrl.length() - 1).equals("/")) {
             this.baseUrl += "/";
         }
         return this;
@@ -229,13 +274,17 @@ public class ApiAuthenticationClient {
      * Make the call to the Rest API and return its response as a string.
      * @return String
      */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public String execute() {
         String line;
         StringBuilder outputStringBuilder = new StringBuilder();
 
         try {
             StringBuilder urlString = new StringBuilder(baseUrl + urlResource);
+            String urlParameters  = "username="+username+"&password="+password;
+            //httpMethod = "POST";
 
+            //payload = urlParameters;
             if (!urlPath.equals("") && httpMethod.equals("GET")) {
                 urlString.append("/" + urlPath);
                 if(new Character(urlString.charAt(urlString.length()-1)).equals("/")){
@@ -255,48 +304,102 @@ public class ApiAuthenticationClient {
 
             URL url = new URL(urlString.toString());
 
-            String encoding = Base64Encoder.encode(username + ":" + password);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             Log.d("Request_Method", httpMethod);
             connection.setRequestMethod(httpMethod);
-            connection.setRequestProperty("Authorization", "Basic " + encoding);
-            connection.setRequestProperty("Accept", "application/json");
-            connection.setRequestProperty("Content-Type", "text/plain");
+            if(getToken){
 
-            // Make the network connection and retrieve the output from the server.
-            if (httpMethod.equals("POST") || httpMethod.equals("PUT")) {
+                byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
+                int    postDataLength = postData.length;
 
-                payload = getPayloadAsString();
+                connection.setDoOutput( true );
+                connection.setDoInput( true );
+                connection.setInstanceFollowRedirects( false );
+                connection.setRequestMethod( "POST" );
 
-                connection.setDoInput(true);
-                connection.setDoOutput(true);
-                Log.d("URL", connection.getURL().toString());
-                try {
-                    OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-                    writer.write(payload);
-                    Log.d("Payload", payload);
+                connection.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");
+                //connection.setRequestProperty( "charset", "utf-8");
+                //connection.setRequestProperty( "Content-Length", Integer.toString( postDataLength ));
+                connection.setRequestProperty("Cache-Control", "no-cache");
+                //String test2 = (String) connection.getContent();
 
-                    headerFields = connection.getHeaderFields();
-                    Log.d("HeaderFields", headerFields.toString());
-
-                    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    while ((line = br.readLine()) != null) {
-                        outputStringBuilder.append(line);
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                //connection.setUseCaches( false );
+                //OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+                ////writer.write(String.valueOf(postData));
+                //writer.write(urlParameters);
+                //writer.close();
+                try( DataOutputStream wr = new DataOutputStream( connection.getOutputStream())) {
+                    wr.write( postData );
+                    wr.close();
                 }
-                connection.disconnect();
+                
+                int responseCode = connection.getResponseCode();
+                //System.out.println("\nSending 'POST' request to URL : " + url);
+                //System.out.println("Post parameters : " + urlParameters);
+                //System.out.println("Response Code : " + responseCode);
+                headerFields= connection.getHeaderFields();
+//                BufferedReader in = new BufferedReader(
+//                        new InputStreamReader(connection.getInputStream()));
+//                String inputLine;
+//                StringBuffer response = new StringBuffer();
+//
+//                while ((inputLine = in.readLine()) != null) {
+//                    response.append(inputLine);
+//                }
+//                in.close();
+                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = br.readLine()) != null) {
+                    outputStringBuilder.append(line);
+                }
+
+                //print result
+                //System.out.println(response.toString());
             }
             else {
-                InputStream content = (InputStream) connection.getInputStream();
-                headerFields = connection.getHeaderFields();
+                connection.setRequestProperty("Authorization", "Bearer" + token);
+                //String encoding = Base64Encoder.encode(username + ":" + password);
+                //connection.setRequestProperty("username",username);
+                //connection.setRequestProperty("password",password);
+                //connection.setRequestProperty("Authorization", "Basic " + encoding);
+                connection.setRequestProperty("Accept", "application/json");
+                connection.setRequestProperty("Content-Type", "text/plain");
+                //byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
+                //int    postDataLength = postData.length;
 
-                //connection.
-                BufferedReader in = new BufferedReader(new InputStreamReader(content));
+                // Make the network connection and retrieve the output from the server.
+                if (httpMethod.equals("POST") || httpMethod.equals("PUT")) {
 
-                while ((line = in.readLine()) != null) {
-                    outputStringBuilder.append(line);
+                    payload = getPayloadAsString();
+
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
+                    Log.d("URL", connection.getURL().toString());
+                    try {
+                        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+                        writer.write(payload);
+                        Log.d("Payload", payload);
+
+                        headerFields = connection.getHeaderFields();
+                        Log.d("HeaderFields", headerFields.toString());
+
+                        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        while ((line = br.readLine()) != null) {
+                            outputStringBuilder.append(line);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    connection.disconnect();
+                } else {
+                    InputStream content = (InputStream) connection.getInputStream();
+                    headerFields = connection.getHeaderFields();
+
+                    //connection.
+                    BufferedReader in = new BufferedReader(new InputStreamReader(content));
+
+                    while ((line = in.readLine()) != null) {
+                        outputStringBuilder.append(line);
+                    }
                 }
             }
         } catch (Exception e) {

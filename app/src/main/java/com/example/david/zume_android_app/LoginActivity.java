@@ -41,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editText_login_password;
     private String username;
     private String password;
+    private String token;
     private Integer user_id;
     private String baseUrlUserProfile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     private GetUser auth;
@@ -97,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                 else {
                     InputStreamReader isr = new InputStreamReader(fis);
                     BufferedReader bufferedReader = new BufferedReader(isr);
-                    String user = null, pass = null;
+                    String user = null, pass = null, oldToken = null;
                     try {
                         user = bufferedReader.readLine();
                     } catch (IOException e) {
@@ -105,6 +106,8 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     try {
                         pass = bufferedReader.readLine();
+                        bufferedReader.readLine();
+                        oldToken = bufferedReader.readLine();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -114,7 +117,17 @@ public class LoginActivity extends AppCompatActivity {
                     if (user.equals(username) && pass.equals(password)) {
                         Log.d("Test", "Passing saved data");
                         if(isNetworkAvailable()){
+                            //get token from file.
+                            //get new info.
                             makeApiCall(getApplicationContext());
+                            // USe this to reuse token auth = new GetUser(oldToken,getApplicationContext() );
+                            //Go to get User to handle what happens.
+                            //check token
+                        }
+                        else{
+                            //get token from file.
+                            token = oldToken;
+                            //goToDashboardActivity();
                         }
                         goToDashboardActivity();
                     } else {
@@ -151,10 +164,12 @@ public class LoginActivity extends AppCompatActivity {
             AsyncTask<Void, String, String> download = new DownloadFileAsync().execute();
         }
 
+
         Bundle bundle = new Bundle();
         bundle.putString("username", username);
         bundle.putString("password", password);
         bundle.putString("baseUrl", baseUrlUserProfile);
+        bundle.putString("token", token);
 
         Intent intent = new Intent(this, DashboardActivity.class);
         intent.putExtras(bundle);
@@ -176,6 +191,7 @@ public class LoginActivity extends AppCompatActivity {
                 SessionPostHandler pendingPosts = new SessionPostHandler(cont, isNetworkAvailable());
                 Log.d("What!", String.valueOf(auth.getFailed()));
                 if(!auth.getFailed()){
+                    token = auth.getToken();
                     goToDashboardActivity();
                 }
                 else{
@@ -249,6 +265,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
             }
+
             return null;
 
         }
