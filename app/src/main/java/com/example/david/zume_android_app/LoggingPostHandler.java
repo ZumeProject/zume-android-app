@@ -1,8 +1,6 @@
 package com.example.david.zume_android_app;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -23,35 +21,37 @@ import java.util.LinkedHashMap;
  * Created by Brandi on 3/25/2018.
  */
 
-public class SessionPostHandler extends AppCompatActivity {
+public class LoggingPostHandler extends AppCompatActivity {
 
     private ArrayList<String> resultFromFile = new ArrayList<String>();
     private Context context = null;
     private boolean internet;
 
-    public SessionPostHandler(Context context, String username, String password, String group_id, LinkedHashMap<String, String> args, boolean internet){
+    public LoggingPostHandler(Context context, String username, String password, String createdDate, String page, String action, String meta, String group_id, boolean internet){
 
         this.internet = internet;
         if(this.internet){
-            Log.d("Internet", "true for sessionPostHandler");
+            Log.d("Internet", "true for loggingPostHandler");
         }
         else{
-            Log.d("Internet", "false for sessionPostHandler");
+            Log.d("Internet", "false for loggingPostHandler");
         }
         this.context = context;
         if(internet){
-            Log.d("Network", "Network available - updating group data");
-            UpdateGroup update = new UpdateGroup(username, password, group_id, args);
+            Log.d("Network", "Network available - updating group-logging data");
+            UpdateLogging update = new UpdateLogging(username, password, createdDate, page, action, meta, group_id);
         }
         else{
-            Log.d("Network", "Network unavailable - adding to pending posts");
+            Log.d("Network", "Network unavailable - adding to pending logging posts");
             try {
                 JSONObject object = new JSONObject();
                 object.put("username", username);
                 object.put("password", password);
+                object.put("createdDate", createdDate);
+                object.put("page", page);
+                object.put("action", action);
+                object.put("meta", meta);
                 object.put("group_id", group_id);
-                JSONObject arguments = new JSONObject(args);
-                object.put("args", arguments);
                 addToPendingPosts(object);
             }
             catch(JSONException e){
@@ -60,7 +60,38 @@ public class SessionPostHandler extends AppCompatActivity {
         }
     }
 
-    public SessionPostHandler(Context context, boolean internet){
+    public LoggingPostHandler(Context context, String username, String password, String createdDate, String page, String action,  boolean internet){
+
+        this.internet = internet;
+        if(this.internet){
+            Log.d("Internet", "true for loggingPostHandler");
+        }
+        else{
+            Log.d("Internet", "false for loggingPostHandler");
+        }
+        this.context = context;
+        if(internet){
+            Log.d("Network", "Network available - updating group-logging data");
+            UpdateLogging update = new UpdateLogging(username, password, createdDate, page, action);
+        }
+        else{
+            Log.d("Network", "Network unavailable - adding to pending logging posts");
+            try {
+                JSONObject object = new JSONObject();
+                object.put("username", username);
+                object.put("password", password);
+                object.put("createdDate", createdDate);
+                object.put("page", page);
+                object.put("action", action);
+                addToPendingPosts(object);
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public LoggingPostHandler(Context context, boolean internet){
         this.context = context;
         this.internet = internet;
         if(internet){
@@ -69,18 +100,26 @@ public class SessionPostHandler extends AppCompatActivity {
                     JSONObject object = new JSONObject(row);
                     String username = object.get("username").toString();
                     String password = object.get("password").toString();
+                    String date = object.get("createdDate").toString();
+                    String page = object.get("page").toString();
+                    String action = object.get("action").toString();
+                    String meta = object.get("meta").toString();
                     String group_id = object.get("group_id").toString();
-                    JSONObject args = new JSONObject(object.get("args").toString());
-                    Iterator<String> keys = args.keys();
-                    LinkedHashMap<String, String> map = new LinkedHashMap<>();
-                    while(keys.hasNext()){
-                        String key = keys.next();
-                        map.put(key, args.get(key).toString());
-                    }
-                    UpdateGroup update = new UpdateGroup(username, password, group_id, map);
+                    UpdateLogging update = new UpdateLogging(username, password, date, page, action, meta, group_id);
                 }
                 catch(JSONException e){
-                    e.printStackTrace();
+                    try{
+                        JSONObject object = new JSONObject(row);
+                        String username = object.get("username").toString();
+                        String password = object.get("password").toString();
+                        String date = object.get("createdDate").toString();
+                        String page = object.get("page").toString();
+                        String action = object.get("action").toString();
+                        UpdateLogging update = new UpdateLogging(username, password, date, page, action);
+                    }
+                    catch(JSONException ex){
+                        ex.printStackTrace();
+                    }
                 }
             }
         }
@@ -106,20 +145,19 @@ public class SessionPostHandler extends AppCompatActivity {
      */
     private boolean writeFile(){
         FileOutputStream outputStream;
-        String filename = "pending_posts.txt";
-        Log.d("Test", "Made first call");
+        String filename = "logging_posts.txt";
         try {
             outputStream = context.openFileOutput(filename, context.MODE_PRIVATE);
 
             for(String row: resultFromFile){
-                Log.d("Pending_Posts", row);
+                Log.d("logging_Posts", row);
                 byte[] bytes = new String(row+"\n").getBytes();
                 outputStream.write(bytes);
             }
 
             //outputStream.write(new String("").getBytes());
             outputStream.close();
-            Log.d("Test", "Made the pending_posts file");
+            Log.d("LoggingHandler", "Made the logging_posts file");
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -133,7 +171,7 @@ public class SessionPostHandler extends AppCompatActivity {
     private void readFile(){
         FileInputStream fis= null;
         try {
-            fis = context.openFileInput("pending_posts.txt");
+            fis = context.openFileInput("logging_posts.txt");
             Log.d("Test", "Opened the file");
 
         } catch (FileNotFoundException e) {

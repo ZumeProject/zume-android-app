@@ -332,6 +332,9 @@ public class ApiAuthenticationClient {
                     wr.write( postData );
                     wr.close();
                 }
+                catch(Exception exc){
+                    exc.printStackTrace();
+                }
                 
                 int responseCode = connection.getResponseCode();
                 //System.out.println("\nSending 'POST' request to URL : " + url);
