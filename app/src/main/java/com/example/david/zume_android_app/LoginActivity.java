@@ -4,14 +4,19 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -65,6 +70,17 @@ public class LoginActivity extends AppCompatActivity {
                 goToDashboardActivity();
             }
         });
+
+        Button register = (Button) findViewById(R.id.button_login_register);
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("http://zume.hsutx.edu/wp-login.php?action=register"); // missing 'http://' will cause crashed
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+
         editText_login_username = (EditText) findViewById(R.id.editText_login_username);
         editText_login_password = (EditText) findViewById(R.id.editText_login_password);
         button_login_login = (Button) findViewById(R.id.button_login_login);
@@ -127,9 +143,8 @@ public class LoginActivity extends AppCompatActivity {
                         else{
                             //get token from file.
                             token = oldToken;
-                            //goToDashboardActivity();
+                            goToDashboardActivity();
                         }
-                        goToDashboardActivity();
                     } else {
                         if(isNetworkAvailable()) {
                             makeApiCall(getApplicationContext());
@@ -199,7 +214,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d("Testing" , String.valueOf(auth.getFailed()));
                 }
             }
-        }, 500);
+        }, 800);
 
     }
 
