@@ -80,7 +80,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
             else if(list.get(position).isPdf()){
                 view = inflater.inflate(R.layout.session_list_text_layout, null);
                 TextView listItemText = (TextView)view.findViewById(R.id.session_item_text);
-                listItemText.setText(list.get(position).getPdfTitle()+" "+list.get(position).getPdfUrl());
+                listItemText.setText(list.get(position).getPdfTitle());
                 listItemText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v){
@@ -95,7 +95,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                         }
                         catch(ActivityNotFoundException e){
                             e.printStackTrace();
-                            Toast.makeText(context,"No Application available to viewPDF",
+                            Toast.makeText(context,"No Application available to view PDF.",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }

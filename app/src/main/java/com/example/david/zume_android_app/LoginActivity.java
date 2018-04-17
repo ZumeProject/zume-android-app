@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,7 +30,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class LoginActivity extends AppCompatActivity {
     private Button button_login_login;
@@ -84,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 //Creates new files with the user information if the credentials are correct.
-                if (failed) {
+                if (failed && isNetworkAvailable()) {
                     makeApiCall(getApplicationContext());
                 }
                 //Checks to see if it is the same user loging in.
@@ -111,8 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                     //Checking if its the same user loging in.
                     if (user.equals(username) && pass.equals(password)) {
                         Log.d("Test", "Passing saved data");
-                        Boolean connected =true;
-                        if(connected){
+                        if(isNetworkAvailable()){
                             //get token from file.
                             //get new info.
                             makeApiCall(getApplicationContext());
@@ -123,11 +127,13 @@ public class LoginActivity extends AppCompatActivity {
                         else{
                             //get token from file.
                             token = oldToken;
-                            goToDashboardActivity();
+                            //goToDashboardActivity();
                         }
-                        //goToDashboardActivity();
+                        goToDashboardActivity();
                     } else {
-                        makeApiCall(getApplicationContext());
+                        if(isNetworkAvailable()) {
+                            makeApiCall(getApplicationContext());
+                        }
                     }
 
                 }
@@ -154,7 +160,9 @@ public class LoginActivity extends AppCompatActivity {
      * Open the Dashboard window.
      */
     private void goToDashboardActivity() {
-        AsyncTask<Void, String, String> download = new DownloadFileAsync().execute();
+        if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
+            AsyncTask<Void, String, String> download = new DownloadFileAsync().execute();
+        }
 
 
         Bundle bundle = new Bundle();
@@ -167,15 +175,20 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtras(bundle);
         startActivity(intent);
     }
+
     /**
-     * Makes a call to get the info from the endpoint http://zume.hsutx.edu/wp-json/zume/v1/android/user/1"
+     * Makes a call to get info from the user and user_profile endpoints. Also updates session information if there are pending posts.
+     * @param context
      */
     private void makeApiCall(Context context) {
+        final Context cont = context;
         auth = new GetUser(username, password, context);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                Log.d("Login - Internet", String.valueOf(isNetworkAvailable()));
+                SessionPostHandler pendingPosts = new SessionPostHandler(cont, isNetworkAvailable());
                 Log.d("What!", String.valueOf(auth.getFailed()));
                 if(!auth.getFailed()){
                     token = auth.getToken();
@@ -201,39 +214,54 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
 
-            PdfDownloader downloader = new PdfDownloader(getApplicationContext());
-            ArrayList<String[]> urls = downloader.execute();
-            int count;
-            if(urls!=null) {
-                for(String[] thisUrl: urls) {
-                    try {
+            if(isNetworkAvailable()) {
+                try{
+                    File pdfExists = new File(getFilesDir(), "pdfs_downloaded.txt");
+                    OutputStream output = new FileOutputStream(pdfExists);
+                    DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date today = new Date();
+                    output.write(format.format(today).getBytes());
+                    output.close();
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 
-                        URL url = new URL(thisUrl[0]);
-                        URLConnection conexion = url.openConnection();
-                        conexion.connect();
 
-                        int lenghtOfFile = conexion.getContentLength();
-                        Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
+                PdfDownloader downloader = new PdfDownloader(getApplicationContext());
+                ArrayList<String[]> urls = downloader.execute();
+                int count;
+                if (urls != null) {
+                    for (String[] thisUrl : urls) {
+                        try {
 
-                        InputStream input = new BufferedInputStream(url.openStream());
-                        File file = new File(getFilesDir(), thisUrl[1].replace(" ", "_").replace("/", "_"));
-                        OutputStream output = new FileOutputStream(file);
+                            URL url = new URL(thisUrl[0]);
+                            URLConnection conexion = url.openConnection();
+                            conexion.connect();
 
-                        byte data[] = new byte[1024];
+                            int lenghtOfFile = conexion.getContentLength();
+                            //Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
 
-                        long total = 0;
+                            InputStream input = new BufferedInputStream(url.openStream());
+                            File file = new File(getFilesDir(), thisUrl[1].replace(" ", "_").replace("/", "_"));
+                            OutputStream output = new FileOutputStream(file);
 
-                        while ((count = input.read(data)) != -1) {
-                            total += count;
-                            publishProgress("" + (int) ((total * 100) / lenghtOfFile));
-                            output.write(data, 0, count);
+                            byte data[] = new byte[1024];
+
+                            long total = 0;
+
+                            while ((count = input.read(data)) != -1) {
+                                total += count;
+                                publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+                                output.write(data, 0, count);
+                            }
+
+                            output.flush();
+                            output.close();
+                            input.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-
-                        output.flush();
-                        output.close();
-                        input.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
             }
@@ -242,7 +270,7 @@ public class LoginActivity extends AppCompatActivity {
 
         }
         protected void onProgressUpdate(String... progress) {
-            Log.d("ANDRO_ASYNC",progress[0]);
+            //Log.d("ANDRO_ASYNC",progress[0]);
             mProgressDialog.setProgress(Integer.parseInt(progress[0]));
         }
 
@@ -250,5 +278,17 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(String unused) {
             dismissDialog(DIALOG_DOWNLOAD_PROGRESS);
         }
+    }
+
+    /**
+     * Check to see if we can connect to the network.
+     * @return true if we can, false otherwise
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        //Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
+        //Log.d("Internet", "connectedOrConnecting: "+String.valueOf(activeNetworkInfo.isConnectedOrConnecting()));
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 }
