@@ -10,7 +10,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import com.google.android.gms.appdatasearch.GetRecentContextCall;
+//import com.google.android.gms.appdatasearch.GetRecentContextCall;
 
 import org.json.JSONArray;
 import org.json.JSONException;

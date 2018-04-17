@@ -276,7 +276,7 @@ public class EditProfileActivity extends AppCompatActivity {
             apiAuthenticationClient.setHttpMethod("POST");
             // Create a LinkedHashMap of parameters to send
             LinkedHashMap<String, String> parameters = new LinkedHashMap<String, String>();
-            parameters.put("user_id", "10");
+            parameters.put("user_id", String.valueOf(user_id));
             parameters.put("first_name", first_name);
             parameters.put("last_name", last_name);
             parameters.put("user_email", email);
