@@ -182,13 +182,13 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void makeApiCall(Context context) {
         final Context cont = context;
+        SessionPostHandler pendingPosts = new SessionPostHandler(cont, isNetworkAvailable());
         auth = new GetUser(username, password, context);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Log.d("Login - Internet", String.valueOf(isNetworkAvailable()));
-                SessionPostHandler pendingPosts = new SessionPostHandler(cont, isNetworkAvailable());
                 Log.d("What!", String.valueOf(auth.getFailed()));
                 if(!auth.getFailed()){
                     token = auth.getToken();

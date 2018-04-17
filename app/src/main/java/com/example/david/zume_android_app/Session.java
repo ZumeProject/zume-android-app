@@ -141,8 +141,11 @@ public class Session extends AppCompatActivity {
     }
 
     public void addToContentList(String url, String title){
-        SessionRow row = new SessionRow(url, title);
-        this.contentList.add(row);
+        File file = new File(getFilesDir(), title.replace(" ", "_").replace("/", "_"));
+        if(file.exists() && file.isFile()){
+            SessionRow row = new SessionRow(url, title);
+            this.contentList.add(row);
+        }
     }
 
     /**
