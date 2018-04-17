@@ -56,18 +56,29 @@ public class GetUser extends AppCompatActivity {
             AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "user_profile", context);
             execute.execute();
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
-    public GetUser(String token, Context context){
+    public GetUser(String token, Boolean indentifyier, Context context){
         this.context = context;
         try {
-            ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
-                    jwtToken
-                    ,  token
-            );
-            apiAuthenticationClient.setHttpMethod("POST");
-            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "check_token", context);
-            execute.execute();
+            if(indentifyier){
+                ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
+                        user_profile
+                        ,  token
+                );
+                apiAuthenticationClient.setHttpMethod("GET");
+                AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "user_profile", context);
+                execute.execute();
+            }else{
+                ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
+                        user
+                        ,  token
+                );
+                apiAuthenticationClient.setHttpMethod("GET");
+                AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "user", context);
+                execute.execute();
+            }
         } catch (Exception ex) {
         }
     }
@@ -128,13 +139,13 @@ public class GetUser extends AppCompatActivity {
                     Log.d("Test", tokenArray[0]);
                     token = tokenArray[0];
                     Log.d("Test", token);
-                    ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
-                            user_profile
-                            , token
-                    );
-                    apiAuthenticationClient2.setHttpMethod("GET");
-                    AsyncTask<Void, Void, String> execute2 = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient2, "user_profile", context);
-                    execute2.execute();
+//                    ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
+//                            user_profile
+//                            , token
+//                    );
+//                    apiAuthenticationClient2.setHttpMethod("GET");
+//                    AsyncTask<Void, Void, String> execute2 = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient2, "user_profile", context);
+//                    execute2.execute();
 
                 }
                 else if(type.equals("user_profile")) {
@@ -153,13 +164,13 @@ public class GetUser extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     // Now make the call to rewrite the user file
-                    ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
-                            user
-                            , token
-                    );
-                    apiAuthenticationClient2.setHttpMethod("GET");
-                    AsyncTask<Void, Void, String> execute2 = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient2, "user", context);
-                    execute2.execute();
+//                    ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
+//                            user
+//                            , token
+//                    );
+//                    apiAuthenticationClient2.setHttpMethod("GET");
+//                    AsyncTask<Void, Void, String> execute2 = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient2, "user", context);
+//                    execute2.execute();
 
                 }
                 else if(type.equals("user")){

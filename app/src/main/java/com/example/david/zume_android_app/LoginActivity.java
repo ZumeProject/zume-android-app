@@ -171,6 +171,7 @@ public class LoginActivity extends AppCompatActivity {
     * Makes a call to get the info from the endpoint http://zume.hsutx.edu/wp-json/zume/v1/android/user/1"
      */
     private void makeApiCall(Context context) {
+        final Context ctext = context;
         auth = new GetUser(username, password, context);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -179,14 +180,45 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("What!", String.valueOf(auth.getFailed()));
                 if(!auth.getFailed()){
                     token = auth.getToken();
-                    goToDashboardActivity();
+                    auth = new GetUser(token, true, ctext);
+                    final Handler handler2 = new Handler();
+                    handler2.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("What!", String.valueOf(auth.getFailed()));
+                            if(!auth.getFailed()){
+                                auth = new GetUser(token, false,  ctext);
+                                final Handler handler3 = new Handler();
+                                handler3.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d("What!", String.valueOf(auth.getFailed()));
+                                        if(!auth.getFailed()){
+                                            goToDashboardActivity();
+                                        }
+                                        else{
+                                            Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
+                                            Log.d("Testing" , String.valueOf(auth.getFailed()));
+                                        }
+                                    }
+                                }, 1000);
+
+                                //goToDashboardActivity();
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
+                                Log.d("Testing" , String.valueOf(auth.getFailed()));
+                            }
+                        }
+                    }, 1000);
+                    //goToDashboardActivity();
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
                     Log.d("Testing" , String.valueOf(auth.getFailed()));
                 }
             }
-        }, 500);
+        }, 1000);
 
     }
 
