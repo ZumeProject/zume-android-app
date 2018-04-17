@@ -26,7 +26,6 @@ public class GetUser extends AppCompatActivity {
     String jwtToken = "http://zume.hsutx.edu/wp-json/jwt-auth/v1/token/validate";
     String user_profile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     String user = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
-    String sessions = "http://zume.hsutx.edu/wp-json/zume/v1/android/lessons";
     private boolean failed = true;
 
     public GetUser(String username, String password, Context context){
@@ -205,34 +204,8 @@ public class GetUser extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
-                            sessions
-                            , token
-                    );
-                    apiAuthenticationClient2.setHttpMethod("GET");
-                    AsyncTask<Void, Void, String> execute2 = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient2, "sessions", context);
-                    execute2.execute();
-                }else if(type.equals("sessions")){
-                    failed = false;
-                    Log.d("What!", String.valueOf(failed));
-                    String sessions = "";
-                    String filename = "session_data.txt";
-                    try {
-                        JSONObject reader = new JSONObject(isValidCredentials);
-                         sessions = String.valueOf(reader);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    String fileContents = sessions;
-                    FileOutputStream outputStream;
+                }else if(type.equals("check_token")){
 
-                    try {
-                        outputStream = context.openFileOutput(filename, context.MODE_PRIVATE);
-                        outputStream.write(fileContents.getBytes());
-                        outputStream.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                     Log.d("Test", isValidCredentials);
                 }
             }

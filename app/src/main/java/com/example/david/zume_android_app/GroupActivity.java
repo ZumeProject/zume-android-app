@@ -23,7 +23,6 @@ public class GroupActivity extends AppCompatActivity {
     private String resultFromAPI = "";
     private String next_session = "0";
     private String group_id = "";
-    private String groupName = "";
     private String username = "";
     private String password = "";
     private String token = "";
@@ -48,7 +47,6 @@ public class GroupActivity extends AppCompatActivity {
         Intent intent = getIntent();
         next_session = intent.getStringExtra("next_session");
         group_id = intent.getStringExtra("groupID");
-        groupName = intent.getStringExtra("groupName");
         username = intent.getStringExtra("username");
         password = intent.getStringExtra("password");
         token = intent.getStringExtra("token");
@@ -59,10 +57,10 @@ public class GroupActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString("session_number", next_session);
                 bundle.putString("group_id", group_id);
-                bundle.putString("groupName", groupName);
                 bundle.putString("username", username);
                 bundle.putString("password", password);
                 bundle.putBoolean("Has_a_Group", true);
+
 //                FileInputStream fis = null;
 //
 //                try {
@@ -107,7 +105,6 @@ public class GroupActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString("session_number", next_session);
                 bundle.putString("group_id", group_id);
-                bundle.putString("groupName", groupName);
                 bundle.putString("username", username);
                 bundle.putString("password", password);
                 bundle.putString("token", token);

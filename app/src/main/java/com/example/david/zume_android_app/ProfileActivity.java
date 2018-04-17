@@ -60,6 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
                 Integer user_id = intent.getIntExtra("user_id", 0);
                 String token = intent.getStringExtra("token");
 
+
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
                 bundle.putString("password", password);
@@ -82,12 +83,14 @@ public class ProfileActivity extends AppCompatActivity {
                     Intent intent = getIntent();
                     String username = intent.getStringExtra("username");
                     String password = intent.getStringExtra("password");
+
                     Integer userID = intent.getIntExtra("user_id", 0);
                     String token = intent.getStringExtra("token");
-
+					
                     Bundle bundle = new Bundle();
                     bundle.putString("username", username);
                     bundle.putString("password", password);
+
                     bundle.putInt("user_id", userID);
                     bundle.putString("token", token);
 

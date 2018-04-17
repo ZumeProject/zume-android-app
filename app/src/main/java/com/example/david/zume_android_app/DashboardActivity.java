@@ -91,6 +91,7 @@ public class DashboardActivity extends AppCompatActivity {
                     Intent intent = getIntent();
                     String username = intent.getStringExtra("username");
                     String password = intent.getStringExtra("password");
+
                     String token = intent.getStringExtra("token");
                     FileInputStream fis = null;
                     try {
@@ -111,7 +112,6 @@ public class DashboardActivity extends AppCompatActivity {
                         Log.d("Test", "Failed");
                     }
                     //Log.d("Username", username);
-
 
                     Bundle bundle = new Bundle();
                     bundle.putString("username", username);

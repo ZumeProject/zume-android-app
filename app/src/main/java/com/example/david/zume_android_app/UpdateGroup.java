@@ -28,13 +28,14 @@ public class UpdateGroup {
      * @param group_id the id of the group
      * @param args a LinkedHashMap of group field names and values
      */
-    public UpdateGroup(String token, String group_id, LinkedHashMap<String, String> args) {
+    public UpdateGroup(String username, String password, String group_id, LinkedHashMap<String, String> args) {
         try {
             Log.d("Test", "Making API call");
             ApiAuthenticationClient apiAuthenticationClient =
                     new ApiAuthenticationClient(
                             baseURL
-                            , token
+                            , username
+                            , password
                     );
             // Set type to POST
             apiAuthenticationClient.setHttpMethod("POST");
