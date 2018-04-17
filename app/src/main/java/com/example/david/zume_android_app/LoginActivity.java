@@ -36,7 +36,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editText_login_password;
     private String username;
     private String password;
-    private String token;
     private Integer user_id;
     private String baseUrlUserProfile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     private GetUser auth;
@@ -93,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
                 else {
                     InputStreamReader isr = new InputStreamReader(fis);
                     BufferedReader bufferedReader = new BufferedReader(isr);
-                    String user = null, pass = null, oldToken = null;
+                    String user = null, pass = null;
                     try {
                         user = bufferedReader.readLine();
                     } catch (IOException e) {
@@ -101,8 +100,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     try {
                         pass = bufferedReader.readLine();
-                        bufferedReader.readLine();
-                        oldToken = bufferedReader.readLine();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -111,21 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                     //Checking if its the same user loging in.
                     if (user.equals(username) && pass.equals(password)) {
                         Log.d("Test", "Passing saved data");
-                        Boolean connected =true;
-                        if(connected){
-                            //get token from file.
-                            //get new info.
-                            makeApiCall(getApplicationContext());
-                            // USe this to reuse token auth = new GetUser(oldToken,getApplicationContext() );
-                            //Go to get User to handle what happens.
-                            //check token
-                        }
-                        else{
-                            //get token from file.
-                            token = oldToken;
-                            goToDashboardActivity();
-                        }
-                        //goToDashboardActivity();
+                        goToDashboardActivity();
                     } else {
                         makeApiCall(getApplicationContext());
                     }
@@ -156,12 +139,10 @@ public class LoginActivity extends AppCompatActivity {
     private void goToDashboardActivity() {
         AsyncTask<Void, String, String> download = new DownloadFileAsync().execute();
 
-
         Bundle bundle = new Bundle();
         bundle.putString("username", username);
         bundle.putString("password", password);
         bundle.putString("baseUrl", baseUrlUserProfile);
-        bundle.putString("token", token);
 
         Intent intent = new Intent(this, DashboardActivity.class);
         intent.putExtras(bundle);
@@ -179,6 +160,7 @@ public class LoginActivity extends AppCompatActivity {
             public void run() {
                 Log.d("What!", String.valueOf(auth.getFailed()));
                 if(!auth.getFailed()){
+<<<<<<< HEAD
                     token = auth.getToken();
                     auth = new GetUser(token, true, ctext);
                     final Handler handler2 = new Handler();
@@ -212,6 +194,9 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }, 1000);
                     //goToDashboardActivity();
+=======
+                    goToDashboardActivity();
+>>>>>>> parent of da5d14d... Working on implementing jwt tokens through out the app.
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();

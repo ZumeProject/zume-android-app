@@ -21,9 +21,7 @@ public class GetUser extends AppCompatActivity {
     protected String username = "";
     protected String password = "";
     protected int UserID = 0;
-    protected  String token = "";
     String jwtAuth = "http://zume.hsutx.edu/wp-json/jwt-auth/v1/token";
-    String jwtToken = "http://zume.hsutx.edu/wp-json/jwt-auth/v1/token/validate";
     String user_profile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     String user = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
     private boolean failed = true;
@@ -50,15 +48,14 @@ public class GetUser extends AppCompatActivity {
                     jwtAuth
                     , username
                     , password
-                    , true
             );
-            apiAuthenticationClient.setHttpMethod("POST");
             AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "user_profile", context);
             execute.execute();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
+<<<<<<< HEAD
     public GetUser(String token, Boolean indentifyier, Context context){
         this.context = context;
         try {
@@ -82,12 +79,9 @@ public class GetUser extends AppCompatActivity {
         } catch (Exception ex) {
         }
     }
+=======
+>>>>>>> parent of da5d14d... Working on implementing jwt tokens through out the app.
     public boolean getFailed(){ return failed;}
-
-    public String getToken() {
-        return token;
-    }
-
     /**
      * This subclass handles the network operations in a new thread.
      * It starts the progress bar, makes the API call, and ends the progress bar.
@@ -123,6 +117,7 @@ public class GetUser extends AppCompatActivity {
 
             return isValidCredentials;
         }
+
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
@@ -131,6 +126,7 @@ public class GetUser extends AppCompatActivity {
             if (isValidCredentials != null && !isValidCredentials.equals("")) {
                 //Creating te credentials file and user_profile file
                 //Also makes a call for the second Api call
+<<<<<<< HEAD
                 if(isValidCredentials.substring(2,7).equals("token")){
                     failed = false;
                     String [] tokenArray = isValidCredentials.split(":");
@@ -149,6 +145,9 @@ public class GetUser extends AppCompatActivity {
 
                 }
                 else if(type.equals("user_profile")) {
+=======
+                if(type.equals("user_profile")) {
+>>>>>>> parent of da5d14d... Working on implementing jwt tokens through out the app.
                     failed = false;
                     Log.d("What!", String.valueOf(failed));
                     FileOutputStream outputStream;
@@ -164,6 +163,7 @@ public class GetUser extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     // Now make the call to rewrite the user file
+<<<<<<< HEAD
 //                    ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
 //                            user
 //                            , token
@@ -171,6 +171,15 @@ public class GetUser extends AppCompatActivity {
 //                    apiAuthenticationClient2.setHttpMethod("GET");
 //                    AsyncTask<Void, Void, String> execute2 = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient2, "user", context);
 //                    execute2.execute();
+=======
+                    ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
+                            user
+                            , username
+                            , password
+                    );
+                    AsyncTask<Void, Void, String> execute2 = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient2, "user", context);
+                    execute2.execute();
+>>>>>>> parent of da5d14d... Working on implementing jwt tokens through out the app.
 
                 }
                 else if(type.equals("user")){
@@ -190,7 +199,7 @@ public class GetUser extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    String fileContents = username + "\n" + password + "\n" + UserID+ "\n"+ token+"\n";
+                    String fileContents = username + "\n" + password + "\n" + UserID+ "\n";
                     FileOutputStream outputStream;
 
                     try {
@@ -215,9 +224,6 @@ public class GetUser extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }else if(type.equals("check_token")){
-
-                    Log.d("Test", isValidCredentials);
                 }
             }
         }
