@@ -1,6 +1,9 @@
 package com.example.david.zume_android_app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +27,8 @@ import java.io.InputStreamReader;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private String resultFromAPI = "";
+    private String resultFromUserProfile = "";
+    private String resultFromUser = "";
     private String baseUrl = "";
     private String username = "";
     private String password = "";
@@ -52,10 +57,12 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 String username = intent.getStringExtra("username");
                 String password = intent.getStringExtra("password");
+                Integer user_id = intent.getIntExtra("user_id", 0);
 
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
                 bundle.putString("password", password);
+                bundle.putInt("user_id", user_id);
 
                 intent = new Intent(ProfileActivity.this, DashboardActivity.class);
                 intent.putExtras(bundle);
@@ -64,121 +71,81 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         Button editProfile = (Button)findViewById(R.id.editProfile);
+        if(isNetworkAvailable()){
 
-        editProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            editProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                Intent intent = getIntent();
-                String username = intent.getStringExtra("username");
-                String password = intent.getStringExtra("password");
-                Integer user_id = intent.getIntExtra("user_id", 0);
+                    Intent intent = getIntent();
+                    String username = intent.getStringExtra("username");
+                    String password = intent.getStringExtra("password");
+                    Integer userID = intent.getIntExtra("user_id", 0);
 
-                Bundle bundle = new Bundle();
-                bundle.putString("username", username);
-                bundle.putString("password", password);
-                bundle.putInt("user_id", user_id);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("username", username);
+                    bundle.putString("password", password);
+                    bundle.putInt("user_id", userID);
 
-                intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
+                    intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            });
+        }
+        else{
+            editProfile.setVisibility(View.GONE);
+        }
 
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
         password = intent.getStringExtra("password");
 
-        FileInputStream fis= null;
+        FileInputStream fis = null;
         try {
             fis = openFileInput("user_profile.txt");
             Log.d("Test", "Opened the file");
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            // Couldn't find user_profile info, so get that from the API
+            GetUser user = new GetUser(username, password, this);
+            this.onCreate(savedInstanceState);
         }
         InputStreamReader isr = new InputStreamReader(fis);
         BufferedReader bufferedReader = new BufferedReader(isr);
 
         try {
-            resultFromAPI = bufferedReader.readLine();
+            resultFromUserProfile = bufferedReader.readLine();
+            Log.d("UserProfile", resultFromUserProfile);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d("Test", "Passing saved data");
-        setProfileScreen();
-/*
-        baseUrl = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
+
         try {
+            fis = openFileInput("user.txt");
+            Log.d("Test", "Opened the file");
 
-            ApiAuthenticationClient apiAuthenticationClient =
-                    new ApiAuthenticationClient(
-                            baseUrl
-                            , username
-                            , password
-                    );
-
-            AsyncTask<Void, Void, String> execute = new ProfileActivity.ExecuteNetworkOperation(apiAuthenticationClient);
-            execute.execute();
-        } catch (Exception ex){
-            Log.d("Test","Error getting profile data.");
-        }
-        */
-
-    }
-
-    /**
-     * This subclass handles the network operations in a new thread.
-     * It starts the progress bar, makes the API call, and ends the progress bar.
-     */
-
-    public class ExecuteNetworkOperation extends AsyncTask<Void, Void, String> {
-
-        private ApiAuthenticationClient apiAuthenticationClient;
-
-        /**
-         * Overload the constructor to pass objects to this class.
-         */
-        public ExecuteNetworkOperation(ApiAuthenticationClient apiAuthenticationClient) {
-            this.apiAuthenticationClient = apiAuthenticationClient;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            // Display the progress bar.
-            //findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                Log.d("Test", "Made to the execute method");
-                resultFromAPI = apiAuthenticationClient.execute();
-            } catch (Exception e) {
-                Log.d("Test", "Error making it to execute method");
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            // Hide the progress bar.
-            //findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-
-            // Credentials correct
-            if (resultFromAPI != null && !resultFromAPI.equals("")) {
-                setProfileScreen();
-            }
-            // Login Failure
-            else {
-                Toast.makeText(getApplicationContext(), "Error opening profile: Invalid Credentials", Toast.LENGTH_LONG).show();
+        } catch (FileNotFoundException e) {
+            // Couldn't find the user information, so get that information from the API
+            if(isNetworkAvailable()) {
+                GetUser user = new GetUser(username, password, this);
+                this.onCreate(savedInstanceState);
             }
         }
+        isr = new InputStreamReader(fis);
+        bufferedReader = new BufferedReader(isr);
+
+        try {
+            resultFromUser = bufferedReader.readLine();
+            Log.d("User", resultFromUser);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("Test", "Passing saved data");
+        // Set up the display
+        setProfileScreen();
+
     }
 
     /**
@@ -186,24 +153,36 @@ public class ProfileActivity extends AppCompatActivity {
      */
     private void setProfileScreen() {
         try{
-            JSONObject reader = new JSONObject(resultFromAPI);
+            JSONObject reader = new JSONObject(resultFromUserProfile);
             JSONArray first = reader.getJSONArray("first_name");
             JSONArray last = reader.getJSONArray("last_name");
             JSONArray nickname = reader.getJSONArray("nickname");
-            JSONArray lastActive = reader.getJSONArray("zume_last_active");
+            JSONArray phone = reader.getJSONArray("zume_phone_number");
 
-            TextView name = (TextView)findViewById(R.id.name);
-            if(!first.get(0).equals("") || !last.get(0).equals("")){
-                name.setText(first.get(0) + " " + last.get(0));
+            TextView firstName = (TextView)findViewById(R.id.firstNameProfile);
+            if(!first.get(0).equals("")){
+                firstName.setText(first.get(0).toString());
             }
             else{
-                name.setText(nickname.get(0).toString());
+                firstName.setText(nickname.get(0).toString());
             }
 
-            TextView activity = (TextView)findViewById(R.id.lastActivity);
-            if(!lastActive.get(0).equals("")){
-                activity.setText("Last Active: " + lastActive.get(0));
+            TextView lastName = (TextView)findViewById(R.id.lastNameProfile);
+            if(!last.get(0).equals("")){
+                lastName.setText(last.get(0).toString());
             }
+            else{
+                lastName.setText(nickname.get(0).toString());
+            }
+
+            TextView phoneNumber = (TextView)findViewById(R.id.phoneProfile);
+            phoneNumber.setText((phone.get(0).toString()));
+
+            // Get email from user
+            reader = new JSONObject(resultFromUser);
+            String email = reader.getString("user_email");
+            TextView emailText = (TextView)findViewById(R.id.emailProfile);
+            emailText.setText(email);
 
 
         }
@@ -212,6 +191,18 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         TextView home = (TextView)findViewById(R.id.home);
+    }
+
+    /**
+     * Check to see if we can connect to the network.
+     * @return true if we can, false otherwise
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+    //    Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
+    //    Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
 }

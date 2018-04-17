@@ -2,6 +2,8 @@ package com.example.david.zume_android_app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,6 +36,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private String resultFromUser = ""; // JSON from user.txt or user endpoint
     private String username = ""; // Username
     private String password = ""; // Password
+    private String token = "";
     String prevFirstName = ""; // The user's first name before attempting to update
     String prevLastName = ""; // The user's last name before attempting to update
     String prevEmail = ""; // The user's email before attempting to update
@@ -149,7 +152,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         }
 
                         // If the data is valid, then update the user's information
-                        if(validData){
+                        if(validData && isNetworkAvailable()){
                             updateUser(userID, username, password, first_name, last_name, email_address, phone_number);
                         }
                     }
@@ -264,11 +267,29 @@ public class EditProfileActivity extends AppCompatActivity {
     public void updateUser(int user_id, String username, String password, String first_name, String last_name, String email, String phone_number) {
         try {
             Log.d("Test", "Making API call");
+            FileInputStream fis = null;
+            try {
+                fis = openFileInput("credentials.txt");
+                Log.d("Test", "Opened the file");
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader bufferedReader = new BufferedReader(isr);
+                try {
+                    bufferedReader.readLine();
+                    bufferedReader.readLine();
+                    bufferedReader.readLine();
+                    token = bufferedReader.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Log.d("Test", "Failed");
+            }
             ApiAuthenticationClient apiAuthenticationClient =
                     new ApiAuthenticationClient(
                             baseURL
-                            , username
-                            , password
+                            , token
                     );
             // Set Http Method type to POST
             apiAuthenticationClient.setHttpMethod("POST");
@@ -323,7 +344,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
             // Update the user_profile, credentials, and user text files after updating data
             // in database
-            GetUser getUser = new GetUser(username, password, context);
+            if(isNetworkAvailable()) {
+                GetUser getUser = new GetUser(token, context);
+            }
 
             // Wait a couple of seconds for the user_profile and user text files to update before
             // returning to the ProfileActivity
@@ -348,6 +371,18 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             }, 200);
         }
+    }
+
+    /**
+     * Check to see if we can connect to the network.
+     * @return true if we can, false otherwise
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+    //    Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
+     //   Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
 }

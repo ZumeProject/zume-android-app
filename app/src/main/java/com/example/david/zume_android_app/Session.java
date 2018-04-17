@@ -60,15 +60,20 @@ public class Session extends AppCompatActivity {
                 Intent intent = getIntent();
                 String next_session = intent.getStringExtra("next_session");
                 String group_id = intent.getStringExtra("groupID");
+                String groupName = intent.getStringExtra("groupName");
                 String username = intent.getStringExtra("username");
                 String password = intent.getStringExtra("password");
+                String token = intent.getStringExtra("token");
+
 
                 Bundle bundle = new Bundle();
                 bundle.putString("session_number", next_session);
+                bundle.putString("next_number", next_session);
                 bundle.putString("group_id", group_id);
+                bundle.putString("groupName", groupName);
                 bundle.putString("username", username);
                 bundle.putString("password", password);
-
+                bundle.putString("token", token);
                 intent = new Intent(Session.this, DashboardActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -278,8 +283,8 @@ public class Session extends AppCompatActivity {
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
-        Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
+     //   Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
+     //   Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 }

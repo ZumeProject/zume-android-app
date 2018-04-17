@@ -1,6 +1,9 @@
 package com.example.david.zume_android_app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -81,25 +84,46 @@ public class DashboardActivity extends AppCompatActivity {
 
         Button viewProfile = (Button)findViewById(R.id.viewProfile);
 
-        viewProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            viewProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                Intent intent = getIntent();
-                String username = intent.getStringExtra("username");
-                String password = intent.getStringExtra("password");
-                Log.d("Username", username);
+                    Intent intent = getIntent();
+                    String username = intent.getStringExtra("username");
+                    String password = intent.getStringExtra("password");
 
-                Bundle bundle = new Bundle();
-                bundle.putString("username", username);
-                bundle.putString("password", password);
-                bundle.putInt("user_id", user_id);
+                    FileInputStream fis = null;
+                    try {
+                        fis = openFileInput("credentials.txt");
+                        Log.d("Test", "Opened the file");
+                        InputStreamReader isr = new InputStreamReader(fis);
+                        BufferedReader bufferedReader = new BufferedReader(isr);
+                        try {
+                            bufferedReader.readLine();
+                            bufferedReader.readLine();
+                            user_id = Integer.parseInt(bufferedReader.readLine());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
-                intent = new Intent(DashboardActivity.this, ProfileActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Log.d("Test", "Failed");
+                    }
+                    //Log.d("Username", username);
+
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("username", username);
+                    bundle.putString("password", password);
+                    bundle.putInt("user_id", user_id);
+
+                    intent = new Intent(DashboardActivity.this, ProfileActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            });
+
 
         Button notifications = (Button)findViewById(R.id.notifications);
 
@@ -137,17 +161,10 @@ public class DashboardActivity extends AppCompatActivity {
         }
         InputStreamReader isr = new InputStreamReader(fis);
         BufferedReader bufferedReader = new BufferedReader(isr);
-        /*try {
-            Log.d("Test", bufferedReader.readLine());
-            Log.d("Test", bufferedReader.readLine());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
 
         try {
             resultFromAPI = bufferedReader.readLine();
             Log.d("Test", resultFromAPI);
-            //Log.d("Test", bufferedReader.readLine());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -215,14 +232,6 @@ public class DashboardActivity extends AppCompatActivity {
 
     }
 
-/*
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
-*/
-
     /**
      * Get the group name from the group JSON object.
      * @param data JSON String
@@ -237,5 +246,17 @@ public class DashboardActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return groupName;
+    }
+
+    /**
+     * Check to see if we can connect to the network.
+     * @return true if we can, false otherwise
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+  //      Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
+//        Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 }

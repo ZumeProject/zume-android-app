@@ -332,7 +332,7 @@ public class ApiAuthenticationClient {
                     wr.write( postData );
                     wr.close();
                 }
-                
+
                 int responseCode = connection.getResponseCode();
                 //System.out.println("\nSending 'POST' request to URL : " + url);
                 //System.out.println("Post parameters : " + urlParameters);
@@ -413,4 +413,3 @@ public class ApiAuthenticationClient {
         return outputStringBuilder.toString();
     }
 }
-

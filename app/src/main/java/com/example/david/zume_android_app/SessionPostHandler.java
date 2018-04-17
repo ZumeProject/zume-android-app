@@ -28,9 +28,9 @@ public class SessionPostHandler extends AppCompatActivity {
     private ArrayList<String> resultFromFile = new ArrayList<String>();
     private Context context = null;
     private boolean internet;
-
-    public SessionPostHandler(Context context, String username, String password, String group_id, LinkedHashMap<String, String> args, boolean internet){
-
+    String token;
+    public SessionPostHandler(Context context, String username, String password, String group_id, String token, LinkedHashMap<String, String> args, boolean internet){
+        this.token = token;
         this.internet = internet;
         if(this.internet){
             Log.d("Internet", "true for sessionPostHandler");
@@ -41,7 +41,28 @@ public class SessionPostHandler extends AppCompatActivity {
         this.context = context;
         if(internet){
             Log.d("Network", "Network available - updating group data");
-            UpdateGroup update = new UpdateGroup(username, password, group_id, args);
+
+//            FileInputStream fis = null;
+//            String token = "";
+//            try {
+//                fis = openFileInput("credentials.txt");
+//                Log.d("Test", "Opened the file");
+//                InputStreamReader isr = new InputStreamReader(fis);
+//                BufferedReader bufferedReader = new BufferedReader(isr);
+//                token = null;
+//                try {
+//                    bufferedReader.readLine();
+//                    bufferedReader.readLine();
+//                    bufferedReader.readLine();
+//                    token = bufferedReader.readLine();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//                Log.d("Test", "Failed");
+//            }
+            UpdateGroup update = new UpdateGroup(this.token, group_id, args);
         }
         else{
             Log.d("Network", "Network unavailable - adding to pending posts");
@@ -60,8 +81,9 @@ public class SessionPostHandler extends AppCompatActivity {
         }
     }
 
-    public SessionPostHandler(Context context){
+    public SessionPostHandler(Context context, boolean internet){
         this.context = context;
+        this.internet = internet;
         if(internet){
             for(String row: resultFromFile){
                 try {
@@ -76,7 +98,27 @@ public class SessionPostHandler extends AppCompatActivity {
                         String key = keys.next();
                         map.put(key, args.get(key).toString());
                     }
-                    UpdateGroup update = new UpdateGroup(username, password, group_id, map);
+//                    FileInputStream fis = null;
+//                    String token = "";
+//                    try {
+//                        fis = openFileInput("credentials.txt");
+//                        Log.d("Test", "Opened the file");
+//                        InputStreamReader isr = new InputStreamReader(fis);
+//                        BufferedReader bufferedReader = new BufferedReader(isr);
+//                        token = null;
+//                        try {
+//                            bufferedReader.readLine();
+//                            bufferedReader.readLine();
+//                            bufferedReader.readLine();
+//                            token = bufferedReader.readLine();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                        Log.d("Test", "Failed");
+//                    }
+                    UpdateGroup update = new UpdateGroup(this.token, group_id, map);
                 }
                 catch(JSONException e){
                     e.printStackTrace();
