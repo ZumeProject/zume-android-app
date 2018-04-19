@@ -16,14 +16,8 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -130,8 +124,8 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                         Boolean recordCompletion = intent.getBooleanExtra("Has_a_Group", false);
                         if(recordCompletion) {
                             String next_session = "0";
-                            String username = intent.getStringExtra("username");
-                            Log.d("Username", "SessionListAdapter " + username);
+                            //String username = intent.getStringExtra("username");
+                            //Log.d("Username", "SessionListAdapter " + username);
                             //String password = intent.getStringExtra("password");
                             String groupID = intent.getStringExtra("group_id");
                             String token = intent.getStringExtra("token");
@@ -169,7 +163,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
 
 
                             Bundle bundle = new Bundle();
-                            bundle.putString("username", username);
+                            //bundle.putString("username", username);
                             //bundle.putString("password", password);
                             bundle.putString("token",token);
                             bundle.putString("groupID", groupID);

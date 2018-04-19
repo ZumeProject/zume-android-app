@@ -172,13 +172,15 @@ public class LoginActivity extends AppCompatActivity {
      * Open the Dashboard window.
      */
     private void goToDashboardActivity() {
-        if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
+        //if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
+        //Fix logic after the &&
+        if(isNetworkAvailable()) {
             AsyncTask<Void, String, String> download = new DownloadFileAsync().execute();
         }
 
 
         Bundle bundle = new Bundle();
-        bundle.putString("username", username);
+        //bundle.putString("username", username);
         //bundle.putString("password", password);
         //bundle.putString("baseUrl", baseUrlUserProfile);
         bundle.putString("token", token);

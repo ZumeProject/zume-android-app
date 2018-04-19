@@ -67,12 +67,12 @@ public class GroupListAdapter extends BaseAdapter implements ListAdapter {
             public void onClick(View v) {
                 Log.d("Test", "Going to group..."+list.get(position)[0]);
                 Intent intent = getIntent();
-                String username = intent.getStringExtra("username");
+                //String username = intent.getStringExtra("username");
                 //String password = intent.getStringExtra("password");
                 String token = intent.getStringExtra("token");
 
                 Bundle bundle = new Bundle();
-                bundle.putString("username", username);
+                //bundle.putString("username", username);
                 //bundle.putString("password", password);
                 bundle.putString("groupID", list.get(position)[0]);
                 bundle.putString("groupName", list.get(position)[1]);

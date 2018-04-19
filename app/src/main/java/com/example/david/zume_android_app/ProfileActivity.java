@@ -27,7 +27,7 @@ public class ProfileActivity extends AppCompatActivity {
     private String resultFromUserProfile = "";
     private String resultFromUser = "";
     //private String baseUrl = "";
-    private String username = "";
+    //private String username = "";
     //private String password = "";
     private String token ="";
 
@@ -53,14 +53,14 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = getIntent();
-                String username = intent.getStringExtra("username");
+                //String username = intent.getStringExtra("username");
                 //String password = intent.getStringExtra("password");
                 Integer user_id = intent.getIntExtra("user_id", 0);
                 String token = intent.getStringExtra("token");
 
 
                 Bundle bundle = new Bundle();
-                bundle.putString("username", username);
+                //bundle.putString("username", username);
                 //bundle.putString("password", password);
                 bundle.putInt("user_id", user_id);
                 bundle.putString("token", token);
@@ -79,14 +79,14 @@ public class ProfileActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     Intent intent = getIntent();
-                    String username = intent.getStringExtra("username");
+                    //String username = intent.getStringExtra("username");
                     //String password = intent.getStringExtra("password");
 
                     Integer userID = intent.getIntExtra("user_id", 0);
                     String token = intent.getStringExtra("token");
 					
                     Bundle bundle = new Bundle();
-                    bundle.putString("username", username);
+                    //bundle.putString("username", username);
                     //bundle.putString("password", password);
 
                     bundle.putInt("user_id", userID);

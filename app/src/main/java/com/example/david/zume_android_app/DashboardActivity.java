@@ -25,7 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.Buffer;
 import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -38,7 +37,7 @@ public class DashboardActivity extends AppCompatActivity {
     private String resultFromAPI = "";
     private String userString = "";
     //private String baseUrl = "";
-    private String username = "";
+    //private String username = "";
     //private String password = "";
     private Integer user_id = 0;
 
@@ -92,7 +91,7 @@ public class DashboardActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     Intent intent = getIntent();
-                    String username = intent.getStringExtra("username");
+                    //String username = intent.getStringExtra("username");
                     //String password = intent.getStringExtra("password");
 
                     String token = intent.getStringExtra("token");
@@ -117,7 +116,7 @@ public class DashboardActivity extends AppCompatActivity {
                     //Log.d("Username", username);
 
                     Bundle bundle = new Bundle();
-                    bundle.putString("username", username);
+                    //bundle.putString("username", username);
                     //bundle.putString("password", password);
                     bundle.putString("token", token);
                     bundle.putInt("user_id", user_id);
