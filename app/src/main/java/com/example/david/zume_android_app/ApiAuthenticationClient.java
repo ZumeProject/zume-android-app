@@ -359,6 +359,7 @@ public class ApiAuthenticationClient {
                 //System.out.println(response.toString());
             }
             else {
+                Log.d("Token", token);
                 connection.setRequestProperty("Authorization", "Bearer" + token);
                 //String encoding = Base64Encoder.encode(username + ":" + password);
                 //connection.setRequestProperty("username",username);
