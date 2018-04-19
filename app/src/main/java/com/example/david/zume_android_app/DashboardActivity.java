@@ -217,6 +217,7 @@ public class DashboardActivity extends AppCompatActivity {
                     JSONObject groupInfo = sessionReader.getJSONObject(0);
                     int sessionNum = groupInfo.getInt("next_session");
                     String members = groupInfo.getString("members");
+                    Log.d("Members", members);
                     Log.d("Session" , String.valueOf(sessionNum));
                     // Make sure we get the correct local version of the session number.
                     thisGroup[2] = getSession(String.valueOf(sessionNum), thisGroup[0]);

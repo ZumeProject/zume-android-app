@@ -27,7 +27,7 @@ public class LoggingPostHandler extends AppCompatActivity {
     private Context context = null;
     private boolean internet;
 
-    public LoggingPostHandler(Context context, String username, String password, String createdDate, String page, String action, String meta, String group_id, boolean internet){
+    public LoggingPostHandler(Context context, String token, String createdDate, String page, String action, String meta, String group_id, boolean internet){
 
         this.internet = internet;
         if(this.internet){
@@ -39,14 +39,13 @@ public class LoggingPostHandler extends AppCompatActivity {
         this.context = context;
         if(internet){
             Log.d("Network", "Network available - updating group-logging data");
-            UpdateLogging update = new UpdateLogging(username, password, createdDate, page, action, meta, group_id);
+            UpdateLogging update = new UpdateLogging(token, createdDate, page, action, meta, group_id);
         }
         else{
             Log.d("Network", "Network unavailable - adding to pending logging posts");
             try {
                 JSONObject object = new JSONObject();
-                object.put("username", username);
-                object.put("password", password);
+                object.put("token", token);
                 object.put("createdDate", createdDate);
                 object.put("page", page);
                 object.put("action", action);
@@ -60,7 +59,7 @@ public class LoggingPostHandler extends AppCompatActivity {
         }
     }
 
-    public LoggingPostHandler(Context context, String username, String password, String createdDate, String page, String action,  boolean internet){
+    public LoggingPostHandler(Context context, String token, String createdDate, String page, String action,  boolean internet){
 
         this.internet = internet;
         if(this.internet){
@@ -72,14 +71,13 @@ public class LoggingPostHandler extends AppCompatActivity {
         this.context = context;
         if(internet){
             Log.d("Network", "Network available - updating group-logging data");
-            UpdateLogging update = new UpdateLogging(username, password, createdDate, page, action);
+            UpdateLogging update = new UpdateLogging(token, createdDate, page, action);
         }
         else{
             Log.d("Network", "Network unavailable - adding to pending logging posts");
             try {
                 JSONObject object = new JSONObject();
-                object.put("username", username);
-                object.put("password", password);
+                object.put("token", token);
                 object.put("createdDate", createdDate);
                 object.put("page", page);
                 object.put("action", action);
@@ -98,24 +96,22 @@ public class LoggingPostHandler extends AppCompatActivity {
             for(String row: resultFromFile){
                 try {
                     JSONObject object = new JSONObject(row);
-                    String username = object.get("username").toString();
-                    String password = object.get("password").toString();
+                    String token = object.get("token").toString();
                     String date = object.get("createdDate").toString();
                     String page = object.get("page").toString();
                     String action = object.get("action").toString();
                     String meta = object.get("meta").toString();
                     String group_id = object.get("group_id").toString();
-                    UpdateLogging update = new UpdateLogging(username, password, date, page, action, meta, group_id);
+                    UpdateLogging update = new UpdateLogging(token, date, page, action, meta, group_id);
                 }
                 catch(JSONException e){
                     try{
                         JSONObject object = new JSONObject(row);
-                        String username = object.get("username").toString();
-                        String password = object.get("password").toString();
+                        String token = object.get("token").toString();
                         String date = object.get("createdDate").toString();
                         String page = object.get("page").toString();
                         String action = object.get("action").toString();
-                        UpdateLogging update = new UpdateLogging(username, password, date, page, action);
+                        UpdateLogging update = new UpdateLogging(token, date, page, action);
                     }
                     catch(JSONException ex){
                         ex.printStackTrace();

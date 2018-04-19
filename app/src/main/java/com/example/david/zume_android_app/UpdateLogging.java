@@ -20,22 +20,20 @@ public class UpdateLogging {
 
     /**
      * Makes Post to update the zume_logging table for a group-type action
-     * @param username
-     * @param password
+     * @param token
      * @param createdDate
      * @param page
      * @param action
      * @param meta
      * @param group_id
      */
-    public UpdateLogging(String username, String password, String createdDate, String page, String action, String meta, String group_id) {
+    public UpdateLogging(String token, String createdDate, String page, String action, String meta, String group_id) {
         try {
             Log.d("Test", "Making API call");
             ApiAuthenticationClient apiAuthenticationClient =
                     new ApiAuthenticationClient(
                             baseURL
-                            , username
-                            , password
+                            , token
                     );
             // Set type to POST
             apiAuthenticationClient.setHttpMethod("POST");
@@ -55,20 +53,18 @@ public class UpdateLogging {
 
     /**
      * Makes Post to update the zume_logging table for a user-type action
-     * @param username
-     * @param password
+     * @param token
      * @param createdDate
      * @param page
      * @param action
      */
-    public UpdateLogging(String username, String password, String createdDate, String page, String action) {
+    public UpdateLogging(String token, String createdDate, String page, String action) {
         try {
             Log.d("Test", "Making API call");
             ApiAuthenticationClient apiAuthenticationClient =
                     new ApiAuthenticationClient(
                             baseURL
-                            , username
-                            , password
+                            , token
                     );
             // Set type to POST
             apiAuthenticationClient.setHttpMethod("POST");
