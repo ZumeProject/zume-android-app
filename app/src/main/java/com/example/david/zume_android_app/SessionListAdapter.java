@@ -3,6 +3,7 @@ package com.example.david.zume_android_app;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +16,14 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -74,13 +82,14 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
             if(list.get(position).isVideo()){
                 view = inflater.inflate(R.layout.session_list_text_layout, null);
                 TextView listItemText = (TextView)view.findViewById(R.id.session_item_text);
-                listItemText.setText(list.get(position).getVideo());
+                listItemText.setText(cleanText(list.get(position).getVideo()));
             }
             //Handle pdf link
             else if(list.get(position).isPdf()){
                 view = inflater.inflate(R.layout.session_list_text_layout, null);
                 TextView listItemText = (TextView)view.findViewById(R.id.session_item_text);
-                listItemText.setText(list.get(position).getPdfTitle());
+                listItemText.setText(cleanText(list.get(position).getPdfTitle()));
+                listItemText.setTextColor(Color.BLUE);
                 listItemText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v){
@@ -150,6 +159,11 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             args.put(session_complete, session_complete_date);
                             args.put(next_session_key, next_session);
 
+                            // Set meta value for zume_logging table
+                            String members = intent.getStringExtra("members");
+                            String meta = "group_";
+
+                            LoggingPostHandler logging = new LoggingPostHandler(context, username, "test", session_complete_date, "course", session_number, meta, groupID, internet);
 //Fix this!!!!!!
                             SessionPostHandler handler = new SessionPostHandler(context, token, groupID, args, internet);
 
@@ -161,6 +175,9 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             bundle.putString("groupID", groupID);
                             bundle.putString("groupName", groupName);
                             bundle.putString("next_session", next_session);
+                            bundle.putString("members", members);
+
+                            updateSession(next_session, groupID);
 
 
                             final Intent i = new Intent(context, GroupActivity.class);
@@ -183,7 +200,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
             else {
                 view = inflater.inflate(R.layout.session_list_text_layout, null);
                 TextView listItemText = (TextView)view.findViewById(R.id.session_item_text);
-                listItemText.setText(list.get(position).getText());
+                listItemText.setText(cleanText(list.get(position).getText()));
                 //Log.d("ListViewDebug", list.get(position).getText());
             }
 
@@ -191,6 +208,32 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
 
         
         return view;
+    }
+
+    public void updateSession(String next_session, String group_id){
+        try {
+            File file = new File(context.getFilesDir(), group_id);
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(new String(next_session+"\n").getBytes());
+
+            fos.flush();
+            fos.close();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public String cleanText(String text){
+        text = text.replace("\u00c3\u009a", "\u00DA"); // Uppercase accented U
+        text = text.replace("\u00c3\u00ba", "\u00FA"); // Lowercase accented u
+        text = text.replace("\u00e2\u0080\u0094", "-"); // Hyphen
+        text = text.replace("\u00e2\u0080\u0099", "'"); // Apostrophe
+        text = text.replace("\u00e2\u0080\u009c", "\""); // Quotation open
+        text = text.replace("\u00c2", "");
+        text = text.replace("\u00e2\u0080\u009d", "\""); // Quotation close
+        text = text.replace("\u00e2\u0080\u00a6", "...");
+        return text;
     }
 
     public Intent getIntent(){

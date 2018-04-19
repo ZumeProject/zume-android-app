@@ -19,10 +19,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.Buffer;
 import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -201,7 +204,7 @@ public class DashboardActivity extends AppCompatActivity {
             ArrayList<String[]> groups = new ArrayList<String[]>();
             for(int i=0; i<allFields.length(); i++){
                 if(allFields.get(i).toString().contains("zume_group_")){
-                    String[] thisGroup = new String[3];
+                    String[] thisGroup = new String[4];
                     // Set group ID
                     thisGroup[0] = allFields.get(i).toString();
                     Log.d("Group ID", thisGroup[0]);
@@ -213,8 +216,11 @@ public class DashboardActivity extends AppCompatActivity {
                     Log.d("Test", String.valueOf(sessionReader));
                     JSONObject groupInfo = sessionReader.getJSONObject(0);
                     int sessionNum = groupInfo.getInt("next_session");
+                    String members = groupInfo.getString("members");
                     Log.d("Session" , String.valueOf(sessionNum));
-                    thisGroup[2] = String.valueOf(sessionNum);
+                    // Make sure we get the correct local version of the session number.
+                    thisGroup[2] = getSession(String.valueOf(sessionNum), thisGroup[0]);
+                    thisGroup[3] = members;
                     Log.d("Group Name", thisGroup[1]);
                     listItems.add(thisGroup);
                     groups.add(thisGroup);
@@ -259,5 +265,36 @@ public class DashboardActivity extends AppCompatActivity {
   //      Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
 //        Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
+    /**
+     * See if the session number stored locally is greater than the session number retrieved from the api - we may have pending session posts.
+     * @param next_session
+     * @param group_id
+     * @return
+     */
+    public String getSession(String next_session, String group_id){
+        try {
+            File file = new File(getFilesDir(), group_id);
+            if(file.exists() && file.isFile()){
+                FileInputStream fis = new FileInputStream(file);
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader br = new BufferedReader(isr);
+                String session = br.readLine().replace("\n", "");
+                if(Integer.valueOf(session)>Integer.valueOf(next_session)){
+                    return session;
+                }
+                return next_session;
+            }
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(new String(next_session+"\n").getBytes());
+
+            fos.flush();
+            fos.close();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return next_session;
     }
 }

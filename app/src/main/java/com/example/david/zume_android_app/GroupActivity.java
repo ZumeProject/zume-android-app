@@ -24,6 +24,8 @@ public class GroupActivity extends AppCompatActivity {
     private String next_session = "0";
     private String group_id = "";
     private String username = "";
+    private String groupName = "";
+    private String members = "";
     //private String password = "";
     private String token = "";
 
@@ -49,17 +51,25 @@ public class GroupActivity extends AppCompatActivity {
         group_id = intent.getStringExtra("groupID");
         username = intent.getStringExtra("username");
         //password = intent.getStringExtra("password");
+        groupName= intent.getStringExtra("groupName");
+        members = intent.getStringExtra("members");
         token = intent.getStringExtra("token");
-        startSession.setText("Start Session "+next_session);
-        startSession.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString("session_number", next_session);
-                bundle.putString("group_id", group_id);
-                bundle.putString("username", username);
-                //bundle.putString("password", password);
-                bundle.putBoolean("Has_a_Group", true);
+        if(Integer.valueOf(next_session)>10){
+            startSession.setVisibility(View.GONE);
+        }
+        else {
+            startSession.setText("Start Session " + next_session);
+            startSession.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("session_number", next_session);
+                    bundle.putString("group_id", group_id);
+                    bundle.putString("username", username);
+                    //bundle.putString("password", password);
+                    bundle.putString("groupName", groupName);
+                    bundle.putString("members", members);
+                    bundle.putBoolean("Has_a_Group", true);
 
 //                FileInputStream fis = null;
 //
@@ -81,12 +91,13 @@ public class GroupActivity extends AppCompatActivity {
 //                    e.printStackTrace();
 //                    Log.d("Test", "Failed");
 //                }
-                bundle.putString("token", token);
-                Intent intent = new Intent(GroupActivity.this, Session.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
+                    bundle.putString("token", token);
+                    Intent intent = new Intent(GroupActivity.this, Session.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            });
+        }
 
         Button viewMap = (Button)findViewById(R.id.viewMap);
 

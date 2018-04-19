@@ -332,6 +332,9 @@ public class ApiAuthenticationClient {
                     wr.write( postData );
                     wr.close();
                 }
+                catch(Exception exc){
+                    exc.printStackTrace();
+                }
 
                 int responseCode = connection.getResponseCode();
                 //System.out.println("\nSending 'POST' request to URL : " + url);
@@ -356,6 +359,7 @@ public class ApiAuthenticationClient {
                 //System.out.println(response.toString());
             }
             else {
+                Log.d("Token", token);
                 connection.setRequestProperty("Authorization", "Bearer" + token);
                 //String encoding = Base64Encoder.encode(username + ":" + password);
                 //connection.setRequestProperty("username",username);
@@ -413,3 +417,4 @@ public class ApiAuthenticationClient {
         return outputStringBuilder.toString();
     }
 }
+

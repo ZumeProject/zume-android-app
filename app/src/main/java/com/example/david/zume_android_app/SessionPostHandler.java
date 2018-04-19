@@ -116,14 +116,14 @@ public class SessionPostHandler extends AppCompatActivity {
         Log.d("Test", "Made first call");
         try {
             outputStream = context.openFileOutput(filename, context.MODE_PRIVATE);
-            /*
+
             for(String row: resultFromFile){
                 Log.d("Pending_Posts", row);
                 byte[] bytes = new String(row+"\n").getBytes();
                 outputStream.write(bytes);
             }
-            */
-            outputStream.write(new String("").getBytes());
+
+            //outputStream.write(new String("").getBytes());
             outputStream.close();
             Log.d("Test", "Made the pending_posts file");
             return true;

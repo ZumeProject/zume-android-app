@@ -6,12 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -63,6 +65,17 @@ public class LoginActivity extends AppCompatActivity {
 //                goToDashboardActivity();
 //            }
 //        });
+
+        Button register = (Button) findViewById(R.id.button_login_register);
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("http://zume.hsutx.edu/wp-login.php?action=register"); // missing 'http://' will cause crashed
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+
         editText_login_username = (EditText) findViewById(R.id.editText_login_username);
         editText_login_password = (EditText) findViewById(R.id.editText_login_password);
         button_login_login = (Button) findViewById(R.id.button_login_login);
@@ -124,7 +137,6 @@ public class LoginActivity extends AppCompatActivity {
                             token = oldToken;
                             goToDashboardActivity();
                         }
-                        //goToDashboardActivity();
                     } else {
                         if(isNetworkAvailable()) {
                             makeApiCall(getApplicationContext());
@@ -177,13 +189,13 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void makeApiCall(Context context) {
         final Context cont = context;
+        SessionPostHandler pendingPosts = new SessionPostHandler(cont, isNetworkAvailable());
         auth = new GetUser(username, password, context);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Log.d("Login - Internet", String.valueOf(isNetworkAvailable()));
-                SessionPostHandler pendingPosts = new SessionPostHandler(cont, isNetworkAvailable());
                 Log.d("What!", String.valueOf(auth.getFailed()));
                 if(!auth.getFailed()){
                     token = auth.getToken();

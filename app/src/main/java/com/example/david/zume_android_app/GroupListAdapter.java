@@ -77,6 +77,7 @@ public class GroupListAdapter extends BaseAdapter implements ListAdapter {
                 bundle.putString("groupID", list.get(position)[0]);
                 bundle.putString("groupName", list.get(position)[1]);
                 bundle.putString("next_session", list.get(position)[2]);
+                bundle.putString("members", list.get(position)[3]);
                 bundle.putString("token", token);
 
                 intent = new Intent(context, GroupActivity.class);

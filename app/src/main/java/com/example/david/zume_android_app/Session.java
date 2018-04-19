@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -136,8 +137,11 @@ public class Session extends AppCompatActivity {
     }
 
     public void addToContentList(String url, String title){
-        SessionRow row = new SessionRow(url, title);
-        this.contentList.add(row);
+        File file = new File(getFilesDir(), title.replace(" ", "_").replace("/", "_"));
+        if(file.exists() && file.isFile()){
+            SessionRow row = new SessionRow(url, title);
+            this.contentList.add(row);
+        }
     }
 
     /**
