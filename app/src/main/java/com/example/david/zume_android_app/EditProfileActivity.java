@@ -391,7 +391,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }
-            }, 200);
+            }, 1000);
         }
     }
 
