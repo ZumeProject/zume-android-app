@@ -93,7 +93,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 // Set credentials
                 Intent intent = getIntent();
                 String username = intent.getStringExtra("username");
-                Log.d("Username", username);
+                //Log.d("Username", username);
                 //String password = intent.getStringExtra("password");
                 String token = intent.getStringExtra("token");
                 int userID = intent.getIntExtra("user_id", 0);
