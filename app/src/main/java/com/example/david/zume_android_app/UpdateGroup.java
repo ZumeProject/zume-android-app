@@ -23,8 +23,6 @@ public class UpdateGroup {
 
     /**
      * Constructor initializes and makes call to ApiAuthenticationClient
-     * @param username
-     * @param password
      * @param group_id the id of the group
      * @param args a LinkedHashMap of group field names and values
      */
