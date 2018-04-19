@@ -101,13 +101,16 @@ public class LoginActivity extends AppCompatActivity {
 
                 //Creates new files with the user information if the credentials are correct.
                 // switched && to ||
-                if (failed || isNetworkAvailable()) {
+                if (failed && isNetworkAvailable()) {
                     makeApiCall(getApplicationContext());
                 }
                 //Checks to see if it is the same user loging in.
                 //If it is it will go to the next page.
                 //Otherwise it will create new files for the new user.
-                else {
+                else if(failed && !isNetworkAvailable()){
+                    Toast.makeText(getApplicationContext(), "Can't log in. No Internet connection", Toast.LENGTH_LONG).show();
+                }
+                else{
                     InputStreamReader isr = new InputStreamReader(fis);
                     BufferedReader bufferedReader = new BufferedReader(isr);
                     String user = null, pass = null, oldToken = null;
@@ -140,6 +143,8 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         if(isNetworkAvailable()) {
                             makeApiCall(getApplicationContext());
+                        }else{
+                            Toast.makeText(getApplicationContext(), "Can't log in. No Internet connection", Toast.LENGTH_LONG).show();
                         }
                     }
 
