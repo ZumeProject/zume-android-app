@@ -64,7 +64,7 @@ public class GetUser extends AppCompatActivity {
         this.token = token;
         try {
             ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
-                    jwtAuth
+                    user_profile
                     ,this.token
             );
             apiAuthenticationClient.setHttpMethod("GET");
@@ -239,6 +239,13 @@ public class GetUser extends AppCompatActivity {
                     }
                     String fileContents = sessions;
                     FileOutputStream outputStream;
+                    try {
+                        outputStream = context.openFileOutput(filename, context.MODE_PRIVATE);
+                        outputStream.write(fileContents.getBytes());
+                        outputStream.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
 // else if(type.equals("check_token")){
 //
