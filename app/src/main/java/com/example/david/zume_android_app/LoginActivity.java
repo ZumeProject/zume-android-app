@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -14,21 +13,17 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -61,15 +56,15 @@ public class LoginActivity extends AppCompatActivity {
         /*
          * Bypass button to help with debugging. So I don't have to type in a login
          */
-        Button bypass = (Button) findViewById(R.id.bypass_button);
-        bypass.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                username = "daoffner";
-                password = "Astra2008";
-                goToDashboardActivity();
-            }
-        });
+//        Button bypass = (Button) findViewById(R.id.bypass_button);
+//        bypass.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                username = "daoffner";
+//                password = "Astra2008";
+//                goToDashboardActivity();
+//            }
+//        });
 
         Button register = (Button) findViewById(R.id.button_login_register);
         register.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +100,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 //Creates new files with the user information if the credentials are correct.
-                if (failed && isNetworkAvailable()) {
+                // switched && to ||
+                if (failed || isNetworkAvailable()) {
                     makeApiCall(getApplicationContext());
                 }
                 //Checks to see if it is the same user loging in.
@@ -117,10 +113,6 @@ public class LoginActivity extends AppCompatActivity {
                     String user = null, pass = null, oldToken = null;
                     try {
                         user = bufferedReader.readLine();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
                         pass = bufferedReader.readLine();
                         bufferedReader.readLine();
                         oldToken = bufferedReader.readLine();
@@ -182,8 +174,8 @@ public class LoginActivity extends AppCompatActivity {
 
         Bundle bundle = new Bundle();
         bundle.putString("username", username);
-        bundle.putString("password", password);
-        bundle.putString("baseUrl", baseUrlUserProfile);
+        //bundle.putString("password", password);
+        //bundle.putString("baseUrl", baseUrlUserProfile);
         bundle.putString("token", token);
 
         Intent intent = new Intent(this, DashboardActivity.class);
@@ -214,7 +206,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d("Testing" , String.valueOf(auth.getFailed()));
                 }
             }
-        }, 800);
+        }, 1000);
 
     }
 

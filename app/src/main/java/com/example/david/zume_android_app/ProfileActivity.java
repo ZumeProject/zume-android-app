@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,9 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,9 +26,10 @@ public class ProfileActivity extends AppCompatActivity {
 
     private String resultFromUserProfile = "";
     private String resultFromUser = "";
-    private String baseUrl = "";
+    //private String baseUrl = "";
     private String username = "";
-    private String password = "";
+    //private String password = "";
+    private String token ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +54,14 @@ public class ProfileActivity extends AppCompatActivity {
 
                 Intent intent = getIntent();
                 String username = intent.getStringExtra("username");
-                String password = intent.getStringExtra("password");
+                //String password = intent.getStringExtra("password");
                 Integer user_id = intent.getIntExtra("user_id", 0);
                 String token = intent.getStringExtra("token");
 
 
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
-                bundle.putString("password", password);
+                //bundle.putString("password", password);
                 bundle.putInt("user_id", user_id);
                 bundle.putString("token", token);
 
@@ -82,14 +80,14 @@ public class ProfileActivity extends AppCompatActivity {
 
                     Intent intent = getIntent();
                     String username = intent.getStringExtra("username");
-                    String password = intent.getStringExtra("password");
+                    //String password = intent.getStringExtra("password");
 
                     Integer userID = intent.getIntExtra("user_id", 0);
                     String token = intent.getStringExtra("token");
 					
                     Bundle bundle = new Bundle();
                     bundle.putString("username", username);
-                    bundle.putString("password", password);
+                    //bundle.putString("password", password);
 
                     bundle.putInt("user_id", userID);
                     bundle.putString("token", token);
@@ -105,8 +103,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         Intent intent = getIntent();
-        username = intent.getStringExtra("username");
-        password = intent.getStringExtra("password");
+        //username = intent.getStringExtra("username");
+        //password = intent.getStringExtra("password");
+        token = intent.getStringExtra("token");
 
         FileInputStream fis = null;
         try {
@@ -115,7 +114,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         } catch (FileNotFoundException e) {
             // Couldn't find user_profile info, so get that from the API
-            GetUser user = new GetUser(username, password, this);
+            //GetUser user = new GetUser(username, password, this);
+            GetUser user = new GetUser(token, this);
             this.onCreate(savedInstanceState);
         }
         InputStreamReader isr = new InputStreamReader(fis);
@@ -135,7 +135,9 @@ public class ProfileActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             // Couldn't find the user information, so get that information from the API
             if(isNetworkAvailable()) {
-                GetUser user = new GetUser(username, password, this);
+//                GetUser user = new GetUser(username, password, this);
+                GetUser user = new GetUser(token, this);
+
                 this.onCreate(savedInstanceState);
             }
         }

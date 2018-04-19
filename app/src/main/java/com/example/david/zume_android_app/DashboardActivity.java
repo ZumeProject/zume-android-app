@@ -37,9 +37,9 @@ public class DashboardActivity extends AppCompatActivity {
 
     private String resultFromAPI = "";
     private String userString = "";
-    private String baseUrl = "";
+    //private String baseUrl = "";
     private String username = "";
-    private String password = "";
+    //private String password = "";
     private Integer user_id = 0;
 
     @Override
@@ -93,7 +93,7 @@ public class DashboardActivity extends AppCompatActivity {
 
                     Intent intent = getIntent();
                     String username = intent.getStringExtra("username");
-                    String password = intent.getStringExtra("password");
+                    //String password = intent.getStringExtra("password");
 
                     String token = intent.getStringExtra("token");
                     FileInputStream fis = null;
@@ -118,7 +118,7 @@ public class DashboardActivity extends AppCompatActivity {
 
                     Bundle bundle = new Bundle();
                     bundle.putString("username", username);
-                    bundle.putString("password", password);
+                    //bundle.putString("password", password);
                     bundle.putString("token", token);
                     bundle.putInt("user_id", user_id);
 

@@ -132,8 +132,9 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             String next_session = "0";
                             String username = intent.getStringExtra("username");
                             Log.d("Username", "SessionListAdapter " + username);
-                            String password = intent.getStringExtra("password");
+                            //String password = intent.getStringExtra("password");
                             String groupID = intent.getStringExtra("group_id");
+                            String token = intent.getStringExtra("token");
                             Log.d("Group_id", groupID);
                             String groupName = intent.getStringExtra("groupName");
                             String session_number = intent.getStringExtra("session_number");
@@ -162,12 +163,15 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             String members = intent.getStringExtra("members");
                             String meta = "group_";
 
-                            SessionPostHandler handler = new SessionPostHandler(context, username, password, groupID, args, internet);
                             LoggingPostHandler logging = new LoggingPostHandler(context, username, password, session_complete_date, "course", session_number, meta, groupID, internet);
+//Fix this!!!!!!
+                            SessionPostHandler handler = new SessionPostHandler(context, token, groupID, args, internet);
+
 
                             Bundle bundle = new Bundle();
                             bundle.putString("username", username);
-                            bundle.putString("password", password);
+                            //bundle.putString("password", password);
+                            bundle.putString("token",token);
                             bundle.putString("groupID", groupID);
                             bundle.putString("groupName", groupName);
                             bundle.putString("next_session", next_session);
@@ -178,7 +182,8 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
 
                             final Intent i = new Intent(context, GroupActivity.class);
                             i.putExtras(bundle);
-                            GetUser gu = new GetUser(username, password, context);
+                            //GetUser gu = new GetUser(username, password, context);
+                            GetUser gu = new GetUser(token, context);
 
                             context.startActivity(i);
                         }
