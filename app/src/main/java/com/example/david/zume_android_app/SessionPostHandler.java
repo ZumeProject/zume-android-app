@@ -1,8 +1,6 @@
 package com.example.david.zume_android_app;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -29,7 +27,7 @@ public class SessionPostHandler extends AppCompatActivity {
     private Context context = null;
     private boolean internet;
 
-    public SessionPostHandler(Context context, String username, String password, String group_id, LinkedHashMap<String, String> args, boolean internet){
+    public SessionPostHandler(Context context, String token, String group_id, LinkedHashMap<String, String> args, boolean internet){
 
         this.internet = internet;
         if(this.internet){
@@ -41,14 +39,18 @@ public class SessionPostHandler extends AppCompatActivity {
         this.context = context;
         if(internet){
             Log.d("Network", "Network available - updating group data");
-            UpdateGroup update = new UpdateGroup(username, password, group_id, args);
+            //UpdateGroup update = new UpdateGroup(username, password, group_id, args);
+            UpdateGroup update = new UpdateGroup(token, group_id, args);
+
         }
         else{
             Log.d("Network", "Network unavailable - adding to pending posts");
             try {
                 JSONObject object = new JSONObject();
-                object.put("username", username);
-                object.put("password", password);
+                //object.put("username", username);
+                //object.put("password", password);
+                object.put("token", token);
+
                 object.put("group_id", group_id);
                 JSONObject arguments = new JSONObject(args);
                 object.put("args", arguments);
@@ -67,8 +69,10 @@ public class SessionPostHandler extends AppCompatActivity {
             for(String row: resultFromFile){
                 try {
                     JSONObject object = new JSONObject(row);
-                    String username = object.get("username").toString();
-                    String password = object.get("password").toString();
+                    //String username = object.get("username").toString();
+                    //String password = object.get("password").toString();
+                    String token = object.get("token").toString();
+
                     String group_id = object.get("group_id").toString();
                     JSONObject args = new JSONObject(object.get("args").toString());
                     Iterator<String> keys = args.keys();
@@ -77,7 +81,9 @@ public class SessionPostHandler extends AppCompatActivity {
                         String key = keys.next();
                         map.put(key, args.get(key).toString());
                     }
-                    UpdateGroup update = new UpdateGroup(username, password, group_id, map);
+                    //UpdateGroup update = new UpdateGroup(username, password, group_id, map);
+                    UpdateGroup update = new UpdateGroup(token, group_id, map);
+
                 }
                 catch(JSONException e){
                     e.printStackTrace();

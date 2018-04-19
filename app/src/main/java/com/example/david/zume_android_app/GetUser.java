@@ -26,6 +26,7 @@ public class GetUser extends AppCompatActivity {
     String jwtToken = "http://zume.hsutx.edu/wp-json/jwt-auth/v1/token/validate";
     String user_profile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     String user = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
+    String sessions = "http://zume.hsutx.edu/wp-json/zume/v1/android/lessons";
     private boolean failed = true;
 
     public GetUser(String username, String password, Context context){
@@ -53,23 +54,36 @@ public class GetUser extends AppCompatActivity {
                     , true
             );
             apiAuthenticationClient.setHttpMethod("POST");
-            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "user_profile", context);
+            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "token", context);
             execute.execute();
         } catch (Exception ex) {
         }
     }
     public GetUser(String token, Context context){
         this.context = context;
+        this.token = token;
         try {
             ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
-                    jwtToken
-                    ,  token
+                    jwtAuth
+                    ,this.token
             );
-            apiAuthenticationClient.setHttpMethod("POST");
-            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "check_token", context);
+            apiAuthenticationClient.setHttpMethod("GET");
+            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "user_profile", context);
             execute.execute();
         } catch (Exception ex) {
         }
+
+//        this.context = context;
+//        try {
+//            ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
+//                    jwtToken
+//                    ,  token
+//            );
+//            apiAuthenticationClient.setHttpMethod("POST");
+//            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "check_token", context);
+//            execute.execute();
+//        } catch (Exception ex) {
+//        }
     }
     public boolean getFailed(){ return failed;}
 
@@ -120,7 +134,7 @@ public class GetUser extends AppCompatActivity {
             if (isValidCredentials != null && !isValidCredentials.equals("")) {
                 //Creating te credentials file and user_profile file
                 //Also makes a call for the second Api call
-                if(isValidCredentials.substring(2,7).equals("token")){
+                if(type.equals("token")){
                     failed = false;
                     String [] tokenArray = isValidCredentials.split(":");
                     tokenArray = tokenArray[1].split(",");
@@ -204,10 +218,32 @@ public class GetUser extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }else if(type.equals("check_token")){
 
-                    Log.d("Test", isValidCredentials);
+                    ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
+                            sessions
+                                    , token
+                            );
+                    apiAuthenticationClient2.setHttpMethod("GET");
+                    AsyncTask<Void, Void, String> execute2 = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient2, "sessions", context);
+                    execute2.execute();
+                }else if(type.equals("sessions")){
+                    failed = false;
+                    Log.d("What!", String.valueOf(failed));
+                    String sessions = "";
+                    String filename = "session_data.txt";
+                    try {
+                        JSONObject reader = new JSONObject(isValidCredentials);
+                        sessions = String.valueOf(reader);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    String fileContents = sessions;
+                    FileOutputStream outputStream;
                 }
+// else if(type.equals("check_token")){
+//
+//                    Log.d("Test", isValidCredentials);
+//                }
             }
         }
     }
