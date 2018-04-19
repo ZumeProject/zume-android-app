@@ -194,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d("Testing" , String.valueOf(auth.getFailed()));
                 }
             }
-        }, 500);
+        }, 1000);
 
     }
 
