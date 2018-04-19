@@ -163,7 +163,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             String members = intent.getStringExtra("members");
                             String meta = "group_";
 
-                            LoggingPostHandler logging = new LoggingPostHandler(context, username, password, session_complete_date, "course", session_number, meta, groupID, internet);
+                            LoggingPostHandler logging = new LoggingPostHandler(context, username, "test", session_complete_date, "course", session_number, meta, groupID, internet);
 //Fix this!!!!!!
                             SessionPostHandler handler = new SessionPostHandler(context, token, groupID, args, internet);
 
