@@ -14,19 +14,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.parser.PdfTextExtractor;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -61,13 +55,13 @@ public class Session extends AppCompatActivity {
                 String next_session = intent.getStringExtra("session_number");
                 String group_id = intent.getStringExtra("group_id");
                 String username = intent.getStringExtra("username");
-                String password = intent.getStringExtra("password");
+                //String password = intent.getStringExtra("password");
                 String token = intent.getStringExtra("token");
                 Bundle bundle = new Bundle();
                 bundle.putString("session_number", next_session);
                 bundle.putString("group_id", group_id);
                 bundle.putString("username", username);
-                bundle.putString("password", password);
+                //bundle.putString("password", password);
                 bundle.putString("token", token);
 
                 intent = new Intent(Session.this, DashboardActivity.class);

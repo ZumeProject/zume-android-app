@@ -18,12 +18,10 @@ import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -56,15 +54,15 @@ public class LoginActivity extends AppCompatActivity {
         /*
          * Bypass button to help with debugging. So I don't have to type in a login
          */
-        Button bypass = (Button) findViewById(R.id.bypass_button);
-        bypass.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                username = "daoffner";
-                password = "Astra2008";
-                goToDashboardActivity();
-            }
-        });
+//        Button bypass = (Button) findViewById(R.id.bypass_button);
+//        bypass.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                username = "daoffner";
+//                password = "Astra2008";
+//                goToDashboardActivity();
+//            }
+//        });
         editText_login_username = (EditText) findViewById(R.id.editText_login_username);
         editText_login_password = (EditText) findViewById(R.id.editText_login_password);
         button_login_login = (Button) findViewById(R.id.button_login_login);
@@ -89,7 +87,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 //Creates new files with the user information if the credentials are correct.
-                if (failed && isNetworkAvailable()) {
+                // switched && to ||
+                if (failed || isNetworkAvailable()) {
                     makeApiCall(getApplicationContext());
                 }
                 //Checks to see if it is the same user loging in.
@@ -101,10 +100,6 @@ public class LoginActivity extends AppCompatActivity {
                     String user = null, pass = null, oldToken = null;
                     try {
                         user = bufferedReader.readLine();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
                         pass = bufferedReader.readLine();
                         bufferedReader.readLine();
                         oldToken = bufferedReader.readLine();
@@ -167,8 +162,8 @@ public class LoginActivity extends AppCompatActivity {
 
         Bundle bundle = new Bundle();
         bundle.putString("username", username);
-        bundle.putString("password", password);
-        bundle.putString("baseUrl", baseUrlUserProfile);
+        //bundle.putString("password", password);
+        //bundle.putString("baseUrl", baseUrlUserProfile);
         bundle.putString("token", token);
 
         Intent intent = new Intent(this, DashboardActivity.class);
