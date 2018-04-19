@@ -161,9 +161,9 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
 
                             // Set meta value for zume_logging table
                             String members = intent.getStringExtra("members");
-                            String meta = "group_";
+                            String meta = "group_"+members;
 
-                            LoggingPostHandler logging = new LoggingPostHandler(context, username, "test", session_complete_date, "course", session_number, meta, groupID, internet);
+                            LoggingPostHandler logging = new LoggingPostHandler(context, token, session_complete_date, "course", session_number, meta, groupID, internet);
 //Fix this!!!!!!
                             SessionPostHandler handler = new SessionPostHandler(context, token, groupID, args, internet);
 

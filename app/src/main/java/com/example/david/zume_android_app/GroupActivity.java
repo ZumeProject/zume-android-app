@@ -68,6 +68,7 @@ public class GroupActivity extends AppCompatActivity {
                     bundle.putString("username", username);
                     //bundle.putString("password", password);
                     bundle.putString("groupName", groupName);
+                    Log.d("Members-Session", members);
                     bundle.putString("members", members);
                     bundle.putBoolean("Has_a_Group", true);
 
