@@ -276,7 +276,7 @@ public class EditProfileActivity extends AppCompatActivity {
             apiAuthenticationClient.setHttpMethod("POST");
             // Create a LinkedHashMap of parameters to send
             LinkedHashMap<String, String> parameters = new LinkedHashMap<String, String>();
-            parameters.put("user_id", "10");
+            parameters.put("user_id", String.valueOf(user_id));
             parameters.put("first_name", first_name);
             parameters.put("last_name", last_name);
             parameters.put("user_email", email);
@@ -340,11 +340,13 @@ public class EditProfileActivity extends AppCompatActivity {
                     String username = intent.getStringExtra("username");
                     String password = intent.getStringExtra("password");
                     int userID = intent.getIntExtra("user_id", 0);
+                    String token = intent.getStringExtra("token");
                     // Save parameters to bundle
                     Bundle bundle = new Bundle();
                     bundle.putString("username", username);
                     bundle.putString("password", password);
                     bundle.putInt("user_id", userID);
+                    bundle.putString("token", token);
                     // Return to ProfileActivity
                     intent = new Intent(EditProfileActivity.this, ProfileActivity.class);
                     intent.putExtras(bundle);

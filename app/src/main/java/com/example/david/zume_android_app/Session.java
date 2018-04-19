@@ -58,16 +58,17 @@ public class Session extends AppCompatActivity {
         Home.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = getIntent();
-                String next_session = intent.getStringExtra("next_session");
-                String group_id = intent.getStringExtra("groupID");
+                String next_session = intent.getStringExtra("session_number");
+                String group_id = intent.getStringExtra("group_id");
                 String username = intent.getStringExtra("username");
                 String password = intent.getStringExtra("password");
-
+                String token = intent.getStringExtra("token");
                 Bundle bundle = new Bundle();
                 bundle.putString("session_number", next_session);
                 bundle.putString("group_id", group_id);
                 bundle.putString("username", username);
                 bundle.putString("password", password);
+                bundle.putString("token", token);
 
                 intent = new Intent(Session.this, DashboardActivity.class);
                 intent.putExtras(bundle);

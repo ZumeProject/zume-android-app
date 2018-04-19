@@ -27,6 +27,7 @@ public class GroupActivity extends AppCompatActivity {
     private String password = "";
     private String groupName = "";
     private String members = "";
+    private String token = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,7 @@ public class GroupActivity extends AppCompatActivity {
         password = intent.getStringExtra("password");
         groupName= intent.getStringExtra("groupName");
         members = intent.getStringExtra("members");
+        token = intent.getStringExtra("token");
         startSession.setText("Start Session "+next_session);
         startSession.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +66,28 @@ public class GroupActivity extends AppCompatActivity {
                 bundle.putString("groupName", groupName);
                 bundle.putString("members", members);
                 bundle.putBoolean("Has_a_Group", true);
+
+//                FileInputStream fis = null;
+//
+//                try {
+//                    fis = openFileInput("credentials.txt");
+//                    Log.d("Test", "Opened the file");
+//                    InputStreamReader isr = new InputStreamReader(fis);
+//                    BufferedReader bufferedReader = new BufferedReader(isr);
+//                    try {
+//                        bufferedReader.readLine();
+//                        bufferedReader.readLine();
+//                        bufferedReader.readLine();
+//                        token = bufferedReader.readLine();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                    Log.d("Test", "Failed");
+//                }
+                bundle.putString("token", token);
                 Intent intent = new Intent(GroupActivity.this, Session.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -89,6 +113,29 @@ public class GroupActivity extends AppCompatActivity {
                 bundle.putString("group_id", group_id);
                 bundle.putString("username", username);
                 bundle.putString("password", password);
+                bundle.putString("token", token);
+//                FileInputStream fis = null;
+//                String token = null;
+//                try {
+//                    fis = openFileInput("credentials.txt");
+//                    Log.d("Test", "Opened the file");
+//                    InputStreamReader isr = new InputStreamReader(fis);
+//                    BufferedReader bufferedReader = new BufferedReader(isr);
+//                    try {
+//                        bufferedReader.readLine();
+//                        bufferedReader.readLine();
+//                        bufferedReader.readLine();
+//                        token = bufferedReader.readLine();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                    Log.d("Test", "Failed");
+//                }
+//                bundle.putString("token", token);
+
                 Intent intent = new Intent(GroupActivity.this, DashboardActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);

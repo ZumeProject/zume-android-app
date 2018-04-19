@@ -69,6 +69,7 @@ public class GroupListAdapter extends BaseAdapter implements ListAdapter {
                 Intent intent = getIntent();
                 String username = intent.getStringExtra("username");
                 String password = intent.getStringExtra("password");
+                String token = intent.getStringExtra("token");
 
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
@@ -77,6 +78,7 @@ public class GroupListAdapter extends BaseAdapter implements ListAdapter {
                 bundle.putString("groupName", list.get(position)[1]);
                 bundle.putString("next_session", list.get(position)[2]);
                 bundle.putString("members", list.get(position)[3]);
+                bundle.putString("token", token);
 
                 intent = new Intent(context, GroupActivity.class);
                 intent.putExtras(bundle);

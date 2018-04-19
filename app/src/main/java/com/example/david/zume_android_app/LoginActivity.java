@@ -58,8 +58,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-         /*
-        * Bypass button to help with debugging. So I don't have to type in a login
+        /*
+         * Bypass button to help with debugging. So I don't have to type in a login
          */
         Button bypass = (Button) findViewById(R.id.bypass_button);
         bypass.setOnClickListener(new View.OnClickListener() {

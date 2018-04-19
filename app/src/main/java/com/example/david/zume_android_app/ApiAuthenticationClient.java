@@ -10,7 +10,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import com.google.android.gms.appdatasearch.GetRecentContextCall;
+//import com.google.android.gms.appdatasearch.GetRecentContextCall;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -335,7 +335,7 @@ public class ApiAuthenticationClient {
                 catch(Exception exc){
                     exc.printStackTrace();
                 }
-                
+
                 int responseCode = connection.getResponseCode();
                 //System.out.println("\nSending 'POST' request to URL : " + url);
                 //System.out.println("Post parameters : " + urlParameters);
