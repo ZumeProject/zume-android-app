@@ -23,7 +23,7 @@ public class GroupActivity extends AppCompatActivity {
     private String resultFromAPI = "";
     private String next_session = "0";
     private String group_id = "";
-    private String username = "";
+    //private String username = "";
     private String groupName = "";
     private String members = "";
     //private String password = "";
@@ -49,7 +49,7 @@ public class GroupActivity extends AppCompatActivity {
         Intent intent = getIntent();
         next_session = intent.getStringExtra("next_session");
         group_id = intent.getStringExtra("groupID");
-        username = intent.getStringExtra("username");
+        //username = intent.getStringExtra("username");
         //password = intent.getStringExtra("password");
         groupName= intent.getStringExtra("groupName");
         members = intent.getStringExtra("members");
@@ -65,7 +65,7 @@ public class GroupActivity extends AppCompatActivity {
                     Bundle bundle = new Bundle();
                     bundle.putString("session_number", next_session);
                     bundle.putString("group_id", group_id);
-                    bundle.putString("username", username);
+                    //bundle.putString("username", username);
                     //bundle.putString("password", password);
                     bundle.putString("groupName", groupName);
                     Log.d("Members-Session", members);
@@ -117,7 +117,7 @@ public class GroupActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString("session_number", next_session);
                 bundle.putString("group_id", group_id);
-                bundle.putString("username", username);
+                //bundle.putString("username", username);
                 //bundle.putString("password", password);
                 bundle.putString("token", token);
 //                FileInputStream fis = null;
@@ -172,7 +172,7 @@ public class GroupActivity extends AppCompatActivity {
         try{
             Intent intent = getIntent();
 
-            String username = intent.getStringExtra("username");
+            //String username = intent.getStringExtra("username");
             //String password = intent.getStringExtra("password");
             String groupID = intent.getStringExtra("groupID");
             String groupName = intent.getStringExtra("groupName");

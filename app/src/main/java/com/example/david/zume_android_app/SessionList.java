@@ -81,12 +81,12 @@ public class SessionList extends Activity {
             public void onClick(View v) {
 
                 Intent intent = getIntent();
-                String username = intent.getStringExtra("username");
+                //String username = intent.getStringExtra("username");
                 //String password = intent.getStringExtra("password");
                 String token = intent.getStringExtra("token");
 
                 Bundle bundle = new Bundle();
-                bundle.putString("username", username);
+                //bundle.putString("username", username);
                 bundle.putString("token", token);
                 //bundle.putString("password", password);
 
@@ -101,13 +101,13 @@ public class SessionList extends Activity {
         public void onClick(View v) {
             Bundle bundle = new Bundle();
             Intent intent = getIntent();
-            String username = intent.getStringExtra("username");
+            //String username = intent.getStringExtra("username");
             String token = intent.getStringExtra("token");
             int sessionNumber = (int) v.getTag();
             sessionNumber += 1;
             bundle.putString("session_number", String.valueOf(sessionNumber));
             bundle.putBoolean("Has_a_Group", false);
-            bundle.putString("username", username);
+            //bundle.putString("username", username);
             bundle.putString("token", token);
             intent = new Intent(SessionList.this, Session.class);
             intent.putExtras(bundle);
