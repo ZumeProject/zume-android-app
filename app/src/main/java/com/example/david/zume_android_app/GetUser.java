@@ -22,11 +22,11 @@ public class GetUser extends AppCompatActivity {
     protected String password = "";
     protected int UserID = 0;
     protected  String token = "";
-    String jwtAuth = "http://zume.hsutx.edu/wp-json/jwt-auth/v1/token";
-    String jwtToken = "http://zume.hsutx.edu/wp-json/jwt-auth/v1/token/validate";
-    String user_profile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
-    String user = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
-    String sessions = "http://zume.hsutx.edu/wp-json/zume/v1/android/lessons";
+    String jwtAuth = "https://zume.sergeantservices.com/wp-json/jwt-auth/v1/token";
+    String jwtToken = "https://zume.sergeantservices.com/wp-json/jwt-auth/v1/token/validate";
+    String user_profile = "https://zume.sergeantservices.com/wp-json/zume/v1/android/user_profile/1";
+    String user = "https://zume.sergeantservices.com/wp-json/zume/v1/android/user/1";
+    String sessions = "https://zume.sergeantservices.com/wp-json/zume/v1/android/lessons";
     private boolean failed = true;
 
     public GetUser(String username, String password, Context context){
