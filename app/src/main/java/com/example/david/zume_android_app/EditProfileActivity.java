@@ -30,12 +30,15 @@ import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Brandi Turner
+ * @version 4/22/2018
+ */
+
 public class EditProfileActivity extends AppCompatActivity {
 
     private String resultFromUserProfile = ""; // JSON from user_profile.txt or user_profile endpoint
     private String resultFromUser = ""; // JSON from user.txt or user endpoint
-    //private String username = ""; // Username
-    //private String password = ""; // Password
     private  String token = "";
     private boolean old;
     String prevFirstName = ""; // The user's first name before attempting to update
@@ -50,7 +53,7 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-
+/*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +62,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
+*/
         // ZUME button to return to the dashboard
         Button home = (Button)findViewById(R.id.home);
 
@@ -68,13 +71,9 @@ public class EditProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = getIntent();
-                //String username = intent.getStringExtra("username");
-                //String password = intent.getStringExtra("password");
                 String token= intent.getStringExtra("token");
                 int user_id = intent.getIntExtra("user_id", 0);
                 Bundle bundle = new Bundle();
-                //bundle.putString("username", username);
-                //bundle.putString("password", password);
                 bundle.putString("token", token);
                 bundle.putInt("user_id", user_id);
 
@@ -93,9 +92,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 // Set credentials
                 Intent intent = getIntent();
-                //String username = intent.getStringExtra("username");
-                //Log.d("Username", username);
-                //String password = intent.getStringExtra("password");
                 String token = intent.getStringExtra("token");
                 int userID = intent.getIntExtra("user_id", 0);
 
@@ -137,6 +133,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     if(!phone_number.equals(prevPhoneNumber)){
                         changesMade = true;
                     }
+                    // If no changes have been made, then we do not want to try to update the data
                     if(changesMade) {
                         // Make sure email is of valid format
                         Pattern validEmail = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -158,7 +155,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
                         // If the data is valid, then update the user's information
                         if(validData && isNetworkAvailable()){
-                            //updateUser(userID, username, password, first_name, last_name, email_address, phone_number);
                             updateUser(userID, token, first_name, last_name, email_address, phone_number);
 
                         }
@@ -173,8 +169,6 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         Intent intent = getIntent();
-        //username = intent.getStringExtra("username");
-        //password = intent.getStringExtra("password");
         token = intent.getStringExtra("token");
 
         FileInputStream fis= null;
@@ -184,7 +178,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
         } catch (FileNotFoundException e) {
             // Couldn't find user_profile info, so get that from the API
-            //GetUser user = new GetUser(username, password, this);
             GetUser user = new GetUser(token, this);
 
             this.onCreate(savedInstanceState);
@@ -205,7 +198,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
         } catch (FileNotFoundException e) {
             // Couldn't find the user information, so get that information from the API
-            //GetUser user = new GetUser(username, password, this);
             GetUser user = new GetUser(token, this);
             this.onCreate(savedInstanceState);
         }
@@ -266,8 +258,9 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Update the user's profile information
+     * Update the user's information
      * @param user_id
+     * @param token
      * @param first_name
      * @param last_name
      * @param email
@@ -428,7 +421,6 @@ public class EditProfileActivity extends AppCompatActivity {
             // Update the user_profile, credentials, and user text files after updating data
             // in database
             if(isNetworkAvailable()) {
-                //GetUser getUser = new GetUser(username, password, context);
                 GetUser getUser = new GetUser(token, context);
 
             }
@@ -441,8 +433,6 @@ public class EditProfileActivity extends AppCompatActivity {
                 public void run() {
                     // Get all parameters from intent
                     Intent intent = getIntent();
-                    //String username = intent.getStringExtra("username");
-                    //String password = intent.getStringExtra("password");
                     int userID = intent.getIntExtra("user_id", 0);
                     String token = null;
 
@@ -468,8 +458,6 @@ public class EditProfileActivity extends AppCompatActivity {
                     }
                     // Save parameters to bundle
                     Bundle bundle = new Bundle();
-                    //bundle.putString("username", username);
-                    //bundle.putString("password", password);
                     bundle.putInt("user_id", userID);
                     bundle.putString("token", token);
                     // Return to ProfileActivity
@@ -488,8 +476,6 @@ public class EditProfileActivity extends AppCompatActivity {
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-    //    Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
-     //   Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 

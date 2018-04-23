@@ -62,15 +62,6 @@
                 android:layout_centerHorizontal="true"
                 android:layout_column="0" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Notifications"
-                android:id="@+id/notifications"
-                android:layout_alignTop="@+id/tableLayout"
-                android:layout_toRightOf="@+id/tableLayout"
-                android:layout_toEndOf="@+id/tableLayout"
-                android:layout_column="5" />
         </TableRow>
 
         <TableRow

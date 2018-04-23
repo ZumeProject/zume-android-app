@@ -56,13 +56,6 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
-        <activity
-            android:name=".Notifications"
-            android:label="@string/title_activity_notifications"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />

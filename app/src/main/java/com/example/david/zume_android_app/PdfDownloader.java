@@ -35,21 +35,19 @@ public class PdfDownloader {
         Log.d("PDFDownloader", "Made it here!");
     }
 
+    /**
+     * Get all session data and save pdf data in pdfUrls
+     * @return
+     */
     public ArrayList<String[]> execute(){
-       // FileInputStream fis = null;
-      //  try {
-       //     fis = context.openFileInput("session_pdfs.txt");
-       //     Log.d("Test-check for sessions", "Opened the file");
-      //  }
-      //  catch(FileNotFoundException e){
-            getSessions();
-            saveToList();
-            return pdfUrls;
-       // }
-
-       // return null;
+        getSessions();
+        saveToList();
+        return pdfUrls;
     }
 
+    /**
+     * Parse session_data.txt to get the pdf information
+     */
     public void getSessions(){
             FileInputStream fis= null;
             try {
@@ -58,6 +56,7 @@ public class PdfDownloader {
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
+                return;
             }
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader bufferedReader = new BufferedReader(isr);
@@ -65,24 +64,29 @@ public class PdfDownloader {
             try {
                 resultFromAPI = bufferedReader.readLine();
                 Log.d("Test", resultFromAPI);
-                //Log.d("Test", bufferedReader.readLine());
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            // Make the list of pdfs to be deleted
+            // Make the list of pdfs to be downloaded
             parseSessionData();
     }
 
+    /**
+     * Make the list of pdfs to be downloaded
+     */
     public void parseSessionData(){
         try{
             JSONObject reader = new JSONObject(resultFromAPI);
-            Log.d("Test" , resultFromAPI);
+            Log.d("Test-Downloader" , resultFromAPI);
             JSONArray sessionData = reader.getJSONArray("course");
+            // For each session in "course", find the pdfs for the session
             for(int i=0; i<sessionData.length(); i++) {
                 int sessionNum = i;
                 JSONObject session = sessionData.getJSONObject(sessionNum);
                 JSONArray sessionSteps = session.getJSONArray("steps");
+                Log.d("SessionSteps" , sessionSteps.toString());
+                // Initiate method to find the pdfs in each session
                 findRoot("steps", sessionSteps);
             }
         }
@@ -91,7 +95,13 @@ public class PdfDownloader {
         }
     }
 
+    /**
+     * Recursively searches JSON arrays and objects to find pdfs in the JSON data. The pdfs are added pdfUrls
+     * @param name the name of the current data index
+     * @param data the data at this position
+     */
     public void findRoot(String name, Object data){
+        // We found a pdf, so add it to pdfUrls
         if(name.equals("link")){
             JSONObject pdf = (JSONObject) data;
             Iterator<String> ids = pdf.keys();
@@ -101,19 +111,22 @@ public class PdfDownloader {
             try {
                 while (ids.hasNext()) {
                     String key = ids.next();
+                    // Get the url
                     if (i == 0) {
                         url = (String) pdf.get(key);
-                    } else if (i == 1) {
+                    }
+                    // Get the title
+                    else if (i == 1) {
                         title = (String) pdf.get(key);
                     }
                     i++;
                 }
+                // Add this pdf to pdfUrls
                 String[] thisPdf = new String[2];
                 thisPdf[0] = url;
                 Log.d("addingURL", url);
                 thisPdf[1] = title;
                 pdfUrls.add(thisPdf);
-                downloadPdf(url, title);
             }
             catch(JSONException e){
                 e.printStackTrace();
@@ -121,12 +134,15 @@ public class PdfDownloader {
             return;
         }
         try {
+            // Move through the new JSON array
             if (data instanceof JSONArray) {
                 JSONArray array = (JSONArray) data;
                 for (int i = 0; i < array.length(); i++) {
                     findRoot(name, array.get(i));
                 }
-            } else if (data instanceof JSONObject) {
+            }
+            // Move through the new JSON object
+            else if (data instanceof JSONObject) {
                 JSONObject object = (JSONObject) data;
                 Iterator<String> keys = object.keys();
                 while (keys.hasNext()) {
@@ -140,10 +156,9 @@ public class PdfDownloader {
         }
     }
 
-    public void downloadPdf(String url, String title){
-
-    }
-
+    /**
+     * Save pdfUrls to session_pdfs.txt to keep track of what is downloaded
+     */
     public void saveToList(){
         FileInputStream fis = null;
 

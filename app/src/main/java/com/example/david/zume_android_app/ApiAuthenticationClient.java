@@ -302,6 +302,7 @@ public class ApiAuthenticationClient {
                 urlString.append("?" + payload);
             }
 
+
             URL url = new URL(urlString.toString());
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

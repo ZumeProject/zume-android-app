@@ -28,7 +28,7 @@ public class UpdateGroup {
      */
     public UpdateGroup(String token, String group_id, LinkedHashMap<String, String> args) {
         try {
-            Log.d("Test", "Making API call");
+            Log.d("PendingPosts", "Making API call "+token);
             ApiAuthenticationClient apiAuthenticationClient =
                     new ApiAuthenticationClient(
                             baseURL
