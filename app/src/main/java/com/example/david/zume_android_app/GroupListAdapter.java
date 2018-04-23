@@ -22,13 +22,15 @@ public class GroupListAdapter extends BaseAdapter implements ListAdapter {
     private ArrayList<String[]> list = new ArrayList<String[]>();
     private Context context;
     private Intent intent;
+    private String userID = "0";
 
 
 
-    public GroupListAdapter(ArrayList<String[]> list, Context context, Intent intent) {
+    public GroupListAdapter(ArrayList<String[]> list, Context context, Intent intent, String userID) {
         this.list = list;
         this.context = context;
         this.intent = intent;
+        this.userID = userID;
     }
 
     @Override
@@ -79,6 +81,7 @@ public class GroupListAdapter extends BaseAdapter implements ListAdapter {
                 bundle.putString("next_session", list.get(position)[2]);
                 bundle.putString("members", list.get(position)[3]);
                 bundle.putString("token", token);
+                bundle.putString("user_id", userID);
 
                 intent = new Intent(context, GroupActivity.class);
                 intent.putExtras(bundle);

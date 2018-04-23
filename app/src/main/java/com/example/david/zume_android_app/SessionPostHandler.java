@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -27,7 +28,7 @@ public class SessionPostHandler extends AppCompatActivity {
     private Context context = null;
     private boolean internet;
 
-    public SessionPostHandler(Context context, String token, String group_id, LinkedHashMap<String, String> args, boolean internet){
+    public SessionPostHandler(Context context, String token, String group_id, LinkedHashMap<String, String> args, String userID, boolean internet){
 
         this.internet = internet;
         if(this.internet){
@@ -47,13 +48,12 @@ public class SessionPostHandler extends AppCompatActivity {
             Log.d("Network", "Network unavailable - adding to pending posts");
             try {
                 JSONObject object = new JSONObject();
-                //object.put("username", username);
-                //object.put("password", password);
-                object.put("token", token);
 
                 object.put("group_id", group_id);
                 JSONObject arguments = new JSONObject(args);
                 object.put("args", arguments);
+                Log.d("PendingPosts", userID);
+                object.put("user_id", userID);
                 addToPendingPosts(object);
             }
             catch(JSONException e){
@@ -62,18 +62,19 @@ public class SessionPostHandler extends AppCompatActivity {
         }
     }
 
-    public SessionPostHandler(Context context, boolean internet){
+    public SessionPostHandler(Context context, String token, boolean internet, String userID){
         this.context = context;
         this.internet = internet;
+        boolean remove = false;
+        readFile();
+        Log.d("PendingPosts", "Made it here "+String.valueOf(internet));
         if(internet){
             for(String row: resultFromFile){
                 try {
                     JSONObject object = new JSONObject(row);
-                    //String username = object.get("username").toString();
-                    //String password = object.get("password").toString();
-                    String token = object.get("token").toString();
 
                     String group_id = object.get("group_id").toString();
+                    String user_id = object.get("user_id").toString();
                     JSONObject args = new JSONObject(object.get("args").toString());
                     Iterator<String> keys = args.keys();
                     LinkedHashMap<String, String> map = new LinkedHashMap<>();
@@ -82,12 +83,20 @@ public class SessionPostHandler extends AppCompatActivity {
                         map.put(key, args.get(key).toString());
                     }
                     //UpdateGroup update = new UpdateGroup(username, password, group_id, map);
-                    UpdateGroup update = new UpdateGroup(token, group_id, map);
+                    Log.d("PendingPosts", group_id);
+                    if(userID.equals(user_id)) {
+                        UpdateGroup update = new UpdateGroup(token, group_id, map);
+                        remove = true;
+                    }
 
                 }
                 catch(JSONException e){
                     e.printStackTrace();
                 }
+            }
+            Log.d("PendingPosts", "deleting file");
+            if(remove) {
+                deleteFile();
             }
         }
         else{
@@ -133,6 +142,19 @@ public class SessionPostHandler extends AppCompatActivity {
         }
     }
 
+    private void deleteFile(){
+        FileOutputStream outputStream;
+        String filename = "pending_posts.txt";
+        Log.d("Test", "Made first call");
+        try {
+            File file = new File(context.getFilesDir()+"/"+filename);
+            file.delete();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Read the pending_posts file and create resultFromfile
      */
@@ -144,6 +166,7 @@ public class SessionPostHandler extends AppCompatActivity {
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            return;
         }
         if(fis!=null) {
             InputStreamReader isr = new InputStreamReader(fis);

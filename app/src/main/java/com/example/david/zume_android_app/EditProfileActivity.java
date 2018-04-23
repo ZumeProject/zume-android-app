@@ -42,7 +42,7 @@ public class EditProfileActivity extends AppCompatActivity {
     String prevEmail = ""; // The user's email before attempting to update
     String prevPhoneNumber = ""; // The user's phone number before attempting to update
     protected String isValidCredentials = "";
-    String baseURL = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
+    String baseURL = "https://zume.sergeantservices.com/wp-json/zume/v1/android/user/1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -77,12 +77,13 @@ public class PdfDownloader {
     public void parseSessionData(){
         try{
             JSONObject reader = new JSONObject(resultFromAPI);
-            Log.d("Test" , resultFromAPI);
+            Log.d("Test-Downloader" , resultFromAPI);
             JSONArray sessionData = reader.getJSONArray("course");
             for(int i=0; i<sessionData.length(); i++) {
                 int sessionNum = i;
                 JSONObject session = sessionData.getJSONObject(sessionNum);
                 JSONArray sessionSteps = session.getJSONArray("steps");
+                Log.d("SessionSteps" , sessionSteps.toString());
                 findRoot("steps", sessionSteps);
             }
         }
@@ -113,7 +114,6 @@ public class PdfDownloader {
                 Log.d("addingURL", url);
                 thisPdf[1] = title;
                 pdfUrls.add(thisPdf);
-                downloadPdf(url, title);
             }
             catch(JSONException e){
                 e.printStackTrace();
@@ -138,10 +138,6 @@ public class PdfDownloader {
         catch(Exception ex){
             ex.printStackTrace();
         }
-    }
-
-    public void downloadPdf(String url, String title){
-
     }
 
     public void saveToList(){

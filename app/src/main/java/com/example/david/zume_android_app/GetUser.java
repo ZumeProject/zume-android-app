@@ -91,6 +91,10 @@ public class GetUser extends AppCompatActivity {
         return token;
     }
 
+    public String getUserID(){
+        return String.valueOf(UserID);
+    }
+
     /**
      * This subclass handles the network operations in a new thread.
      * It starts the progress bar, makes the API call, and ends the progress bar.

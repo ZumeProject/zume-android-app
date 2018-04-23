@@ -28,6 +28,7 @@ public class GroupActivity extends AppCompatActivity {
     private String members = "";
     //private String password = "";
     private String token = "";
+    private String userID = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class GroupActivity extends AppCompatActivity {
         groupName= intent.getStringExtra("groupName");
         members = intent.getStringExtra("members");
         token = intent.getStringExtra("token");
+        userID = intent.getStringExtra("user_id");
         if(Integer.valueOf(next_session)>10){
             startSession.setVisibility(View.GONE);
         }
@@ -71,6 +73,7 @@ public class GroupActivity extends AppCompatActivity {
                     Log.d("Members-Session", members);
                     bundle.putString("members", members);
                     bundle.putBoolean("Has_a_Group", true);
+                    bundle.putString("user_id", userID);
 
 //                FileInputStream fis = null;
 //

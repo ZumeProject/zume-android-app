@@ -227,7 +227,7 @@ public class DashboardActivity extends AppCompatActivity {
                 }
             }
 
-            GroupListAdapter adapter = new GroupListAdapter(listItems, this, getIntent());
+            GroupListAdapter adapter = new GroupListAdapter(listItems, this, getIntent(), String.valueOf(user_id));
             ListView listView = (ListView)findViewById(R.id.listView);
             listView.setAdapter(adapter);
             Log.d("Test", "Set listView adapter");

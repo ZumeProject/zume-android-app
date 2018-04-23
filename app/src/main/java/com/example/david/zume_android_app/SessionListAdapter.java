@@ -129,6 +129,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             //String password = intent.getStringExtra("password");
                             String groupID = intent.getStringExtra("group_id");
                             String token = intent.getStringExtra("token");
+                            String userID = intent.getStringExtra("user_id");
                             Log.d("Group_id", groupID);
                             String groupName = intent.getStringExtra("groupName");
                             String session_number = intent.getStringExtra("session_number");
@@ -157,9 +158,9 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             String members = intent.getStringExtra("members");
                             String meta = "group_"+members;
 
-                            LoggingPostHandler logging = new LoggingPostHandler(context, token, session_complete_date, "course", session_number, meta, groupID, internet);
+                            LoggingPostHandler logging = new LoggingPostHandler(context, token, session_complete_date, "course", session_number, meta, groupID, userID, internet);
 //Fix this!!!!!!
-                            SessionPostHandler handler = new SessionPostHandler(context, token, groupID, args, internet);
+                            SessionPostHandler handler = new SessionPostHandler(context, token, groupID, args, userID, internet);
 
 
                             Bundle bundle = new Bundle();

@@ -34,6 +34,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class LoginActivity extends AppCompatActivity {
     private Button button_login_login;
@@ -174,9 +175,17 @@ public class LoginActivity extends AppCompatActivity {
     private void goToDashboardActivity() {
         //if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
         //Fix logic after the &&
-        if(isNetworkAvailable()) {
+        if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
             AsyncTask<Void, String, String> download = new DownloadFileAsync().execute();
         }
+
+        Date complete = new Date();
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("US/Central"));
+        String createdDate = format.format(complete);
+        createdDate = createdDate.replace(" ", "%20");
+
+        LoggingPostHandler handler = new LoggingPostHandler(getApplicationContext(), token, createdDate, "login", "logged_id", String.valueOf(user_id), isNetworkAvailable());
 
 
         Bundle bundle = new Bundle();
@@ -196,9 +205,23 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void makeApiCall(Context context) {
         final Context cont = context;
-        SessionPostHandler pendingPosts = new SessionPostHandler(cont, isNetworkAvailable());
         auth = new GetUser(username, password, context);
         final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("Login - Internet", String.valueOf(isNetworkAvailable()));
+                Log.d("What!", String.valueOf(auth.getFailed()));
+                if(!auth.getFailed()) {
+                    token = auth.getToken();
+                    String userID = auth.getUserID();
+                    SessionPostHandler pendingPosts = new SessionPostHandler(cont, token, isNetworkAvailable(), userID);
+                    LoggingPostHandler pendingLogs = new LoggingPostHandler(cont, token, isNetworkAvailable(), userID);
+                }
+
+            }
+        }, 2000);
+        auth = new GetUser(username, password, context);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -248,8 +271,12 @@ public class LoginActivity extends AppCompatActivity {
                 if (urls != null) {
                     for (String[] thisUrl : urls) {
                         try {
-
-                            URL url = new URL(thisUrl[0]);
+                            String urlPath = thisUrl[0];
+                            if(!urlPath.contains("http://") && !urlPath.contains("https://")){
+                                urlPath = "http://"+urlPath;
+                            }
+                            Log.d("PDF URL", urlPath);
+                            URL url = new URL(urlPath);
                             URLConnection conexion = url.openConnection();
                             conexion.connect();
 
