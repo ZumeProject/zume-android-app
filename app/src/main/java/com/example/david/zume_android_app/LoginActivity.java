@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse("http://zume.hsutx.edu/wp-login.php?action=register"); // missing 'http://' will cause crashed
+                Uri uri = Uri.parse("http://zume.sergeantservices.com/wp-login.php?action=register"); // missing 'http://' will cause crashed
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
@@ -176,9 +176,9 @@ public class LoginActivity extends AppCompatActivity {
         //if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
         //Fix logic after the &&
         // If network is available and the pdfs have not already been downloaded, download them (note, due to the API not returning URLs for the PDFs, when that is fixed, we will need to comment out this code so that the pdfs_downloaded.txt may be overwritten and the pdfs saved)
-        if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
+        //if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
             AsyncTask<Void, String, String> download = new DownloadFileAsync().execute();
-        }
+        //}
 
         Date complete = new Date();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

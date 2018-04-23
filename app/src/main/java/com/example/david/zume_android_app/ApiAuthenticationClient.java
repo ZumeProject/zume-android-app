@@ -31,6 +31,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+
 /**
  * Created by user on 12/8/17.
  */
@@ -305,7 +307,7 @@ public class ApiAuthenticationClient {
 
             URL url = new URL(urlString.toString());
 
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             Log.d("Request_Method", httpMethod);
             connection.setRequestMethod(httpMethod);
             if(getToken){
