@@ -128,15 +128,6 @@ public class DashboardActivity extends AppCompatActivity {
             });
 
 
-        Button notifications = (Button)findViewById(R.id.notifications);
-
-        notifications.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(DashboardActivity.this, Notifications.class));
-            }
-        });
-
         Button logOut = (Button)findViewById(R.id.logOut);
 
         logOut.setOnClickListener(new View.OnClickListener() {
@@ -216,14 +207,17 @@ public class DashboardActivity extends AppCompatActivity {
                     JSONObject groupInfo = sessionReader.getJSONObject(0);
                     int sessionNum = groupInfo.getInt("next_session");
                     String members = groupInfo.getString("members");
+                    boolean closed = groupInfo.getBoolean("closed");
                     Log.d("Members", members);
                     Log.d("Session" , String.valueOf(sessionNum));
                     // Make sure we get the correct local version of the session number.
                     thisGroup[2] = getSession(String.valueOf(sessionNum), thisGroup[0]);
                     thisGroup[3] = members;
                     Log.d("Group Name", thisGroup[1]);
-                    listItems.add(thisGroup);
-                    groups.add(thisGroup);
+                    if(!closed) {
+                        listItems.add(thisGroup);
+                        groups.add(thisGroup);
+                    }
                 }
             }
 

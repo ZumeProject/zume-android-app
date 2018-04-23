@@ -52,10 +52,8 @@ public class GroupListAdapter extends BaseAdapter implements ListAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        //if (view == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.group_list_layout, null);
-        //}
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        view = inflater.inflate(R.layout.group_list_layout, null);
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
@@ -64,18 +62,16 @@ public class GroupListAdapter extends BaseAdapter implements ListAdapter {
         //Handle buttons and add onClickListeners
         Button viewGroupBtn = (Button)view.findViewById(R.id.viewGroup);
 
+        // Go to Group clicked
         viewGroupBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Log.d("Test", "Going to group..."+list.get(position)[0]);
                 Intent intent = getIntent();
-                //String username = intent.getStringExtra("username");
-                //String password = intent.getStringExtra("password");
                 String token = intent.getStringExtra("token");
 
+                // Pass group data in the bundle
                 Bundle bundle = new Bundle();
-                //bundle.putString("username", username);
-                //bundle.putString("password", password);
                 bundle.putString("groupID", list.get(position)[0]);
                 bundle.putString("groupName", list.get(position)[1]);
                 bundle.putString("next_session", list.get(position)[2]);

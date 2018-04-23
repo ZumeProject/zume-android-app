@@ -69,7 +69,6 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        //if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             //Choose view based on if this row contains a video
@@ -96,6 +95,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                         try {
                             context.startActivity(intent);
                         }
+                        // No pdf reader is installed on this device so let the user know
                         catch(ActivityNotFoundException e){
                             e.printStackTrace();
                             Toast.makeText(context,"No Application available to view PDF.",
@@ -104,7 +104,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                     }
                 });
             }
-            //Handle line break
+            //Handle line breaks
             else if(list.get(position).isSpace()){
                 view = inflater.inflate(R.layout.session_list_space_layout, null);
                 TextView listItemText = (TextView)view.findViewById(R.id.session_item_space);
@@ -124,9 +124,6 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                         Boolean recordCompletion = intent.getBooleanExtra("Has_a_Group", false);
                         if(recordCompletion) {
                             String next_session = "0";
-                            //String username = intent.getStringExtra("username");
-                            //Log.d("Username", "SessionListAdapter " + username);
-                            //String password = intent.getStringExtra("password");
                             String groupID = intent.getStringExtra("group_id");
                             String token = intent.getStringExtra("token");
                             String userID = intent.getStringExtra("user_id");
@@ -159,29 +156,28 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             String meta = "group_"+members;
 
                             LoggingPostHandler logging = new LoggingPostHandler(context, token, session_complete_date, "course", session_number, meta, groupID, userID, internet);
-//Fix this!!!!!!
                             SessionPostHandler handler = new SessionPostHandler(context, token, groupID, args, userID, internet);
 
 
                             Bundle bundle = new Bundle();
-                            //bundle.putString("username", username);
-                            //bundle.putString("password", password);
                             bundle.putString("token",token);
                             bundle.putString("groupID", groupID);
                             bundle.putString("groupName", groupName);
                             bundle.putString("next_session", next_session);
                             bundle.putString("members", members);
 
+                            // Update the local session number for this group
                             updateSession(next_session, groupID);
 
 
+                            // Return to GroupActivity and refresh user information
                             final Intent i = new Intent(context, GroupActivity.class);
                             i.putExtras(bundle);
-                            //GetUser gu = new GetUser(username, password, context);
                             GetUser gu = new GetUser(token, context);
 
                             context.startActivity(i);
                         }
+                        // If there is no group associated with this session, just retrun to the sessionList
                         else{
                             final Intent i = new Intent(context, SessionList.class);
                             Bundle bundle = new Bundle();
@@ -196,15 +192,17 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                 view = inflater.inflate(R.layout.session_list_text_layout, null);
                 TextView listItemText = (TextView)view.findViewById(R.id.session_item_text);
                 listItemText.setText(cleanText(list.get(position).getText()));
-                //Log.d("ListViewDebug", list.get(position).getText());
             }
-
-        //}
 
         
         return view;
     }
 
+    /**
+     * Updates the local copy of the next session a group needs to complete
+     * @param next_session The next session after the one just completed
+     * @param group_id The id of the current group
+     */
     public void updateSession(String next_session, String group_id){
         try {
             File file = new File(context.getFilesDir(), group_id);
@@ -219,6 +217,11 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
         }
     }
 
+    /**
+     * Handles characters that were not translated from the lessons endpoint.
+     * @param text The text to be "cleaned"
+     * @return the "clean" text
+     */
     public String cleanText(String text){
         text = text.replace("\u00c3\u009a", "\u00DA"); // Uppercase accented U
         text = text.replace("\u00c3\u00ba", "\u00FA"); // Lowercase accented u

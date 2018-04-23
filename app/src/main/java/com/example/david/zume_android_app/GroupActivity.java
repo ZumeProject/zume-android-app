@@ -36,7 +36,7 @@ public class GroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group);
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
-
+/*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,7 +45,7 @@ public class GroupActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
+*/
         Button startSession = (Button)findViewById(R.id.startSession);
         Intent intent = getIntent();
         next_session = intent.getStringExtra("next_session");
@@ -57,7 +57,13 @@ public class GroupActivity extends AppCompatActivity {
         token = intent.getStringExtra("token");
         userID = intent.getStringExtra("user_id");
         if(Integer.valueOf(next_session)>10){
-            startSession.setVisibility(View.GONE);
+            startSession.setText("Review Sessions");
+            startSession.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(GroupActivity.this, SessionList.class));
+                }
+            });
         }
         else {
             startSession.setText("Start Session " + next_session);
@@ -102,15 +108,6 @@ public class GroupActivity extends AppCompatActivity {
                 }
             });
         }
-
-        Button viewMap = (Button)findViewById(R.id.viewMap);
-
-        viewMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(GroupActivity.this, MapsActivity.class));
-            }
-        });
 
         Button home = (Button)findViewById(R.id.home);
 

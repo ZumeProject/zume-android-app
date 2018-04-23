@@ -28,22 +28,25 @@ public class SessionPostHandler extends AppCompatActivity {
     private Context context = null;
     private boolean internet;
 
+    /**
+     * Constructor for attempting to update the group session data
+     * @param context the context
+     * @param token the current token
+     * @param group_id the current group ID
+     * @param args the LinkedHashMap of keys and values to be updated
+     * @param userID the user ID
+     * @param internet boolean for if the user has internet access
+     */
     public SessionPostHandler(Context context, String token, String group_id, LinkedHashMap<String, String> args, String userID, boolean internet){
 
         this.internet = internet;
-        if(this.internet){
-            Log.d("Internet", "true for sessionPostHandler");
-        }
-        else{
-            Log.d("Internet", "false for sessionPostHandler");
-        }
         this.context = context;
+        // If we have internet, update the session information for the group
         if(internet){
             Log.d("Network", "Network available - updating group data");
-            //UpdateGroup update = new UpdateGroup(username, password, group_id, args);
             UpdateGroup update = new UpdateGroup(token, group_id, args);
-
         }
+        // If we don't have internet, we will add this to our list of pending session posts
         else{
             Log.d("Network", "Network unavailable - adding to pending posts");
             try {
@@ -62,13 +65,22 @@ public class SessionPostHandler extends AppCompatActivity {
         }
     }
 
+    /**
+     * Constructor for updating groups from the list of pending posts.
+     * @param context the context
+     * @param token the current token
+     * @param internet boolean for if the user has internet access
+     * @param userID the user ID
+     */
     public SessionPostHandler(Context context, String token, boolean internet, String userID){
         this.context = context;
         this.internet = internet;
-        boolean remove = false;
+        boolean remove = false; // Flag for if the file should be deleted after (only delete if we successfully updated any data)
+        // Get the current list of data in the pending posts file
         readFile();
         Log.d("PendingPosts", "Made it here "+String.valueOf(internet));
         if(internet){
+            // For each post, update the group information if possible
             for(String row: resultFromFile){
                 try {
                     JSONObject object = new JSONObject(row);
@@ -77,12 +89,12 @@ public class SessionPostHandler extends AppCompatActivity {
                     String user_id = object.get("user_id").toString();
                     JSONObject args = new JSONObject(object.get("args").toString());
                     Iterator<String> keys = args.keys();
+                    // Construct the map of keys and values to be updated for the group
                     LinkedHashMap<String, String> map = new LinkedHashMap<>();
                     while(keys.hasNext()){
                         String key = keys.next();
                         map.put(key, args.get(key).toString());
                     }
-                    //UpdateGroup update = new UpdateGroup(username, password, group_id, map);
                     Log.d("PendingPosts", group_id);
                     if(userID.equals(user_id)) {
                         UpdateGroup update = new UpdateGroup(token, group_id, map);
@@ -95,6 +107,7 @@ public class SessionPostHandler extends AppCompatActivity {
                 }
             }
             Log.d("PendingPosts", "deleting file");
+            // Delete the file if we successfully updated data
             if(remove) {
                 deleteFile();
             }
@@ -117,7 +130,7 @@ public class SessionPostHandler extends AppCompatActivity {
 
     /**
      * Using resultFromFile, create new pending_posts file
-     * @return true if successfull, false otherwise
+     * @return true if successful, false otherwise
      */
     private boolean writeFile(){
         FileOutputStream outputStream;
@@ -132,7 +145,6 @@ public class SessionPostHandler extends AppCompatActivity {
                 outputStream.write(bytes);
             }
 
-            //outputStream.write(new String("").getBytes());
             outputStream.close();
             Log.d("Test", "Made the pending_posts file");
             return true;
@@ -142,6 +154,9 @@ public class SessionPostHandler extends AppCompatActivity {
         }
     }
 
+    /**
+     * Delete the pending_posts.txt file
+     */
     private void deleteFile(){
         FileOutputStream outputStream;
         String filename = "pending_posts.txt";
