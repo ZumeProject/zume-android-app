@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class UpdateGroup {
     protected String isValidCredentials = "";
-    String baseURL = "http://zume.hsutx.edu/wp-json/zume/v1/android/group/1";
+    String baseURL = "https://zume.sergeantservices.com/wp-json/zume/v1/android/group/1";
 
     /**
      * Constructor initializes and makes call to ApiAuthenticationClient

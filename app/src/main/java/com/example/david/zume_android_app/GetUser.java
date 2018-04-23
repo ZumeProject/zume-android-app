@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileOutputStream;
+import java.util.Calendar;
 
 /**
  * Created by Brandi on 3/18/2018.
@@ -193,7 +194,9 @@ public class GetUser extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    String fileContents = username + "\n" + password + "\n" + UserID+ "\n"+ token+"\n";
+                    String timeStamp = String.valueOf(System.currentTimeMillis());
+                    //String timeStamp = String.valueOf(Calendar.getInstance().getTime());
+                    String fileContents = username + "\n" + password + "\n" + UserID+ "\n"+ token+"\n"+timeStamp+"\n";
                     FileOutputStream outputStream;
 
                     try {

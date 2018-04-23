@@ -37,12 +37,13 @@ public class EditProfileActivity extends AppCompatActivity {
     //private String username = ""; // Username
     //private String password = ""; // Password
     private  String token = "";
+    private boolean old;
     String prevFirstName = ""; // The user's first name before attempting to update
     String prevLastName = ""; // The user's last name before attempting to update
     String prevEmail = ""; // The user's email before attempting to update
     String prevPhoneNumber = ""; // The user's phone number before attempting to update
     protected String isValidCredentials = "";
-    String baseURL = "http://zume.hsutx.edu/wp-json/zume/v1/android/user/1";
+    String baseURL = "https://zume.sergeantservices.com/wp-json/zume/v1/android/user/1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -299,28 +300,78 @@ public class EditProfileActivity extends AppCompatActivity {
 //        }
 //    }
 
-    public void updateUser(int user_id, String token, String first_name, String last_name, String email, String phone_number) {
+    public void updateUser(final int user_id, final String token, final String first_name, final String last_name, final String email, final String phone_number) {
         try {
-            Log.d("Test", "Making API call");
-            ApiAuthenticationClient apiAuthenticationClient =
-                    new ApiAuthenticationClient(
-                            baseURL
-                            ,token
-                    );
-            // Set Http Method type to POST
-            apiAuthenticationClient.setHttpMethod("POST");
-            // Create a LinkedHashMap of parameters to send
-            LinkedHashMap<String, String> parameters = new LinkedHashMap<String, String>();
-            parameters.put("user_id", String.valueOf(user_id));
-            parameters.put("first_name", first_name);
-            parameters.put("last_name", last_name);
-            parameters.put("user_email", email);
-            parameters.put("user_phone", phone_number);
-            apiAuthenticationClient.setParameters(parameters);
-            // Execute the Network Operation
-            AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient, this);
-            execute.execute();
-        } catch (Exception ex) {
+            final String newtoken = token;
+            FileInputStream fis = null;
+            fis = openFileInput("credentials.txt");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            long tokenTime = 0;
+            String username = "", password = "";
+            try {
+                username = bufferedReader.readLine();
+                password = bufferedReader.readLine();
+                bufferedReader.readLine();
+                bufferedReader.readLine();
+                tokenTime = Long.parseLong(bufferedReader.readLine());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            TokenTimeStamp check = new TokenTimeStamp();
+            old = check.getTimeDiff(tokenTime);
+
+            if (old) {
+                final GetUser getToken = new GetUser(username, password, getApplicationContext());
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ApiAuthenticationClient apiAuthenticationClient =
+                                new ApiAuthenticationClient(
+                                        baseURL
+                                        , getToken.getToken()
+                                );
+                        // Set Http Method type to POST
+                        apiAuthenticationClient.setHttpMethod("POST");
+                        // Create a LinkedHashMap of parameters to send
+                        LinkedHashMap<String, String> parameters = new LinkedHashMap<String, String>();
+                        parameters.put("user_id", String.valueOf(user_id));
+                        parameters.put("first_name", first_name);
+                        parameters.put("last_name", last_name);
+                        parameters.put("user_email", email);
+                        parameters.put("user_phone", phone_number);
+                        apiAuthenticationClient.setParameters(parameters);
+                        // Execute the Network Operation
+                        AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient, getApplicationContext());
+                        execute.execute();
+                    }
+                }, 2000);
+            } else {
+                try{
+                    ApiAuthenticationClient apiAuthenticationClient =
+                            new ApiAuthenticationClient(
+                                    baseURL
+                                    , newtoken
+                            );
+                    // Set Http Method type to POST
+                    apiAuthenticationClient.setHttpMethod("POST");
+                    // Create a LinkedHashMap of parameters to send
+                    LinkedHashMap<String, String> parameters = new LinkedHashMap<String, String>();
+                    parameters.put("user_id", String.valueOf(user_id));
+                    parameters.put("first_name", first_name);
+                    parameters.put("last_name", last_name);
+                    parameters.put("user_email", email);
+                    parameters.put("user_phone", phone_number);
+                    apiAuthenticationClient.setParameters(parameters);
+                    // Execute the Network Operation
+                    AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient, this);
+                    execute.execute();
+                }catch(Exception ex){
+                    Log.d("Test", "Error getting dashboard data.");
+                }
+        }
+        }catch(Exception ex){
             Log.d("Test", "Error getting dashboard data.");
         }
     }
@@ -358,6 +409,22 @@ public class EditProfileActivity extends AppCompatActivity {
             super.onPostExecute(result);
             Log.d("API_Result", result);
 
+            FileInputStream fis = null;
+            try {
+                fis = openFileInput("credentials.txt");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            try {
+                bufferedReader.readLine();
+                bufferedReader.readLine();
+                bufferedReader.readLine();
+                token = bufferedReader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             // Update the user_profile, credentials, and user text files after updating data
             // in database
             if(isNetworkAvailable()) {
@@ -377,7 +444,28 @@ public class EditProfileActivity extends AppCompatActivity {
                     //String username = intent.getStringExtra("username");
                     //String password = intent.getStringExtra("password");
                     int userID = intent.getIntExtra("user_id", 0);
-                    String token = intent.getStringExtra("token");
+                    String token = null;
+
+                    if (!old) {
+//                        FileInputStream fis = null;
+//                        try {
+//                            fis = openFileInput("credentials.txt");
+//                        } catch (FileNotFoundException e) {
+//                            e.printStackTrace();
+//                        }
+//                        InputStreamReader isr = new InputStreamReader(fis);
+//                        BufferedReader bufferedReader = new BufferedReader(isr);
+//                        try {
+//                            bufferedReader.readLine();
+//                            bufferedReader.readLine();
+//                            bufferedReader.readLine();
+//                            token = bufferedReader.readLine();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }else{
+                        token = intent.getStringExtra("token");
+                    }
                     // Save parameters to bundle
                     Bundle bundle = new Bundle();
                     //bundle.putString("username", username);
@@ -389,7 +477,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }
-            }, 1000);
+            }, 1500);
         }
     }
 

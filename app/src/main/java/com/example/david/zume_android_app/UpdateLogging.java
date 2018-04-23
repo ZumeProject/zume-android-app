@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class UpdateLogging {
     protected String isValidCredentials = "";
-    String baseURL = "http://zume.hsutx.edu/wp-json/zume/v1/android/logging";
+    String baseURL = "https://zume.sergeantservices.com/wp-json/zume/v1/android/logging";
 
     /**
      * Makes Post to update the zume_logging table for a group-type action

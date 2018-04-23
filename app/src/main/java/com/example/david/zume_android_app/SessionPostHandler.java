@@ -1,6 +1,8 @@
 package com.example.david.zume_android_app;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -27,7 +29,7 @@ public class SessionPostHandler extends AppCompatActivity {
     private Context context = null;
     private boolean internet;
 
-    public SessionPostHandler(Context context, String token, String group_id, LinkedHashMap<String, String> args, boolean internet){
+    public SessionPostHandler(Context context, final String token, final String group_id, final LinkedHashMap<String, String> args, boolean internet){
 
         this.internet = internet;
         if(this.internet){
@@ -40,7 +42,42 @@ public class SessionPostHandler extends AppCompatActivity {
         if(internet){
             Log.d("Network", "Network available - updating group data");
             //UpdateGroup update = new UpdateGroup(username, password, group_id, args);
-            UpdateGroup update = new UpdateGroup(token, group_id, args);
+            //Check token date
+            try {
+                FileInputStream fis = null;
+                fis = openFileInput("credentials.txt");
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader bufferedReader = new BufferedReader(isr);
+                long tokenTime = 0;
+                String username = "", password = "";
+                try {
+                    username = bufferedReader.readLine();
+                    password = bufferedReader.readLine();
+                    bufferedReader.readLine();
+                    bufferedReader.readLine();
+                    tokenTime = Long.parseLong(bufferedReader.readLine());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                TokenTimeStamp check = new TokenTimeStamp();
+                boolean old = check.getTimeDiff(tokenTime);
+
+                if (old) {
+                    final GetUser getToken = new GetUser(username, password, getApplicationContext());
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            UpdateGroup update = new UpdateGroup(getToken.getToken(), group_id, args);
+                        }
+                    }, 2000);
+                } else {
+                    UpdateGroup update = new UpdateGroup(token, group_id, args);
+                }
+            }catch(Exception ex){
+                Log.d("Test", "Error getting dashboard data.");
+            }
+            //UpdateGroup update = new UpdateGroup(token, group_id, args);
 
         }
         else{
@@ -73,16 +110,51 @@ public class SessionPostHandler extends AppCompatActivity {
                     //String password = object.get("password").toString();
                     String token = object.get("token").toString();
 
-                    String group_id = object.get("group_id").toString();
-                    JSONObject args = new JSONObject(object.get("args").toString());
+                    final String group_id = object.get("group_id").toString();
+                    final JSONObject args = new JSONObject(object.get("args").toString());
                     Iterator<String> keys = args.keys();
-                    LinkedHashMap<String, String> map = new LinkedHashMap<>();
+                    final LinkedHashMap<String, String> map = new LinkedHashMap<>();
                     while(keys.hasNext()){
                         String key = keys.next();
                         map.put(key, args.get(key).toString());
                     }
                     //UpdateGroup update = new UpdateGroup(username, password, group_id, map);
-                    UpdateGroup update = new UpdateGroup(token, group_id, map);
+                    //Check token date
+                    try {
+                        FileInputStream fis = null;
+                        fis = openFileInput("credentials.txt");
+                        InputStreamReader isr = new InputStreamReader(fis);
+                        BufferedReader bufferedReader = new BufferedReader(isr);
+                        long tokenTime = 0;
+                        String username = "", password = "";
+                        try {
+                            username = bufferedReader.readLine();
+                            password = bufferedReader.readLine();
+                            bufferedReader.readLine();
+                            bufferedReader.readLine();
+                            tokenTime = Long.parseLong(bufferedReader.readLine());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        TokenTimeStamp check = new TokenTimeStamp();
+                        boolean old = check.getTimeDiff(tokenTime);
+
+                        if (old) {
+                            final GetUser getToken = new GetUser(username, password, getApplicationContext());
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    UpdateGroup update = new UpdateGroup(getToken.getToken(), group_id, map);
+                                }
+                            }, 2000);
+                        } else {
+                            UpdateGroup update = new UpdateGroup(token, group_id, map);
+                        }
+                    }catch(Exception ex){
+                        Log.d("Test", "Error getting dashboard data.");
+                    }
+                    //UpdateGroup update = new UpdateGroup(token, group_id, map);
 
                 }
                 catch(JSONException e){
