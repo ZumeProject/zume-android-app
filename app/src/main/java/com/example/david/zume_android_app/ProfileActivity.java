@@ -26,9 +26,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     private String resultFromUserProfile = "";
     private String resultFromUser = "";
-    //private String baseUrl = "";
-    //private String username = "";
-    //private String password = "";
     private String token ="";
 
     @Override
@@ -36,7 +33,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-
+/*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,7 +42,9 @@ public class ProfileActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+*/
 
+        // ZUME button to return home
         Button home = (Button)findViewById(R.id.home);
 
         home.setOnClickListener(new View.OnClickListener() {
@@ -53,15 +52,11 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = getIntent();
-                //String username = intent.getStringExtra("username");
-                //String password = intent.getStringExtra("password");
                 Integer user_id = intent.getIntExtra("user_id", 0);
                 String token = intent.getStringExtra("token");
 
 
                 Bundle bundle = new Bundle();
-                //bundle.putString("username", username);
-                //bundle.putString("password", password);
                 bundle.putInt("user_id", user_id);
                 bundle.putString("token", token);
 
@@ -71,7 +66,9 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        // Button to edit profile
         Button editProfile = (Button)findViewById(R.id.editProfile);
+        // Only allow a user to edit profile if they are connected to internet
         if(isNetworkAvailable()){
 
             editProfile.setOnClickListener(new View.OnClickListener() {
@@ -79,15 +76,11 @@ public class ProfileActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     Intent intent = getIntent();
-                    //String username = intent.getStringExtra("username");
-                    //String password = intent.getStringExtra("password");
 
                     Integer userID = intent.getIntExtra("user_id", 0);
                     String token = intent.getStringExtra("token");
 					
                     Bundle bundle = new Bundle();
-                    //bundle.putString("username", username);
-                    //bundle.putString("password", password);
 
                     bundle.putInt("user_id", userID);
                     bundle.putString("token", token);
@@ -103,8 +96,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         Intent intent = getIntent();
-        //username = intent.getStringExtra("username");
-        //password = intent.getStringExtra("password");
         token = intent.getStringExtra("token");
 
         FileInputStream fis = null;
@@ -114,7 +105,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         } catch (FileNotFoundException e) {
             // Couldn't find user_profile info, so get that from the API
-            //GetUser user = new GetUser(username, password, this);
             GetUser user = new GetUser(token, this);
             this.onCreate(savedInstanceState);
         }
@@ -135,7 +125,6 @@ public class ProfileActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             // Couldn't find the user information, so get that information from the API
             if(isNetworkAvailable()) {
-//                GetUser user = new GetUser(username, password, this);
                 GetUser user = new GetUser(token, this);
 
                 this.onCreate(savedInstanceState);
@@ -158,16 +147,18 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Open a new activity window.
+     * Set the profile screen data.
      */
     private void setProfileScreen() {
         try{
+            // Get JSON data
             JSONObject reader = new JSONObject(resultFromUserProfile);
             JSONArray first = reader.getJSONArray("first_name");
             JSONArray last = reader.getJSONArray("last_name");
             JSONArray nickname = reader.getJSONArray("nickname");
             JSONArray phone = reader.getJSONArray("zume_phone_number");
 
+            // Set first name
             TextView firstName = (TextView)findViewById(R.id.firstNameProfile);
             if(!first.get(0).equals("")){
                 firstName.setText(first.get(0).toString());
@@ -176,6 +167,7 @@ public class ProfileActivity extends AppCompatActivity {
                 firstName.setText(nickname.get(0).toString());
             }
 
+            // Set last name
             TextView lastName = (TextView)findViewById(R.id.lastNameProfile);
             if(!last.get(0).equals("")){
                 lastName.setText(last.get(0).toString());
@@ -184,12 +176,14 @@ public class ProfileActivity extends AppCompatActivity {
                 lastName.setText(nickname.get(0).toString());
             }
 
+            // Set phone number
             TextView phoneNumber = (TextView)findViewById(R.id.phoneProfile);
             phoneNumber.setText((phone.get(0).toString()));
 
             // Get email from user
             reader = new JSONObject(resultFromUser);
             String email = reader.getString("user_email");
+            // set email
             TextView emailText = (TextView)findViewById(R.id.emailProfile);
             emailText.setText(email);
 
@@ -198,8 +192,6 @@ public class ProfileActivity extends AppCompatActivity {
         catch(Exception e) {
             e.printStackTrace();
         }
-
-        TextView home = (TextView)findViewById(R.id.home);
     }
 
     /**
@@ -209,8 +201,6 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-    //    Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
-    //    Log.d("Internet", "connectedOrConnecting: "+new Boolean(activeNetworkInfo.isConnectedOrConnecting()).toString());
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
