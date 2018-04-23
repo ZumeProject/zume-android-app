@@ -54,12 +54,12 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 Integer user_id = intent.getIntExtra("user_id", 0);
                 String token = intent.getStringExtra("token");
-
+                long timeStamp = intent.getLongExtra("timeStamp", 0);
 
                 Bundle bundle = new Bundle();
                 bundle.putInt("user_id", user_id);
                 bundle.putString("token", token);
-
+                bundle.putLong("timeStamp", timeStamp);
                 intent = new Intent(ProfileActivity.this, DashboardActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -79,12 +79,12 @@ public class ProfileActivity extends AppCompatActivity {
 
                     Integer userID = intent.getIntExtra("user_id", 0);
                     String token = intent.getStringExtra("token");
-					
+                    long timeStamp = intent.getLongExtra("timeStamp", 0);
                     Bundle bundle = new Bundle();
 
                     bundle.putInt("user_id", userID);
                     bundle.putString("token", token);
-
+                    bundle.putLong("timeStamp", timeStamp);
                     intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
                     intent.putExtras(bundle);
                     startActivity(intent);
@@ -97,6 +97,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         token = intent.getStringExtra("token");
+
 
         FileInputStream fis = null;
         try {

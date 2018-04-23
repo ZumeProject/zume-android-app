@@ -29,6 +29,7 @@ public class GroupActivity extends AppCompatActivity {
     //private String password = "";
     private String token = "";
     private String userID = "0";
+    private  long timeStamp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class GroupActivity extends AppCompatActivity {
         //password = intent.getStringExtra("password");
         groupName= intent.getStringExtra("groupName");
         members = intent.getStringExtra("members");
+        timeStamp = intent.getLongExtra("timeStamp", 0);
         FileInputStream fiss = null;
         try {
             fiss = openFileInput("credentials.txt");
@@ -119,6 +121,7 @@ public class GroupActivity extends AppCompatActivity {
 //                    Log.d("Test", "Failed");
 //                }
                     bundle.putString("token", token);
+                    bundle.putLong("timeStamp", timeStamp);
                     Intent intent = new Intent(GroupActivity.this, Session.class);
                     intent.putExtras(bundle);
                     startActivity(intent);
@@ -137,6 +140,7 @@ public class GroupActivity extends AppCompatActivity {
                 //bundle.putString("username", username);
                 //bundle.putString("password", password);
                 bundle.putString("token", token);
+                bundle.putLong("timeStamp", timeStamp);
 //                FileInputStream fis = null;
 //                String token = null;
 //                try {

@@ -52,7 +52,7 @@ public class GroupListAdapter extends BaseAdapter implements ListAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         view = inflater.inflate(R.layout.group_list_layout, null);
 
         //Handle TextView and display string from your list
@@ -69,6 +69,7 @@ public class GroupListAdapter extends BaseAdapter implements ListAdapter {
                 Log.d("Test", "Going to group..."+list.get(position)[0]);
                 Intent intent = getIntent();
                 String token = intent.getStringExtra("token");
+                long timeStamp = intent.getLongExtra("timeStamp",0);
 
                 // Pass group data in the bundle
                 Bundle bundle = new Bundle();
@@ -78,6 +79,7 @@ public class GroupListAdapter extends BaseAdapter implements ListAdapter {
                 bundle.putString("members", list.get(position)[3]);
                 bundle.putString("token", token);
                 bundle.putString("user_id", userID);
+                bundle.putLong("timeStamp", timeStamp);
 
                 intent = new Intent(context, GroupActivity.class);
                 intent.putExtras(bundle);

@@ -84,10 +84,12 @@ public class SessionList extends Activity {
                 //String username = intent.getStringExtra("username");
                 //String password = intent.getStringExtra("password");
                 String token = intent.getStringExtra("token");
+                long timeStamp = intent.getLongExtra("timeStamp", 0);
 
                 Bundle bundle = new Bundle();
                 //bundle.putString("username", username);
                 bundle.putString("token", token);
+                bundle.putLong("timeStamp", timeStamp);
                 //bundle.putString("password", password);
 
                 intent = new Intent(SessionList.this, DashboardActivity.class);
@@ -103,12 +105,14 @@ public class SessionList extends Activity {
             Intent intent = getIntent();
             //String username = intent.getStringExtra("username");
             String token = intent.getStringExtra("token");
+            long timeStamp = intent.getLongExtra("timeStamp", 0);
             int sessionNumber = (int) v.getTag();
             sessionNumber += 1;
             bundle.putString("session_number", String.valueOf(sessionNumber));
             bundle.putBoolean("Has_a_Group", false);
             //bundle.putString("username", username);
             bundle.putString("token", token);
+            bundle.putLong("timeStamp", timeStamp);
             intent = new Intent(SessionList.this, Session.class);
             intent.putExtras(bundle);
             startActivity(intent);

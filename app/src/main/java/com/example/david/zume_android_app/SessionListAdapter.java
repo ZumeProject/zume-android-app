@@ -69,7 +69,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             //Choose view based on if this row contains a video
             if(list.get(position).isVideo()){
@@ -130,6 +130,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             Log.d("Group_id", groupID);
                             String groupName = intent.getStringExtra("groupName");
                             String session_number = intent.getStringExtra("session_number");
+                            long timeStamp = intent.getLongExtra("timeStamp", 0);
 
                             // Get next_session
                             next_session = new Integer(new Integer(session_number) + 1).toString();
@@ -161,6 +162,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
 
                             Bundle bundle = new Bundle();
                             bundle.putString("token",token);
+                            bundle.putLong("timeStamp", timeStamp);
                             bundle.putString("groupID", groupID);
                             bundle.putString("groupName", groupName);
                             bundle.putString("next_session", next_session);

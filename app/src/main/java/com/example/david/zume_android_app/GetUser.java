@@ -23,6 +23,7 @@ public class GetUser extends AppCompatActivity {
     protected String password = "";
     protected int UserID = 0;
     protected  String token = "";
+    private long timeStamp = 0;
     String jwtAuth = "https://zume.sergeantservices.com/wp-json/jwt-auth/v1/token";
     String jwtToken = "https://zume.sergeantservices.com/wp-json/jwt-auth/v1/token/validate";
     String user_profile = "https://zume.sergeantservices.com/wp-json/zume/v1/android/user_profile/1";
@@ -90,6 +91,9 @@ public class GetUser extends AppCompatActivity {
 
     public String getToken() {
         return token;
+    }
+    public long getTimeStamp() {
+        return timeStamp;
     }
 
     public String getUserID(){
@@ -198,7 +202,7 @@ public class GetUser extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    String timeStamp = String.valueOf(System.currentTimeMillis());
+                    timeStamp = System.currentTimeMillis();
                     //String timeStamp = String.valueOf(Calendar.getInstance().getTime());
                     String fileContents = username + "\n" + password + "\n" + UserID+ "\n"+ token+"\n"+timeStamp+"\n";
                     FileOutputStream outputStream;

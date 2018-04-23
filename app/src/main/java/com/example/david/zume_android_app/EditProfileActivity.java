@@ -73,8 +73,10 @@ public class EditProfileActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 String token= intent.getStringExtra("token");
                 int user_id = intent.getIntExtra("user_id", 0);
+                long timeStamp = intent.getLongExtra("timeStamp", 0);
                 Bundle bundle = new Bundle();
                 bundle.putString("token", token);
+                bundle.putLong("timeStamp", timeStamp);
                 bundle.putInt("user_id", user_id);
 
                 intent = new Intent(EditProfileActivity.this, DashboardActivity.class);
@@ -434,6 +436,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     // Get all parameters from intent
                     Intent intent = getIntent();
                     int userID = intent.getIntExtra("user_id", 0);
+                    long timeStamp = intent.getLongExtra("timeStamp",0);
                     String token = null;
 
                     if (old) {
@@ -460,6 +463,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     Bundle bundle = new Bundle();
                     bundle.putInt("user_id", userID);
                     bundle.putString("token", token);
+                    bundle.putLong("timeStamp", timeStamp);
                     // Return to ProfileActivity
                     intent = new Intent(EditProfileActivity.this, ProfileActivity.class);
                     intent.putExtras(bundle);

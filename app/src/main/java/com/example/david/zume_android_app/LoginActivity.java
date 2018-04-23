@@ -43,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     private String username;
     private String password;
     private String token;
+    private long timeStamp;
     private Integer user_id;
     private String baseUrlUserProfile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
     private GetUser auth;
@@ -193,6 +194,7 @@ public class LoginActivity extends AppCompatActivity {
         //bundle.putString("username", username);
         //bundle.putString("password", password);
         //bundle.putString("baseUrl", baseUrlUserProfile);
+        bundle.putLong("timeStamp", timeStamp);
         bundle.putString("token", token);
 
         Intent intent = new Intent(this, DashboardActivity.class);
@@ -215,6 +217,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("What!", String.valueOf(auth.getFailed()));
                 if(!auth.getFailed()) {
                     token = auth.getToken();
+                    timeStamp = auth.getTimeStamp();
                     String userID = auth.getUserID();
                     SessionPostHandler pendingPosts = new SessionPostHandler(cont, token, isNetworkAvailable(), userID);
                     LoggingPostHandler pendingLogs = new LoggingPostHandler(cont, token, isNetworkAvailable(), userID);

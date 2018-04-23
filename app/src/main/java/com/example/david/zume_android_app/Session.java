@@ -58,12 +58,14 @@ public class Session extends AppCompatActivity {
                 //String username = intent.getStringExtra("username");
                 //String password = intent.getStringExtra("password");
                 String token = intent.getStringExtra("token");
+                long timeStamp = intent.getLongExtra("timeStamp",0);
                 Bundle bundle = new Bundle();
                 bundle.putString("session_number", next_session);
                 bundle.putString("group_id", group_id);
                 //bundle.putString("username", username);
                 //bundle.putString("password", password);
                 bundle.putString("token", token);
+                bundle.putLong("timeStamp", timeStamp);
 
                 intent = new Intent(Session.this, DashboardActivity.class);
                 intent.putExtras(bundle);
