@@ -9,46 +9,40 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileOutputStream;
-import java.util.Calendar;
 
 /**
  * Created by Brandi on 3/18/2018.
+ *
+ * This java file gets all the user's info that is needed for the app,
+ * and it also gets a token for the user if it is needed.
  */
 
 public class GetUser extends AppCompatActivity {
 
-    private Context context;
-    protected String isValidCredentials = "";
-    protected String username = "";
-    protected String password = "";
-    protected int UserID = 0;
-    protected  String token = "";
-    private long timeStamp = 0;
-    String jwtAuth = "https://zume.sergeantservices.com/wp-json/jwt-auth/v1/token";
-    String jwtToken = "https://zume.sergeantservices.com/wp-json/jwt-auth/v1/token/validate";
-    String user_profile = "https://zume.sergeantservices.com/wp-json/zume/v1/android/user_profile/1";
-    String user = "https://zume.sergeantservices.com/wp-json/zume/v1/android/user/1";
-    String sessions = "https://zume.sergeantservices.com/wp-json/zume/v1/android/lessons";
+    private Context context;                    //context from the app
+    protected String isValidCredentials = "";   //response from the GET or POST that was made
+    protected String username = "";             //Username of the current user
+    protected String password = "";             //password for the current user
+    protected int UserID = 0;                   //userId of the current user
+    protected  String token = "";               //token that will be used for GETs and POSTs
+    private long timeStamp = 0;                 //Time stamp of the token
+    String jwtAuth = "https://zume.sergeantservices.com/wp-json/jwt-auth/v1/token";                     //Url for getting a token
+    String user_profile = "https://zume.sergeantservices.com/wp-json/zume/v1/android/user_profile/1";   //Url for getting the user's profile
+    String user = "https://zume.sergeantservices.com/wp-json/zume/v1/android/user/1";                   //Url for getting the user's email
+    String sessions = "https://zume.sergeantservices.com/wp-json/zume/v1/android/lessons";              //Url for getting the session data
     private boolean failed = true;
 
+    /**
+     * Constructor for GetUser when the user doesn't have a token
+     * @param username String username of the current user
+     * @param password String password of the current user
+     */
     public GetUser(String username, String password, Context context){
-        /*this.context = context;
-        this.username = username;
-        this.password = password;
-        try {
-            ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
-                    user_profile
-                    , username
-                    , password
-            );
-            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "user_profile", context);
-            execute.execute();
-        } catch (Exception ex) {
-        }*/
         this.context = context;
         this.username = username;
         this.password = password;
         try {
+            //Makes an api call to get a token
             ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
                     jwtAuth
                     , username
@@ -61,10 +55,16 @@ public class GetUser extends AppCompatActivity {
         } catch (Exception ex) {
         }
     }
+    /**
+     * Constructor for GetUser when the user has a token
+     * @param token String token of the current user
+     * @param context Context the context for the app
+     */
     public GetUser(String token, Context context){
         this.context = context;
         this.token = token;
         try {
+            //Makes an api call to get all the user's info
             ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
                     user_profile
                     ,this.token
@@ -74,18 +74,6 @@ public class GetUser extends AppCompatActivity {
             execute.execute();
         } catch (Exception ex) {
         }
-
-//        this.context = context;
-//        try {
-//            ApiAuthenticationClient apiAuthenticationClient = new ApiAuthenticationClient(
-//                    jwtToken
-//                    ,  token
-//            );
-//            apiAuthenticationClient.setHttpMethod("POST");
-//            AsyncTask<Void, Void, String> execute = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient, "check_token", context);
-//            execute.execute();
-//        } catch (Exception ex) {
-//        }
     }
     public boolean getFailed(){ return failed;}
 
@@ -141,8 +129,7 @@ public class GetUser extends AppCompatActivity {
 
             // Login Success
             if (isValidCredentials != null && !isValidCredentials.equals("")) {
-                //Creating te credentials file and user_profile file
-                //Also makes a call for the second Api call
+                //Gets the user info with the new token that was created.
                 if(type.equals("token")){
                     failed = false;
                     String [] tokenArray = isValidCredentials.split(":");
@@ -160,6 +147,7 @@ public class GetUser extends AppCompatActivity {
                     execute2.execute();
 
                 }
+                //Save the users infofrom the profile url
                 else if(type.equals("user_profile")) {
                     failed = false;
                     Log.d("What!", String.valueOf(failed));
@@ -175,7 +163,7 @@ public class GetUser extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    // Now make the call to rewrite the user file
+                    // Makes an api call to get the users email
                     ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
                             user
                             , token
@@ -185,15 +173,10 @@ public class GetUser extends AppCompatActivity {
                     execute2.execute();
 
                 }
+                //Saves the user's credentials and the user's email
                 else if(type.equals("user")){
                     failed = false;
-                    Log.d("What!", String.valueOf(failed));
-
                     String filename = "credentials.txt";
-
-                    Log.d("Test", username);
-                    Log.d("Test", password);
-                    //Mess with this after the endpoint is fixed
                     try {
                         JSONObject reader = new JSONObject(isValidCredentials);
                         int id = reader.getInt("user_id");
@@ -202,8 +185,8 @@ public class GetUser extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    //Crates a time stamp for the token
                     timeStamp = System.currentTimeMillis();
-                    //String timeStamp = String.valueOf(Calendar.getInstance().getTime());
                     String fileContents = username + "\n" + password + "\n" + UserID+ "\n"+ token+"\n"+timeStamp+"\n";
                     FileOutputStream outputStream;
 
@@ -229,15 +212,17 @@ public class GetUser extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
+                    //Makes an api call to get the session data from zume.
                     ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
-                            sessions
+                                    sessions
                                     , token
                             );
                     apiAuthenticationClient2.setHttpMethod("GET");
                     AsyncTask<Void, Void, String> execute2 = new GetUser.ExecuteNetworkOperation(apiAuthenticationClient2, "sessions", context);
                     execute2.execute();
-                }else if(type.equals("sessions")){
+                }
+                //Saves the session data from zume
+                else if(type.equals("sessions")){
                     failed = false;
                     Log.d("What!", String.valueOf(failed));
                     String sessions = "";
@@ -258,10 +243,6 @@ public class GetUser extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-// else if(type.equals("check_token")){
-//
-//                    Log.d("Test", isValidCredentials);
-//                }
             }
         }
     }

@@ -4,20 +4,15 @@ package com.example.david.zume_android_app;
  * Created by David on 2/15/2018.
  */
 
-import android.app.DownloadManager;
-import android.media.session.MediaSession;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
-
-//import com.google.android.gms.appdatasearch.GetRecentContextCall;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,47 +26,28 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by user on 12/8/17.
- */
-
 public class ApiAuthenticationClient {
 
-    private String baseUrl;
-    private String username;
-    private String password;
-    private String token;
-    private Boolean getToken = false;
+    private String baseUrl;             //Url to connect to
+    private String username;            //username of the current user
+    private String password;            //password of the current user
+    private String token;               //token for the current user
+    private Boolean getToken = false;   //Tells if a token needs to be created
     private String urlResource;
-    private String httpMethod; // GET, POST, PUT, DELETE
+    private String httpMethod;          // GET, POST, PUT, DELETE
     private String urlPath;
     private String lastResponse;
-    private String payload;
+    private String payload;             //The information that is being sent to the url
     private LinkedHashMap<String, String> parameters;
     private Map<String, List<String>> headerFields;
 
     /**
-     *
-     * @param baseUrl String
-     * @param username String
-     * @param password String
+     * Constructor for ApiAuthenticationClient when the user doesn't have a token
+     * @param baseUrl String url to make the api call
+     * @param username String username of the current user
+     * @param password String password of the current user
      */
-    public ApiAuthenticationClient(String  baseUrl, String username, String password) {
-        setBaseUrl(baseUrl);
-        this.username = username;
-        this.password = password;
-        this.urlResource = "";
-        this.urlPath = "";
-        this.httpMethod = "GET";
-        parameters = new LinkedHashMap<>();
-        lastResponse = "";
-        payload = "";
-        headerFields = new HashMap<>();
-        // This is important. The application may break without this line.
-        System.setProperty("jsse.enableSNIExtension", "false");
-    }
     public ApiAuthenticationClient(String  baseUrl, String username, String password, Boolean getToken) {
-        //setBaseUrl(baseUrl);
         this.baseUrl = baseUrl;
         this.getToken = getToken;
         this.username = username;
@@ -86,6 +62,11 @@ public class ApiAuthenticationClient {
         // This is important. The application may break without this line.
         System.setProperty("jsse.enableSNIExtension", "false");
     }
+    /**
+     * Constructor for ApiAuthenticationClient when the user has a token
+     * @param baseUrl String url to make the api call
+     * @param token String username of the current user
+     */
     public ApiAuthenticationClient(String  baseUrl, String token) {
         setBaseUrl(baseUrl);
         this.urlResource = "";
@@ -281,17 +262,13 @@ public class ApiAuthenticationClient {
 
         try {
             StringBuilder urlString = new StringBuilder(baseUrl + urlResource);
-            String urlParameters  = "username="+username+"&password="+password;
-            //httpMethod = "POST";
-
-            //payload = urlParameters;
+            //Sets up the urls
             if (!urlPath.equals("") && httpMethod.equals("GET")) {
                 urlString.append("/" + urlPath);
                 if(new Character(urlString.charAt(urlString.length()-1)).equals("/")){
                     urlString = urlString.replace(urlString.length()-1, urlString.length(), "");
                 }
             }
-
             if (parameters.size() > 0 && httpMethod.equals("GET")) {
                 payload = getPayloadAsString();
                 urlString.append("?" + payload);
@@ -308,8 +285,10 @@ public class ApiAuthenticationClient {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             Log.d("Request_Method", httpMethod);
             connection.setRequestMethod(httpMethod);
-            if(getToken){
 
+            //Sets up the url headers and body to get a token
+            if(getToken){
+                String urlParameters  = "username="+username+"&password="+password;
                 byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
                 int    postDataLength = postData.length;
 
@@ -319,16 +298,7 @@ public class ApiAuthenticationClient {
                 connection.setRequestMethod( "POST" );
 
                 connection.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");
-                //connection.setRequestProperty( "charset", "utf-8");
-                //connection.setRequestProperty( "Content-Length", Integer.toString( postDataLength ));
                 connection.setRequestProperty("Cache-Control", "no-cache");
-                //String test2 = (String) connection.getContent();
-
-                //connection.setUseCaches( false );
-                //OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-                ////writer.write(String.valueOf(postData));
-                //writer.write(urlParameters);
-                //writer.close();
                 try( DataOutputStream wr = new DataOutputStream( connection.getOutputStream())) {
                     wr.write( postData );
                     wr.close();
@@ -336,42 +306,21 @@ public class ApiAuthenticationClient {
                 catch(Exception exc){
                     exc.printStackTrace();
                 }
-
-                int responseCode = connection.getResponseCode();
-                //System.out.println("\nSending 'POST' request to URL : " + url);
-                //System.out.println("Post parameters : " + urlParameters);
-                //System.out.println("Response Code : " + responseCode);
                 headerFields= connection.getHeaderFields();
-//                BufferedReader in = new BufferedReader(
-//                        new InputStreamReader(connection.getInputStream()));
-//                String inputLine;
-//                StringBuffer response = new StringBuffer();
-//
-//                while ((inputLine = in.readLine()) != null) {
-//                    response.append(inputLine);
-//                }
-//                in.close();
                 BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 while ((line = br.readLine()) != null) {
                     outputStringBuilder.append(line);
                 }
-
-                //print result
-                //System.out.println(response.toString());
             }
+            //Sets up the url headers and body with a token to make a POST or GET.
             else {
                 Log.d("Token", token);
                 connection.setRequestProperty("Authorization", "Bearer" + token);
-                //String encoding = Base64Encoder.encode(username + ":" + password);
-                //connection.setRequestProperty("username",username);
-                //connection.setRequestProperty("password",password);
-                //connection.setRequestProperty("Authorization", "Basic " + encoding);
                 connection.setRequestProperty("Accept", "application/json");
                 connection.setRequestProperty("Content-Type", "text/plain");
-                //byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
-                //int    postDataLength = postData.length;
 
                 // Make the network connection and retrieve the output from the server.
+                //MAkes a POST and receives any new information from the site.
                 if (httpMethod.equals("POST") || httpMethod.equals("PUT")) {
 
                     payload = getPayloadAsString();
@@ -395,6 +344,7 @@ public class ApiAuthenticationClient {
                         ex.printStackTrace();
                     }
                     connection.disconnect();
+                //Makes a GET request.
                 } else {
                     InputStream content = (InputStream) connection.getInputStream();
                     headerFields = connection.getHeaderFields();
@@ -412,6 +362,7 @@ public class ApiAuthenticationClient {
         }
 
         // If the outputStringBuilder is blank, the call failed.
+        //Stores the resposes form the GET or POST
         if (!outputStringBuilder.toString().equals("")) {
             lastResponse = outputStringBuilder.toString();
         }

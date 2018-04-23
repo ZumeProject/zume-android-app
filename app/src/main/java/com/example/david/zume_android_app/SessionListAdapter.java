@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -125,12 +126,12 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                         if(recordCompletion) {
                             String next_session = "0";
                             String groupID = intent.getStringExtra("group_id");
-                            String token = intent.getStringExtra("token");
+                            final String[] token = {intent.getStringExtra("token")};
                             String userID = intent.getStringExtra("user_id");
                             Log.d("Group_id", groupID);
                             String groupName = intent.getStringExtra("groupName");
                             String session_number = intent.getStringExtra("session_number");
-                            long timeStamp = intent.getLongExtra("timeStamp", 0);
+                            final long[] timeStamp = {intent.getLongExtra("timeStamp", 0)};
 
                             // Get next_session
                             next_session = new Integer(new Integer(session_number) + 1).toString();
@@ -155,14 +156,33 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             // Set meta value for zume_logging table
                             String members = intent.getStringExtra("members");
                             String meta = "group_"+members;
+
                             //Come back here to make use of the timestamp.
-                            LoggingPostHandler logging = new LoggingPostHandler(context, token, session_complete_date, "course", session_number, meta, groupID, userID, internet);
-                            SessionPostHandler handler = new SessionPostHandler(context, token, groupID, args, userID, internet);
+                            //pass the username and password to this function.
+                            //So open the credentials file in Session.java
+                            String username = intent.getStringExtra("username");
+                            String password = intent.getStringExtra("password");
+                            TokenTimeStamp check = new TokenTimeStamp();
+                            boolean old = check.getTimeDiff(timeStamp[0]);
+                            if(old){
+                                final GetUser getToken = new GetUser(username, password, context);
+                                final Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        token[0] = getToken.getToken();
+                                        timeStamp[0] = getToken.getTimeStamp();
+                                    }
+                                }, 2000);
+                            }
+
+                            LoggingPostHandler logging = new LoggingPostHandler(context, token[0], session_complete_date, "course", session_number, meta, groupID, userID, internet);
+                            SessionPostHandler handler = new SessionPostHandler(context, token[0], groupID, args, userID, internet);
 
 
                             Bundle bundle = new Bundle();
-                            bundle.putString("token",token);
-                            bundle.putLong("timeStamp", timeStamp);
+                            bundle.putString("token", token[0]);
+                            bundle.putLong("timeStamp", timeStamp[0]);
                             bundle.putString("groupID", groupID);
                             bundle.putString("groupName", groupName);
                             bundle.putString("next_session", next_session);
@@ -175,7 +195,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             // Return to GroupActivity and refresh user information
                             final Intent i = new Intent(context, GroupActivity.class);
                             i.putExtras(bundle);
-                            GetUser gu = new GetUser(token, context);
+                            GetUser gu = new GetUser(token[0], context);
 
                             context.startActivity(i);
                         }
