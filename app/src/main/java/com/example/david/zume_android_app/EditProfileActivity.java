@@ -436,24 +436,24 @@ public class EditProfileActivity extends AppCompatActivity {
                     int userID = intent.getIntExtra("user_id", 0);
                     String token = null;
 
-                    if (!old) {
-//                        FileInputStream fis = null;
-//                        try {
-//                            fis = openFileInput("credentials.txt");
-//                        } catch (FileNotFoundException e) {
-//                            e.printStackTrace();
-//                        }
-//                        InputStreamReader isr = new InputStreamReader(fis);
-//                        BufferedReader bufferedReader = new BufferedReader(isr);
-//                        try {
-//                            bufferedReader.readLine();
-//                            bufferedReader.readLine();
-//                            bufferedReader.readLine();
-//                            token = bufferedReader.readLine();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }else{
+                    if (old) {
+                        FileInputStream fis = null;
+                        try {
+                            fis = openFileInput("credentials.txt");
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        InputStreamReader isr = new InputStreamReader(fis);
+                        BufferedReader bufferedReader = new BufferedReader(isr);
+                        try {
+                            bufferedReader.readLine();
+                            bufferedReader.readLine();
+                            bufferedReader.readLine();
+                            token = bufferedReader.readLine();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
                         token = intent.getStringExtra("token");
                     }
                     // Save parameters to bundle

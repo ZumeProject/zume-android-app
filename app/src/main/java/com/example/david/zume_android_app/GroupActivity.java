@@ -54,7 +54,24 @@ public class GroupActivity extends AppCompatActivity {
         //password = intent.getStringExtra("password");
         groupName= intent.getStringExtra("groupName");
         members = intent.getStringExtra("members");
-        token = intent.getStringExtra("token");
+        FileInputStream fiss = null;
+        try {
+            fiss = openFileInput("credentials.txt");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        InputStreamReader isrr = new InputStreamReader(fiss);
+        BufferedReader bufferedReaderr = new BufferedReader(isrr);
+        try {
+            bufferedReaderr.readLine();
+            bufferedReaderr.readLine();
+            bufferedReaderr.readLine();
+            token = bufferedReaderr.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //token = intent.getStringExtra("token");
         userID = intent.getStringExtra("user_id");
         if(Integer.valueOf(next_session)>10){
             startSession.setText("Review Sessions");
