@@ -125,11 +125,11 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                         Boolean recordCompletion = intent.getBooleanExtra("Has_a_Group", false);
                         if(recordCompletion) {
                             String next_session = "0";
-                            String groupID = intent.getStringExtra("group_id");
+                            final String groupID = intent.getStringExtra("group_id");
                             final String[] token = {intent.getStringExtra("token")};
-                            String userID = intent.getStringExtra("user_id");
+                            final String userID = intent.getStringExtra("user_id");
                             Log.d("Group_id", groupID);
-                            String groupName = intent.getStringExtra("groupName");
+                            final String groupName = intent.getStringExtra("groupName");
                             String session_number = intent.getStringExtra("session_number");
                             final long[] timeStamp = {intent.getLongExtra("timeStamp", 0)};
 
@@ -148,14 +148,14 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             session_complete_date = session_complete_date.replace(" ", "%20");
 
                             // Add argument keys and values to args for sessionPostHandler
-                            LinkedHashMap<String, String> args = new LinkedHashMap<>();
+                            final LinkedHashMap<String, String> args = new LinkedHashMap<>();
                             args.put(session_number, "true");
                             args.put(session_complete, session_complete_date);
                             args.put(next_session_key, next_session);
 
                             // Set meta value for zume_logging table
-                            String members = intent.getStringExtra("members");
-                            String meta = "group_"+members;
+                            final String members = intent.getStringExtra("members");
+                            final String meta = "group_" + members;
 
                             //Come back here to make use of the timestamp.
                             //pass the username and password to this function.
@@ -164,40 +164,66 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             String password = intent.getStringExtra("password");
                             TokenTimeStamp check = new TokenTimeStamp();
                             boolean old = check.getTimeDiff(timeStamp[0]);
-                            if(old){
+                            if (old) {
                                 final GetUser getToken = new GetUser(username, password, context);
                                 final Handler handler = new Handler();
+                                final String finalNext_session = next_session;
+                                final String finalSession_complete_date = session_complete_date;
+                                final String finalSession_number = session_number;
                                 handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         token[0] = getToken.getToken();
                                         timeStamp[0] = getToken.getTimeStamp();
+                                        LoggingPostHandler logging = new LoggingPostHandler(context, token[0], finalSession_complete_date, "course", finalSession_number, meta, groupID, userID, internet);
+                                        SessionPostHandler handler = new SessionPostHandler(context, token[0], groupID, args, userID, internet);
+
+
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("token", token[0]);
+                                        bundle.putLong("timeStamp", timeStamp[0]);
+                                        bundle.putString("groupID", groupID);
+                                        bundle.putString("groupName", groupName);
+                                        bundle.putString("next_session", finalNext_session);
+                                        bundle.putString("members", members);
+
+                                        // Update the local session number for this group
+                                        updateSession(finalNext_session, groupID);
+
+
+                                        // Return to GroupActivity and refresh user information
+                                        final Intent i = new Intent(context, GroupActivity.class);
+                                        i.putExtras(bundle);
+                                        GetUser gu = new GetUser(token[0], context);
+
+                                        context.startActivity(i);
+
                                     }
-                                }, 2000);
+                                }, 4000);
+                            } else {
+                                LoggingPostHandler logging = new LoggingPostHandler(context, token[0], session_complete_date, "course", session_number, meta, groupID, userID, internet);
+                                SessionPostHandler handler = new SessionPostHandler(context, token[0], groupID, args, userID, internet);
+
+
+                                Bundle bundle = new Bundle();
+                                bundle.putString("token", token[0]);
+                                bundle.putLong("timeStamp", timeStamp[0]);
+                                bundle.putString("groupID", groupID);
+                                bundle.putString("groupName", groupName);
+                                bundle.putString("next_session", next_session);
+                                bundle.putString("members", members);
+
+                                // Update the local session number for this group
+                                updateSession(next_session, groupID);
+
+
+                                // Return to GroupActivity and refresh user information
+                                final Intent i = new Intent(context, GroupActivity.class);
+                                i.putExtras(bundle);
+                                GetUser gu = new GetUser(token[0], context);
+
+                                context.startActivity(i);
                             }
-
-                            LoggingPostHandler logging = new LoggingPostHandler(context, token[0], session_complete_date, "course", session_number, meta, groupID, userID, internet);
-                            SessionPostHandler handler = new SessionPostHandler(context, token[0], groupID, args, userID, internet);
-
-
-                            Bundle bundle = new Bundle();
-                            bundle.putString("token", token[0]);
-                            bundle.putLong("timeStamp", timeStamp[0]);
-                            bundle.putString("groupID", groupID);
-                            bundle.putString("groupName", groupName);
-                            bundle.putString("next_session", next_session);
-                            bundle.putString("members", members);
-
-                            // Update the local session number for this group
-                            updateSession(next_session, groupID);
-
-
-                            // Return to GroupActivity and refresh user information
-                            final Intent i = new Intent(context, GroupActivity.class);
-                            i.putExtras(bundle);
-                            GetUser gu = new GetUser(token[0], context);
-
-                            context.startActivity(i);
                         }
                         // If there is no group associated with this session, just retrun to the sessionList
                         else{

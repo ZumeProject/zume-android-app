@@ -26,6 +26,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class ApiAuthenticationClient {
 
     private String baseUrl;             //Url to connect to
@@ -282,7 +284,7 @@ public class ApiAuthenticationClient {
 
             URL url = new URL(urlString.toString());
 
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             Log.d("Request_Method", httpMethod);
             connection.setRequestMethod(httpMethod);
 

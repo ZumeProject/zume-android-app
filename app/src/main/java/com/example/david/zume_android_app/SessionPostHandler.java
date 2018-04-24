@@ -30,9 +30,6 @@ public class SessionPostHandler extends AppCompatActivity {
     private Context context = null;
     private boolean internet;
 
-//<<<<<<< HEAD
-//    public SessionPostHandler(Context context, final String token, final String group_id, final LinkedHashMap<String, String> args, boolean internet){
-//=======
     /**
      * Constructor for attempting to update the group session data
      * @param context the context
@@ -49,44 +46,8 @@ public class SessionPostHandler extends AppCompatActivity {
         // If we have internet, update the session information for the group
         if(internet){
             Log.d("Network", "Network available - updating group data");
-            //UpdateGroup update = new UpdateGroup(username, password, group_id, args);
-            //Check token date
-            try {
-                FileInputStream fis = null;
-                fis = openFileInput("credentials.txt");
-                InputStreamReader isr = new InputStreamReader(fis);
-                BufferedReader bufferedReader = new BufferedReader(isr);
-                long tokenTime = 0;
-                String username = "", password = "";
-                try {
-                    username = bufferedReader.readLine();
-                    password = bufferedReader.readLine();
-                    bufferedReader.readLine();
-                    bufferedReader.readLine();
-                    tokenTime = Long.parseLong(bufferedReader.readLine());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                TokenTimeStamp check = new TokenTimeStamp();
-                boolean old = check.getTimeDiff(tokenTime);
+            UpdateGroup update = new UpdateGroup(token, group_id, args);
 
-                if (old) {
-                    final GetUser getToken = new GetUser(username, password, getApplicationContext());
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            UpdateGroup update = new UpdateGroup(getToken.getToken(), group_id, args);
-                        }
-                    }, 2000);
-                } else {
-                    UpdateGroup update = new UpdateGroup(token, group_id, args);
-                }
-            }catch(Exception ex){
-                Log.d("Test", "Error getting dashboard data.");
-            }
-            //UpdateGroup update = new UpdateGroup(token, group_id, args);
-            //UpdateGroup update = new UpdateGroup(token, group_id, args);
         }
         // If we don't have internet, we will add this to our list of pending session posts
         else{
@@ -117,7 +78,7 @@ public class SessionPostHandler extends AppCompatActivity {
     public SessionPostHandler(Context context, String token, boolean internet, final String userID){
         this.context = context;
         this.internet = internet;
-        final boolean[] remove = {false}; // Flag for if the file should be deleted after (only delete if we successfully updated any data)
+        boolean remove = false; // Flag for if the file should be deleted after (only delete if we successfully updated any data)
         // Get the current list of data in the pending posts file
         readFile();
         Log.d("PendingPosts", "Made it here "+String.valueOf(internet));
@@ -126,79 +87,23 @@ public class SessionPostHandler extends AppCompatActivity {
             for(String row: resultFromFile){
                 try {
                     JSONObject object = new JSONObject(row);
-
-//<<<<<<< HEAD
-//                    final String group_id = object.get("group_id").toString();
-//                    final JSONObject args = new JSONObject(object.get("args").toString());
-//                    Iterator<String> keys = args.keys();
-//                    final LinkedHashMap<String, String> map = new LinkedHashMap<>();
-//=======
                     final String group_id = object.get("group_id").toString();
                     final String user_id = object.get("user_id").toString();
                     JSONObject args = new JSONObject(object.get("args").toString());
                     Iterator<String> keys = args.keys();
                     // Construct the map of keys and values to be updated for the group
                     final LinkedHashMap<String, String> map = new LinkedHashMap<>();
-//>>>>>>> master
+
                     while(keys.hasNext()){
                         String key = keys.next();
                         map.put(key, args.get(key).toString());
                     }
-//<<<<<<< HEAD
-                    //UpdateGroup update = new UpdateGroup(username, password, group_id, map);
-                    //Check token date
-                    try {
-                        FileInputStream fis = null;
-                        fis = openFileInput("credentials.txt");
-                        InputStreamReader isr = new InputStreamReader(fis);
-                        BufferedReader bufferedReader = new BufferedReader(isr);
-                        long tokenTime = 0;
-                        String username = "", password = "";
-                        try {
-                            username = bufferedReader.readLine();
-                            password = bufferedReader.readLine();
-                            bufferedReader.readLine();
-                            bufferedReader.readLine();
-                            tokenTime = Long.parseLong(bufferedReader.readLine());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        TokenTimeStamp check = new TokenTimeStamp();
-                        boolean old = check.getTimeDiff(tokenTime);
-
-                        if (old) {
-                            final GetUser getToken = new GetUser(username, password, getApplicationContext());
-                            final Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //UpdateGroup update = new UpdateGroup(getToken.getToken(), group_id, map);
-                                    Log.d("PendingPosts", group_id);
-                                    if(userID.equals(user_id)) {
-                                        UpdateGroup update = new UpdateGroup(getToken.getToken(), group_id, map);
-                                        remove[0] = true;
-                                    }
-                                }
-                            }, 2000);
-                        } else {
-                            //UpdateGroup update = new UpdateGroup(token, group_id, map);
-                            Log.d("PendingPosts", group_id);
-                            if(userID.equals(user_id)) {
-                                UpdateGroup update = new UpdateGroup(token, group_id, map);
-                                remove[0] = true;
-                            }
-                        }
-                    }catch(Exception ex){
-                        Log.d("Test", "Error getting dashboard data.");
+                    Log.d("PendingPosts", group_id);
+                    if(userID.equals(user_id)) {
+                        UpdateGroup update = new UpdateGroup(token, group_id, map);
+                        remove = true;
                     }
-                    //UpdateGroup update = new UpdateGroup(token, group_id, map);
-//=======
-//                    Log.d("PendingPosts", group_id);
-//                    if(userID.equals(user_id)) {
-//                        UpdateGroup update = new UpdateGroup(token, group_id, map);
-//                        remove = true;
-//                    }
-//>>>>>>> master
+
 
                 }
                 catch(JSONException e){
@@ -207,7 +112,7 @@ public class SessionPostHandler extends AppCompatActivity {
             }
             Log.d("PendingPosts", "deleting file");
             // Delete the file if we successfully updated data
-            if(remove[0]) {
+            if(remove) {
                 deleteFile();
             }
         }
