@@ -6,8 +6,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -27,11 +25,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
-
+/**
+ * Created by David on 2/15/2018.
+ *
+ * This java file displays the session data to the screen.
+ */
 public class Session extends AppCompatActivity {
 
-    private String resultFromAPI;
-    private int sessionNumber;
+    private String sessionData;         //Session data
+    private int sessionNumber;          //Session number
     private JSONObject empty = new JSONObject("{\"empty\":\"\"}");
     private JSONArray emptyArray = new JSONArray("[{\"empty1\":\"\"},{\"empty2\":\"\"}]");
 
@@ -51,20 +53,17 @@ public class Session extends AppCompatActivity {
         endList();
 
         Button Home = (Button) findViewById(R.id.Home);
+        //Takes the user back to the dashboard
         Home.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = getIntent();
                 String next_session = intent.getStringExtra("session_number");
                 String group_id = intent.getStringExtra("group_id");
-                //String username = intent.getStringExtra("username");
-                //String password = intent.getStringExtra("password");
                 String token = intent.getStringExtra("token");
                 long timeStamp = intent.getLongExtra("timeStamp",0);
                 Bundle bundle = new Bundle();
                 bundle.putString("session_number", next_session);
                 bundle.putString("group_id", group_id);
-                //bundle.putString("username", username);
-                //bundle.putString("password", password);
                 bundle.putString("token", token);
                 bundle.putLong("timeStamp", timeStamp);
 
@@ -88,8 +87,7 @@ public class Session extends AppCompatActivity {
 
         FileInputStream fis= null;
         try {
-            fis = openFileInput("session_data.txt");
-            Log.d("Test", "Opened the file");
+            fis = openFileInput("session_data.txt");;
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -98,14 +96,10 @@ public class Session extends AppCompatActivity {
         BufferedReader bufferedReader = new BufferedReader(isr);
 
         try {
-            resultFromAPI = bufferedReader.readLine();
-            Log.d("Test", resultFromAPI);
-            //Log.d("Test", bufferedReader.readLine());
+            sessionData = bufferedReader.readLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        Log.d("Test", "Passing saved data");
         parseSessionData();
     }
 
@@ -129,10 +123,9 @@ public class Session extends AppCompatActivity {
         SessionRow row = new SessionRow(value, isVideo, isNetworkAvailable());
         this.contentList.add(row);
     }
-
+    //Adds the pdf to the content list
     public void addToContentList(String url, String title){
         File file = new File(Environment.getExternalStorageDirectory().toString()+"/Download/"+title.replace(" ", "_").replace("/", "_")+".pdf");
-        //File file = new File(getFilesDir(), title.replace("\u00c3\u009a", "\u00DA").replace(" ", "_").replace("/", "_")+".pdf");
         if(file.exists() && file.isFile()){
             SessionRow row = new SessionRow(url, title);
             this.contentList.add(row);
@@ -157,10 +150,11 @@ public class Session extends AppCompatActivity {
         this.contentList.add(row);
     }
 
+    //Parses the session data
     public void parseSessionData(){
         try{
-            JSONObject reader = new JSONObject(resultFromAPI);
-            Log.d("Test" , resultFromAPI);
+            JSONObject reader = new JSONObject(sessionData);
+            //Log.d("Test" , sessionData);
             JSONArray sessionData = reader.getJSONArray("course");
             int sessionNum = Integer.parseInt(session_number);
             JSONObject session = sessionData.getJSONObject(sessionNum-1);
@@ -232,14 +226,14 @@ public class Session extends AppCompatActivity {
                 if(name.equals("video")){
                     String text = (String)data;
                     addToContentList(text, true);
-                    Log.d("PRINTT", text);
+                    //Log.d("PRINTT", text);
                     return;
                 }
                 // Add space to list if this is a space
                 else if(name.equals("br")){
                     Integer num = (Integer)data;
                     addToContentList(num.intValue());
-                    Log.d("PRINTT", String.valueOf(num));
+                    //Log.d("PRINTT", String.valueOf(num));
                     return;
                 }
                 // Add text to list if this is text
@@ -255,7 +249,6 @@ public class Session extends AppCompatActivity {
                     else{
                         addToContentList(text, false);
                     }
-                    Log.d("PRINTT", text);
                     return;
                 }
             }

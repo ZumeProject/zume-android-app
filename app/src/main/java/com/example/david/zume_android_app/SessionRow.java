@@ -1,27 +1,15 @@
 package com.example.david.zume_android_app;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.util.Log;
 
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.URL;
-import java.net.URLConnection;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -168,6 +156,8 @@ public class SessionRow {
 
             if(internet) {
                 try {
+                    //Setting the video url and getting its information
+                    //and putting it on the screen
                     URL url = new URL(urlPath);
                     Log.d("SessionRowURL", url.toString());
                     HttpsURLConnection conexion = (HttpsURLConnection) url.openConnection();

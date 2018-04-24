@@ -7,14 +7,11 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -25,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,7 +109,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                     // See if any valid changes have been made so far
                     boolean changesMade = false;
-                    Log.d("PrevPhone", prevPhoneNumber);
+                    //Log.d("PrevPhone", prevPhoneNumber);
                     if(!first_name.equals(prevFirstName)){
                         changesMade = true;
                     }
@@ -167,8 +163,6 @@ public class EditProfileActivity extends AppCompatActivity {
         FileInputStream fis= null;
         try {
             fis = openFileInput("user_profile.txt");
-            Log.d("Test", "Opened the file");
-
         } catch (FileNotFoundException e) {
             // Couldn't find user_profile info, so get that from the API
             GetUser user = new GetUser(token, this);
@@ -180,15 +174,12 @@ public class EditProfileActivity extends AppCompatActivity {
 
         try {
             resultFromUserProfile = bufferedReader.readLine();
-            Log.d("UserProfile", resultFromUserProfile);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         try {
             fis = openFileInput("user.txt");
-            Log.d("Test", "Opened the file");
-
         } catch (FileNotFoundException e) {
             // Couldn't find the user information, so get that information from the API
             GetUser user = new GetUser(token, this);
@@ -199,12 +190,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
         try {
             resultFromUser = bufferedReader.readLine();
-            Log.d("User", resultFromUser);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        Log.d("Test", "Passing saved data");
         // Set up the display
         setEditProfileScreen();
 
@@ -226,7 +214,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 // Set phoneNumber
                 EditText phoneNumber = (EditText)findViewById(R.id.phoneNumber);
                 phoneNumber.setText(phone.get(0).toString());
-                Log.d("Phone", phone.get(0).toString());
+                //Log.d("Phone", phone.get(0).toString());
                 this.prevPhoneNumber = phone.get(0).toString();
             }
             catch(Exception o){
@@ -271,7 +259,7 @@ public class EditProfileActivity extends AppCompatActivity {
     public void updateUser(final int user_id, final String token, final String first_name, final String last_name, final String email, final String phone_number) {
         try {
             final String newtoken = token;
-            Log.d("EditToken", newtoken);
+            //Gets info to check and update the token if needed
             FileInputStream fis = null;
             fis = openFileInput("credentials.txt");
             InputStreamReader isr = new InputStreamReader(fis);
@@ -289,14 +277,13 @@ public class EditProfileActivity extends AppCompatActivity {
             }
             TokenTimeStamp check = new TokenTimeStamp();
             old = check.getTimeDiff(tokenTime);
-
+            //Gets a new token and does the POST
             if (old) {
                 final GetUser getToken = new GetUser(username, password, getApplicationContext());
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("EditToken", getToken.getToken());
                         ApiAuthenticationClient apiAuthenticationClient =
                                 new ApiAuthenticationClient(
                                         baseURL
@@ -318,7 +305,9 @@ public class EditProfileActivity extends AppCompatActivity {
                         GetUser user = new GetUser(getToken.getToken(), getApplicationContext());
                     }
                 }, 2000);
-            } else {
+            }
+            //Uses the old token.
+            else {
                 try{
                     ApiAuthenticationClient apiAuthenticationClient =
                             new ApiAuthenticationClient(
@@ -378,7 +367,7 @@ public class EditProfileActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Log.d("API_Result", result);
+            //Log.d("API_Result", result);
             // Update the user_profile, credentials, and user text files after updating data
             // in database
             if(isNetworkAvailable() && !old) {
@@ -392,8 +381,7 @@ public class EditProfileActivity extends AppCompatActivity {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-
-
+                    //Gets the new token
                     FileInputStream fis = null;
                     try {
                         fis = openFileInput("credentials.txt");
@@ -417,7 +405,6 @@ public class EditProfileActivity extends AppCompatActivity {
                     // Save parameters to bundle
                     Bundle bundle = new Bundle();
                     bundle.putInt("user_id", userID);
-                    Log.d("EditToken", token);
                     bundle.putString("token", token);
                     bundle.putLong("timeStamp", timeStamp);
                     // Return to ProfileActivity

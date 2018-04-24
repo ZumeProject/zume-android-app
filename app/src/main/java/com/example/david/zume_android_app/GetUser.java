@@ -8,7 +8,12 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Created by Brandi on 3/18/2018.
@@ -135,9 +140,7 @@ public class GetUser extends AppCompatActivity {
                     String [] tokenArray = isValidCredentials.split(":");
                     tokenArray = tokenArray[1].split(",");
                     tokenArray[0] = tokenArray[0].substring(1,tokenArray[0].length()-1);
-                    Log.d("Test", tokenArray[0]);
                     token = tokenArray[0];
-                    Log.d("Test", token);
                     ApiAuthenticationClient apiAuthenticationClient2 = new ApiAuthenticationClient(
                             user_profile
                             , token
@@ -147,19 +150,17 @@ public class GetUser extends AppCompatActivity {
                     execute2.execute();
 
                 }
-                //Save the users infofrom the profile url
+                //Save the users information from the profile url
                 else if(type.equals("user_profile")) {
                     failed = false;
-                    Log.d("What!", String.valueOf(failed));
                     FileOutputStream outputStream;
                     String filename = "user_profile.txt";
                     String fileContents = isValidCredentials + "\n";
-                    Log.d("Test", "Made first call");
                     try {
                         outputStream = context.openFileOutput(filename, context.MODE_PRIVATE);
                         outputStream.write(fileContents.getBytes());
                         outputStream.close();
-                        Log.d("Test", "Made the user_profile file");
+                        //Log.d("Test", "Made the user_profile file");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -177,11 +178,28 @@ public class GetUser extends AppCompatActivity {
                 else if(type.equals("user")){
                     failed = false;
                     String filename = "credentials.txt";
+                    FileInputStream fis = null;
+                    try {
+                        fis = openFileInput(filename);
+                        Log.d("Test", "Opened the file");
+                        InputStreamReader isr = new InputStreamReader(fis);
+                        BufferedReader bufferedReader = new BufferedReader(isr);
+                        try {
+                            username = bufferedReader.readLine();
+                            password = bufferedReader.readLine();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Log.d("Test", "Failed");
+                    }
+
                     try {
                         JSONObject reader = new JSONObject(isValidCredentials);
                         int id = reader.getInt("user_id");
                         UserID = id;
-                        Log.d("Test", String.valueOf(UserID));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -194,7 +212,7 @@ public class GetUser extends AppCompatActivity {
                         outputStream = context.openFileOutput(filename, context.MODE_PRIVATE);
                         outputStream.write(fileContents.getBytes());
                         outputStream.close();
-                        Log.d("Test", "Made the credentials file");
+                        //Log.d("Test", "Made the credentials file");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -203,12 +221,11 @@ public class GetUser extends AppCompatActivity {
 
                     filename = "user.txt";
                     fileContents = isValidCredentials + "\n";
-                    Log.d("Test", "Made second call");
                     try {
                         outputStream = context.openFileOutput(filename, context.MODE_PRIVATE);
                         outputStream.write(fileContents.getBytes());
                         outputStream.close();
-                        Log.d("Test", "Made the user file");
+                        //Log.d("Test", "Made the user file");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -224,7 +241,6 @@ public class GetUser extends AppCompatActivity {
                 //Saves the session data from zume
                 else if(type.equals("sessions")){
                     failed = false;
-                    Log.d("What!", String.valueOf(failed));
                     String sessions = "";
                     String filename = "session_data.txt";
                     try {

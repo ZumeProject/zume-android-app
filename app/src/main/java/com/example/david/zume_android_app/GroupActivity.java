@@ -134,23 +134,6 @@ public class GroupActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-/*        FileInputStream fis= null;
-        try {
-            fis = openFileInput("user_profile.txt");
-            Log.d("Test", "Opened the file");
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        InputStreamReader isr = new InputStreamReader(fis);
-        BufferedReader bufferedReader = new BufferedReader(isr);
-        try {
-            resultFromAPI = bufferedReader.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Log.d("Test", "Passing saved data");*/
         setScreen();
 
     }
