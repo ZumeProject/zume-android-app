@@ -36,9 +36,6 @@ public class DashboardActivity extends AppCompatActivity {
 
     private String resultFromAPI = "";
     private String userString = "";
-    //private String baseUrl = "";
-    //private String username = "";
-    //private String password = "";
     private Integer user_id = 0;
 
     @Override
@@ -58,12 +55,6 @@ public class DashboardActivity extends AppCompatActivity {
         }
         InputStreamReader ir = new InputStreamReader(fi);
         BufferedReader br = new BufferedReader(ir);
-        /*try {
-            Log.d("Test", bufferedReader.readLine());
-            Log.d("Test", bufferedReader.readLine());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
 
         try {
             userString = br.readLine();
@@ -82,8 +73,6 @@ public class DashboardActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     Intent intent = getIntent();
-                    //String username = intent.getStringExtra("username");
-                    //String password = intent.getStringExtra("password");
 
                     String token = intent.getStringExtra("token");
                     long timeStamp = intent.getLongExtra("timeStamp", 0);
@@ -108,8 +97,6 @@ public class DashboardActivity extends AppCompatActivity {
                     //Log.d("Username", username);
 
                     Bundle bundle = new Bundle();
-                    //bundle.putString("username", username);
-                    //bundle.putString("password", password);
                     bundle.putString("token", token);
                     bundle.putLong("timeStamp", timeStamp);
                     bundle.putInt("user_id", user_id);
@@ -135,7 +122,16 @@ public class DashboardActivity extends AppCompatActivity {
         viewSessions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(DashboardActivity.this, SessionList.class));
+                Intent intent = getIntent();
+                String token = intent.getStringExtra("token");
+                long timeStamp = intent.getLongExtra("timeStamp", 0);
+                Bundle bundle = new Bundle();
+                bundle.putString("token", token);
+                bundle.putLong("timeStamp", timeStamp);
+
+                intent = new Intent( DashboardActivity.this, SessionList.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
         FileInputStream fis= null;

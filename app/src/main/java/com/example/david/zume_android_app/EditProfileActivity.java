@@ -268,33 +268,6 @@ public class EditProfileActivity extends AppCompatActivity {
      * @param email
      * @param phone_number
      */
-//    public void updateUser(int user_id, String username, String password, String first_name, String last_name, String email, String phone_number) {
-//        try {
-//            Log.d("Test", "Making API call");
-//            ApiAuthenticationClient apiAuthenticationClient =
-//                    new ApiAuthenticationClient(
-//                            baseURL
-//                            , username
-//                            , password
-//                    );
-//            // Set Http Method type to POST
-//            apiAuthenticationClient.setHttpMethod("POST");
-//            // Create a LinkedHashMap of parameters to send
-//            LinkedHashMap<String, String> parameters = new LinkedHashMap<String, String>();
-//            parameters.put("user_id", String.valueOf(user_id));
-//            parameters.put("first_name", first_name);
-//            parameters.put("last_name", last_name);
-//            parameters.put("user_email", email);
-//            parameters.put("user_phone", phone_number);
-//            apiAuthenticationClient.setParameters(parameters);
-//            // Execute the Network Operation
-//            AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient, this);
-//            execute.execute();
-//        } catch (Exception ex) {
-//            Log.d("Test", "Error getting dashboard data.");
-//        }
-//    }
-
     public void updateUser(final int user_id, final String token, final String first_name, final String last_name, final String email, final String phone_number) {
         try {
             final String newtoken = token;
@@ -323,6 +296,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d("EditToken", getToken.getToken());
                         ApiAuthenticationClient apiAuthenticationClient =
                                 new ApiAuthenticationClient(
                                         baseURL
@@ -341,6 +315,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         // Execute the Network Operation
                         AsyncTask<Void, Void, String> execute = new ExecuteNetworkOperation(apiAuthenticationClient, getApplicationContext());
                         execute.execute();
+                        GetUser user = new GetUser(getToken.getToken(), getApplicationContext());
                     }
                 }, 2000);
             } else {
@@ -404,26 +379,9 @@ public class EditProfileActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             Log.d("API_Result", result);
-
-            FileInputStream fis = null;
-            try {
-                fis = openFileInput("credentials.txt");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            try {
-                bufferedReader.readLine();
-                bufferedReader.readLine();
-                bufferedReader.readLine();
-                token = bufferedReader.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             // Update the user_profile, credentials, and user text files after updating data
             // in database
-            if(isNetworkAvailable()) {
+            if(isNetworkAvailable() && !old) {
                 GetUser getUser = new GetUser(token, context);
 
             }
@@ -434,35 +392,32 @@ public class EditProfileActivity extends AppCompatActivity {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+
+
+                    FileInputStream fis = null;
+                    try {
+                        fis = openFileInput("credentials.txt");
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    InputStreamReader isr = new InputStreamReader(fis);
+                    BufferedReader bufferedReader = new BufferedReader(isr);
+                    try {
+                        bufferedReader.readLine();
+                        bufferedReader.readLine();
+                        bufferedReader.readLine();
+                        token = bufferedReader.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     // Get all parameters from intent
                     Intent intent = getIntent();
                     int userID = intent.getIntExtra("user_id", 0);
                     long timeStamp = intent.getLongExtra("timeStamp",0);
-                    String token = null;
-
-                    if (old) {
-                        FileInputStream fis = null;
-                        try {
-                            fis = openFileInput("credentials.txt");
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                        InputStreamReader isr = new InputStreamReader(fis);
-                        BufferedReader bufferedReader = new BufferedReader(isr);
-                        try {
-                            bufferedReader.readLine();
-                            bufferedReader.readLine();
-                            bufferedReader.readLine();
-                            token = bufferedReader.readLine();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }else{
-                        token = intent.getStringExtra("token");
-                    }
                     // Save parameters to bundle
                     Bundle bundle = new Bundle();
                     bundle.putInt("user_id", userID);
+                    Log.d("EditToken", token);
                     bundle.putString("token", token);
                     bundle.putLong("timeStamp", timeStamp);
                     // Return to ProfileActivity
@@ -470,7 +425,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }
-            }, 1500);
+            }, 2500);
         }
     }
 

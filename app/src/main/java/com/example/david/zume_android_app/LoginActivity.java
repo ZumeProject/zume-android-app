@@ -178,9 +178,9 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void goToDashboardActivity() {
         // If network is available and the pdfs have not already been downloaded, download them (note, due to the API not returning URLs for the PDFs, when that is fixed, we will need to comment out this code so that the pdfs_downloaded.txt may be overwritten and the pdfs saved)
-        if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
+        //if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
             AsyncTask<Void, String, String> download = new DownloadFileAsync().execute();
-        }
+        //}
 
         Date complete = new Date();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

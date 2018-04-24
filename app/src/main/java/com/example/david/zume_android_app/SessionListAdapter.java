@@ -120,18 +120,9 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                     @Override
                     public void onClick(View v){
                         // Open the pdf in a pdf reader installed on the device if possible
-//                        File file = new File(context.getFilesDir(), list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_"));
-//                        Uri path = Uri.fromFile(file);
-//                        Intent intent = new Intent(Intent.ACTION_VIEW);
-//                        intent.setDataAndType(path, "application/pdf");
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-                        File file = new File(context.getFilesDir(), list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_"));
-                        //file = new File("/storage/emulated/0/data/data/com.example.david.zume_android_app/files/"+list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_")+".pdf");
-                        file = new File(Environment.getExternalStorageDirectory()
+                        File file = new File(Environment.getExternalStorageDirectory()
                                 .getAbsolutePath()+"/Download/", list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_")+".pdf");
 
-                        /*------------------------
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         Uri apkURI = FileProvider.getUriForFile(
@@ -139,28 +130,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                                 context.getApplicationContext()
                                         .getPackageName() + ".provider", file);
                         intent.setDataAndType(apkURI, "application/pdf");
-                        *///---------------------------
-
-                        Uri apkURI = Uri.fromFile(file);
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(apkURI, "application/pdf");
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-                        //intent.setDataAndType(apkURI, mimeType);
                         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//                        PdfHandler pdf = new PdfHandler(context);
-//                        //pdf.openPdf(String.valueOf(file));
-//                        pdf.openPdf("/data/data/com.example.david.zume_android_app/files/Zúme_Video_Scripts:_3_3_Group");
-//                        //data/data/com.example.david.zume_android_app/files/Zúme_Guidebook
-
-
- //                       Uri apkURI = FileProvider.getUriForFile(SessionListAdapter.this, BuildConfig.APPLICATION_ID + ".provider",
-  //                              context.startActivity(intent));
-//                                context,
-//                                context.getApplicationContext()
-//                                        .getPackageName() + ".provider", file);
-//                        install.setDataAndType(apkURI, mimeType);
-//                        install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                         try {
                            context.startActivity(intent);
