@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,7 +71,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             //Choose view based on if this row contains a video
             if(list.get(position).isVideo()){
@@ -87,11 +89,32 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                     @Override
                     public void onClick(View v){
                         // Open the pdf in a pdf reader installed on the device if possible
+//                        File file = new File(context.getFilesDir(), list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_"));
+//                        Uri path = Uri.fromFile(file);
+//                        Intent intent = new Intent(Intent.ACTION_VIEW);
+//                        intent.setDataAndType(path, "application/pdf");
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                         File file = new File(context.getFilesDir(), list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_"));
-                        Uri path = Uri.fromFile(file);
                         Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(path, "application/pdf");
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        Uri apkURI = FileProvider.getUriForFile(
+                                context,
+                                context.getApplicationContext()
+                                        .getPackageName() + ".provider", file);
+                        intent.setDataAndType(apkURI, "application/pdf");
+                        //intent.setDataAndType(apkURI, mimeType);
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+
+ //                       Uri apkURI = FileProvider.getUriForFile(SessionListAdapter.this, BuildConfig.APPLICATION_ID + ".provider",
+  //                              context.startActivity(intent));
+//                                context,
+//                                context.getApplicationContext()
+//                                        .getPackageName() + ".provider", file);
+//                        install.setDataAndType(apkURI, mimeType);
+//                        install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
                         try {
                             context.startActivity(intent);
                         }
@@ -124,12 +147,13 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                         Boolean recordCompletion = intent.getBooleanExtra("Has_a_Group", false);
                         if(recordCompletion) {
                             String next_session = "0";
-                            String groupID = intent.getStringExtra("group_id");
-                            String token = intent.getStringExtra("token");
-                            String userID = intent.getStringExtra("user_id");
+                            final String groupID = intent.getStringExtra("group_id");
+                            final String[] token = {intent.getStringExtra("token")};
+                            final String userID = intent.getStringExtra("user_id");
                             Log.d("Group_id", groupID);
-                            String groupName = intent.getStringExtra("groupName");
+                            final String groupName = intent.getStringExtra("groupName");
                             String session_number = intent.getStringExtra("session_number");
+                            final long[] timeStamp = {intent.getLongExtra("timeStamp", 0)};
 
                             // Get next_session
                             next_session = new Integer(new Integer(session_number) + 1).toString();
@@ -146,36 +170,82 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             session_complete_date = session_complete_date.replace(" ", "%20");
 
                             // Add argument keys and values to args for sessionPostHandler
-                            LinkedHashMap<String, String> args = new LinkedHashMap<>();
+                            final LinkedHashMap<String, String> args = new LinkedHashMap<>();
                             args.put(session_number, "true");
                             args.put(session_complete, session_complete_date);
                             args.put(next_session_key, next_session);
 
                             // Set meta value for zume_logging table
-                            String members = intent.getStringExtra("members");
-                            String meta = "group_"+members;
+                            final String members = intent.getStringExtra("members");
+                            final String meta = "group_" + members;
 
-                            LoggingPostHandler logging = new LoggingPostHandler(context, token, session_complete_date, "course", session_number, meta, groupID, userID, internet);
-                            SessionPostHandler handler = new SessionPostHandler(context, token, groupID, args, userID, internet);
+                            //Come back here to make use of the timestamp.
+                            //pass the username and password to this function.
+                            //So open the credentials file in Session.java
+                            String username = intent.getStringExtra("username");
+                            String password = intent.getStringExtra("password");
+                            TokenTimeStamp check = new TokenTimeStamp();
+                            boolean old = check.getTimeDiff(timeStamp[0]);
+                            if (old) {
+                                final GetUser getToken = new GetUser(username, password, context);
+                                final Handler handler = new Handler();
+                                final String finalNext_session = next_session;
+                                final String finalSession_complete_date = session_complete_date;
+                                final String finalSession_number = session_number;
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        token[0] = getToken.getToken();
+                                        timeStamp[0] = getToken.getTimeStamp();
+                                        LoggingPostHandler logging = new LoggingPostHandler(context, token[0], finalSession_complete_date, "course", finalSession_number, meta, groupID, userID, internet);
+                                        SessionPostHandler handler = new SessionPostHandler(context, token[0], groupID, args, userID, internet);
 
 
-                            Bundle bundle = new Bundle();
-                            bundle.putString("token",token);
-                            bundle.putString("groupID", groupID);
-                            bundle.putString("groupName", groupName);
-                            bundle.putString("next_session", next_session);
-                            bundle.putString("members", members);
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("token", token[0]);
+                                        bundle.putLong("timeStamp", timeStamp[0]);
+                                        bundle.putString("groupID", groupID);
+                                        bundle.putString("groupName", groupName);
+                                        bundle.putString("next_session", finalNext_session);
+                                        bundle.putString("members", members);
 
-                            // Update the local session number for this group
-                            updateSession(next_session, groupID);
+                                        // Update the local session number for this group
+                                        updateSession(finalNext_session, groupID);
 
 
-                            // Return to GroupActivity and refresh user information
-                            final Intent i = new Intent(context, GroupActivity.class);
-                            i.putExtras(bundle);
-                            GetUser gu = new GetUser(token, context);
+                                        // Return to GroupActivity and refresh user information
+                                        final Intent i = new Intent(context, GroupActivity.class);
+                                        i.putExtras(bundle);
+                                        GetUser gu = new GetUser(token[0], context);
 
-                            context.startActivity(i);
+                                        context.startActivity(i);
+
+                                    }
+                                }, 4000);
+                            } else {
+                                LoggingPostHandler logging = new LoggingPostHandler(context, token[0], session_complete_date, "course", session_number, meta, groupID, userID, internet);
+                                SessionPostHandler handler = new SessionPostHandler(context, token[0], groupID, args, userID, internet);
+
+
+                                Bundle bundle = new Bundle();
+                                bundle.putString("token", token[0]);
+                                bundle.putLong("timeStamp", timeStamp[0]);
+                                bundle.putString("groupID", groupID);
+                                bundle.putString("groupName", groupName);
+                                bundle.putString("next_session", next_session);
+                                bundle.putString("members", members);
+
+                                // Update the local session number for this group
+                                updateSession(next_session, groupID);
+
+
+                                // Return to GroupActivity and refresh user information
+                                final Intent i = new Intent(context, GroupActivity.class);
+                                i.putExtras(bundle);
+                                GetUser gu = new GetUser(token[0], context);
+
+                                context.startActivity(i);
+                            }
                         }
                         // If there is no group associated with this session, just retrun to the sessionList
                         else{

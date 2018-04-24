@@ -2,8 +2,6 @@ package com.example.david.zume_android_app;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -17,45 +15,53 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+/**
+ * Created by David.
+ *
+ * This page of the app displays the Group's next session, and takes them to the session
+ */
 public class GroupActivity extends AppCompatActivity {
 
-    private String resultFromAPI = "";
-    private String next_session = "0";
-    private String group_id = "";
-    //private String username = "";
-    private String groupName = "";
-    private String members = "";
-    //private String password = "";
-    private String token = "";
-    private String userID = "0";
+    private String next_session = "0";  //Next Session for the Group
+    private String group_id = "";       //Id of the group
+    private String groupName = "";      //Name of the group
+    private String members = "";        //Names of members in the group
+    private String token = "";          //Token for the user
+    private String userID = "0";        //The User's Id
+    private  long timeStamp;            //Time stamp of the token
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-/*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-*/
+
         Button startSession = (Button)findViewById(R.id.startSession);
         Intent intent = getIntent();
+        //Getting information from the intent.
         next_session = intent.getStringExtra("next_session");
         group_id = intent.getStringExtra("groupID");
-        //username = intent.getStringExtra("username");
-        //password = intent.getStringExtra("password");
         groupName= intent.getStringExtra("groupName");
         members = intent.getStringExtra("members");
-        token = intent.getStringExtra("token");
+        timeStamp = intent.getLongExtra("timeStamp", 0);
+        //Updates the token since it could have been updated.
+        FileInputStream fiss = null;
+        try {
+            fiss = openFileInput("credentials.txt");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        InputStreamReader isrr = new InputStreamReader(fiss);
+        BufferedReader bufferedReaderr = new BufferedReader(isrr);
+        try {
+            bufferedReaderr.readLine();
+            bufferedReaderr.readLine();
+            bufferedReaderr.readLine();
+            token = bufferedReaderr.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         userID = intent.getStringExtra("user_id");
+        //Takes the user to Session List
         if(Integer.valueOf(next_session)>10){
             startSession.setText("Review Sessions");
             startSession.setOnClickListener(new View.OnClickListener() {
@@ -65,82 +71,63 @@ public class GroupActivity extends AppCompatActivity {
                 }
             });
         }
+        //Takes the user to the next session.
         else {
             startSession.setText("Start Session " + next_session);
             startSession.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //Setting the bundle.
                     Bundle bundle = new Bundle();
                     bundle.putString("session_number", next_session);
                     bundle.putString("group_id", group_id);
-                    //bundle.putString("username", username);
-                    //bundle.putString("password", password);
                     bundle.putString("groupName", groupName);
                     Log.d("Members-Session", members);
                     bundle.putString("members", members);
                     bundle.putBoolean("Has_a_Group", true);
                     bundle.putString("user_id", userID);
+                //Passes the username and password so it can be used in SessionListAdapter to check the token
+                FileInputStream fis = null;
+                String username = "", password = "";
+                try {
+                    fis = openFileInput("credentials.txt");
+                    Log.d("Test", "Opened the file");
+                    InputStreamReader isr = new InputStreamReader(fis);
+                    BufferedReader bufferedReader = new BufferedReader(isr);
 
-//                FileInputStream fis = null;
-//
-//                try {
-//                    fis = openFileInput("credentials.txt");
-//                    Log.d("Test", "Opened the file");
-//                    InputStreamReader isr = new InputStreamReader(fis);
-//                    BufferedReader bufferedReader = new BufferedReader(isr);
-//                    try {
-//                        bufferedReader.readLine();
-//                        bufferedReader.readLine();
-//                        bufferedReader.readLine();
-//                        token = bufferedReader.readLine();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                    Log.d("Test", "Failed");
-//                }
+                    try {
+                        username = bufferedReader.readLine();
+                        password = bufferedReader.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    Log.d("Test", "Failed");
+                }
                     bundle.putString("token", token);
+                    bundle.putLong("timeStamp", timeStamp);
+                    bundle.putString("password", password);
+                    bundle.putString("username", username);
                     Intent intent = new Intent(GroupActivity.this, Session.class);
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }
             });
         }
-
+        //Takes the user to the dashboard.
         Button home = (Button)findViewById(R.id.home);
 
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Setting the bundle.
                 Bundle bundle = new Bundle();
                 bundle.putString("session_number", next_session);
                 bundle.putString("group_id", group_id);
-                //bundle.putString("username", username);
-                //bundle.putString("password", password);
                 bundle.putString("token", token);
-//                FileInputStream fis = null;
-//                String token = null;
-//                try {
-//                    fis = openFileInput("credentials.txt");
-//                    Log.d("Test", "Opened the file");
-//                    InputStreamReader isr = new InputStreamReader(fis);
-//                    BufferedReader bufferedReader = new BufferedReader(isr);
-//                    try {
-//                        bufferedReader.readLine();
-//                        bufferedReader.readLine();
-//                        bufferedReader.readLine();
-//                        token = bufferedReader.readLine();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                    Log.d("Test", "Failed");
-//                }
-//                bundle.putString("token", token);
+                bundle.putLong("timeStamp", timeStamp);
 
                 Intent intent = new Intent(GroupActivity.this, DashboardActivity.class);
                 intent.putExtras(bundle);
@@ -148,7 +135,7 @@ public class GroupActivity extends AppCompatActivity {
             }
         });
 
-        FileInputStream fis= null;
+/*        FileInputStream fis= null;
         try {
             fis = openFileInput("user_profile.txt");
             Log.d("Test", "Opened the file");
@@ -163,17 +150,16 @@ public class GroupActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d("Test", "Passing saved data");
+        Log.d("Test", "Passing saved data");*/
         setScreen();
 
     }
 
+    //Sets the screen for the current group and user.
     public void setScreen(){
         try{
             Intent intent = getIntent();
 
-            //String username = intent.getStringExtra("username");
-            //String password = intent.getStringExtra("password");
             String groupID = intent.getStringExtra("groupID");
             String groupName = intent.getStringExtra("groupName");
             String nextSession = intent.getStringExtra("next_session");
@@ -186,6 +172,7 @@ public class GroupActivity extends AppCompatActivity {
         }
     }
 
+    //Gets the group's name.
     public String getGroupName(String data){
         String groupName = "";
         String pattern = "group_name";

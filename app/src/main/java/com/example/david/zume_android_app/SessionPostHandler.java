@@ -1,6 +1,8 @@
 package com.example.david.zume_android_app;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -37,7 +39,7 @@ public class SessionPostHandler extends AppCompatActivity {
      * @param userID the user ID
      * @param internet boolean for if the user has internet access
      */
-    public SessionPostHandler(Context context, String token, String group_id, LinkedHashMap<String, String> args, String userID, boolean internet){
+    public SessionPostHandler(Context context, String token, final String group_id, final LinkedHashMap<String, String> args, String userID, boolean internet){
 
         this.internet = internet;
         this.context = context;
@@ -45,6 +47,7 @@ public class SessionPostHandler extends AppCompatActivity {
         if(internet){
             Log.d("Network", "Network available - updating group data");
             UpdateGroup update = new UpdateGroup(token, group_id, args);
+
         }
         // If we don't have internet, we will add this to our list of pending session posts
         else{
@@ -72,7 +75,7 @@ public class SessionPostHandler extends AppCompatActivity {
      * @param internet boolean for if the user has internet access
      * @param userID the user ID
      */
-    public SessionPostHandler(Context context, String token, boolean internet, String userID){
+    public SessionPostHandler(Context context, String token, boolean internet, final String userID){
         this.context = context;
         this.internet = internet;
         boolean remove = false; // Flag for if the file should be deleted after (only delete if we successfully updated any data)
@@ -84,13 +87,13 @@ public class SessionPostHandler extends AppCompatActivity {
             for(String row: resultFromFile){
                 try {
                     JSONObject object = new JSONObject(row);
-
-                    String group_id = object.get("group_id").toString();
-                    String user_id = object.get("user_id").toString();
+                    final String group_id = object.get("group_id").toString();
+                    final String user_id = object.get("user_id").toString();
                     JSONObject args = new JSONObject(object.get("args").toString());
                     Iterator<String> keys = args.keys();
                     // Construct the map of keys and values to be updated for the group
-                    LinkedHashMap<String, String> map = new LinkedHashMap<>();
+                    final LinkedHashMap<String, String> map = new LinkedHashMap<>();
+
                     while(keys.hasNext()){
                         String key = keys.next();
                         map.put(key, args.get(key).toString());
@@ -100,6 +103,7 @@ public class SessionPostHandler extends AppCompatActivity {
                         UpdateGroup update = new UpdateGroup(token, group_id, map);
                         remove = true;
                     }
+
 
                 }
                 catch(JSONException e){
