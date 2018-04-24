@@ -1,13 +1,18 @@
 package com.example.david.zume_android_app;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -38,10 +43,19 @@ import java.util.TimeZone;
  */
 
 public class SessionListAdapter extends BaseAdapter implements ListAdapter{
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     private ArrayList<SessionRow> list = new ArrayList<SessionRow>();
     private Context context;
     private Intent intent;
     private boolean internet;
+    private static boolean checkedPermission = false;
+    //private Context activityContext = null;
 
 
 
@@ -50,6 +64,8 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
         this.context = context;
         this.intent = intent;
         this.internet = internet;
+        verifyStoragePermissions(context);
+        while(!checkedPermission){}
         if(this.internet){
             Log.d("Internet", "true for sessionListAdapter");
         }
@@ -111,7 +127,11 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
 //                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                         File file = new File(context.getFilesDir(), list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_"));
-                        file = new File("/storage/emulated/0/data/data/com.example.david.zume_android_app/files/"+list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_")+".pdf");
+                        //file = new File("/storage/emulated/0/data/data/com.example.david.zume_android_app/files/"+list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_")+".pdf");
+                        file = new File(Environment.getExternalStorageDirectory()
+                                .getAbsolutePath()+"/Download/", list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_")+".pdf");
+
+                        /*------------------------
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         Uri apkURI = FileProvider.getUriForFile(
@@ -119,6 +139,13 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                                 context.getApplicationContext()
                                         .getPackageName() + ".provider", file);
                         intent.setDataAndType(apkURI, "application/pdf");
+                        *///---------------------------
+
+                        Uri apkURI = Uri.fromFile(file);
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(apkURI, "application/pdf");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                         //intent.setDataAndType(apkURI, mimeType);
                         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 //                        PdfHandler pdf = new PdfHandler(context);
@@ -332,5 +359,27 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
 
     public void setIntent(Intent intent){
         this.intent = intent;
+    }
+
+    /**
+     * Checks if the app has permission to write to device storage
+     *
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param context
+     */
+    public static void verifyStoragePermissions(Context context) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    (Activity)context,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+        checkedPermission = true;
     }
 }
