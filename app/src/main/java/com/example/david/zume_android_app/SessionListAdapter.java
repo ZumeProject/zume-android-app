@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,11 +89,32 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                     @Override
                     public void onClick(View v){
                         // Open the pdf in a pdf reader installed on the device if possible
+//                        File file = new File(context.getFilesDir(), list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_"));
+//                        Uri path = Uri.fromFile(file);
+//                        Intent intent = new Intent(Intent.ACTION_VIEW);
+//                        intent.setDataAndType(path, "application/pdf");
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                         File file = new File(context.getFilesDir(), list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_"));
-                        Uri path = Uri.fromFile(file);
                         Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(path, "application/pdf");
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        Uri apkURI = FileProvider.getUriForFile(
+                                context,
+                                context.getApplicationContext()
+                                        .getPackageName() + ".provider", file);
+                        intent.setDataAndType(apkURI, "application/pdf");
+                        //intent.setDataAndType(apkURI, mimeType);
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+
+ //                       Uri apkURI = FileProvider.getUriForFile(SessionListAdapter.this, BuildConfig.APPLICATION_ID + ".provider",
+  //                              context.startActivity(intent));
+//                                context,
+//                                context.getApplicationContext()
+//                                        .getPackageName() + ".provider", file);
+//                        install.setDataAndType(apkURI, mimeType);
+//                        install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
                         try {
                             context.startActivity(intent);
                         }
