@@ -53,16 +53,6 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-/*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-*/
         // ZUME button to return to the dashboard
         Button home = (Button)findViewById(R.id.home);
 
@@ -123,6 +113,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                     // See if any valid changes have been made so far
                     boolean changesMade = false;
+                    Log.d("PrevPhone", prevPhoneNumber);
                     if(!first_name.equals(prevFirstName)){
                         changesMade = true;
                     }
@@ -307,6 +298,7 @@ public class EditProfileActivity extends AppCompatActivity {
     public void updateUser(final int user_id, final String token, final String first_name, final String last_name, final String email, final String phone_number) {
         try {
             final String newtoken = token;
+            Log.d("EditToken", newtoken);
             FileInputStream fis = null;
             fis = openFileInput("credentials.txt");
             InputStreamReader isr = new InputStreamReader(fis);

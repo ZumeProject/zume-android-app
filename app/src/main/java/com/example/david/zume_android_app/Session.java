@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -73,15 +74,6 @@ public class Session extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         Log.d("Internet", "Session "+new Boolean(isNetworkAvailable()).toString());
     }
     /*
@@ -139,7 +131,8 @@ public class Session extends AppCompatActivity {
     }
 
     public void addToContentList(String url, String title){
-        File file = new File(getFilesDir(), title.replace("\u00c3\u009a", "\u00DA").replace(" ", "_").replace("/", "_")+".pdf");
+        File file = new File(Environment.getExternalStorageDirectory().toString()+"/Download/"+title.replace(" ", "_").replace("/", "_")+".pdf");
+        //File file = new File(getFilesDir(), title.replace("\u00c3\u009a", "\u00DA").replace(" ", "_").replace("/", "_")+".pdf");
         if(file.exists() && file.isFile()){
             SessionRow row = new SessionRow(url, title);
             this.contentList.add(row);

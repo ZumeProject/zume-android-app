@@ -1,15 +1,21 @@
 package com.example.david.zume_android_app;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +40,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -42,6 +49,13 @@ import java.util.TimeZone;
  * This java file lets the user login and calls GetUser before moving on to the Dashboard.
  */
 public class LoginActivity extends AppCompatActivity {
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     private Button button_login_login;          //Login button
     private EditText editText_login_username;   //EditText for the username
     private EditText editText_login_password;   //EditText for the password
@@ -53,12 +67,15 @@ public class LoginActivity extends AppCompatActivity {
     private GetUser auth;                       //GetUser for login
     public static final int DIALOG_DOWNLOAD_PROGRESS = 0;   //Progress for downloading
     private ProgressDialog mProgressDialog;
+    private Context context = null;
+    private static boolean checkedPermission = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        //Takes the user to the zume site to register if they dont have an account
+        context = this;
+        //Takes the user to the zume site to register if they don't have an account
         Button register = (Button) findViewById(R.id.button_login_register);
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,9 +178,9 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void goToDashboardActivity() {
         // If network is available and the pdfs have not already been downloaded, download them (note, due to the API not returning URLs for the PDFs, when that is fixed, we will need to comment out this code so that the pdfs_downloaded.txt may be overwritten and the pdfs saved)
-        //if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
+        if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
             AsyncTask<Void, String, String> download = new DownloadFileAsync().execute();
-        //}
+        }
 
         Date complete = new Date();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -246,6 +263,8 @@ public class LoginActivity extends AppCompatActivity {
                 ArrayList<String[]> urls = downloader.execute();
                 int count;
                 if (urls != null) {
+                    verifyStoragePermissions(context);
+                    while(!checkedPermission){}
                     for (String[] thisUrl : urls) {
                         try {
                             String urlPath = thisUrl[0];
@@ -262,9 +281,12 @@ public class LoginActivity extends AppCompatActivity {
 
                             InputStream input = new BufferedInputStream(url.openStream());
                             //File file = new File(getFilesDir(), thisUrl[1].replace(" ", "_").replace("/", "_"));
-                            File file = new File(getFilesDir(), thisUrl[1].replace(" ", "_").replace("/", "_")+".pdf");
+                            //File file = new File(getFilesDir(), thisUrl[1].replace(" ", "_").replace("/", "_")+".pdf");
 
-                            OutputStream output = new FileOutputStream(file);
+                            //OutputStream output = new FileOutputStream(file);
+
+                            OutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory()
+                                    .toString()+"/Download/"+thisUrl[1].replace(" ", "_").replace("/", "_")+".pdf");
 
                             byte data[] = new byte[1024];
 
@@ -310,5 +332,27 @@ public class LoginActivity extends AppCompatActivity {
         //Log.d("Internet", "activeNetworkInfo: "+new Boolean(activeNetworkInfo != null).toString());
         //Log.d("Internet", "connectedOrConnecting: "+String.valueOf(activeNetworkInfo.isConnectedOrConnecting()));
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
+    /**
+     * Checks if the app has permission to write to device storage
+     *
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param context
+     */
+    public static void verifyStoragePermissions(Context context) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    (Activity)context,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+        checkedPermission = true;
     }
 }
