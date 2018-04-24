@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,8 +15,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,9 +119,9 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                         // Open the pdf in a pdf reader installed on the device if possible
                         File file = new File(Environment.getExternalStorageDirectory()
                                 .getAbsolutePath()+"/Download/", list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_")+".pdf");
-
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        //Setting permissions for the app to share the file.
                         Uri apkURI = FileProvider.getUriForFile(
                                 context,
                                 context.getApplicationContext()
@@ -196,13 +193,12 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                             final String members = intent.getStringExtra("members");
                             final String meta = "group_" + members;
 
-                            //Come back here to make use of the timestamp.
-                            //pass the username and password to this function.
-                            //So open the credentials file in Session.java
+                            //Checks if the token is still good or about to expire.
                             String username = intent.getStringExtra("username");
                             String password = intent.getStringExtra("password");
                             TokenTimeStamp check = new TokenTimeStamp();
                             boolean old = check.getTimeDiff(timeStamp[0]);
+                            //If the token is old we get a new one and make the POSTs.
                             if (old) {
                                 final GetUser getToken = new GetUser(username, password, context);
                                 final Handler handler = new Handler();
@@ -240,7 +236,9 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
 
                                     }
                                 }, 4000);
-                            } else {
+                            }
+                            //Makes the POSTs since the token is still good.
+                            else {
                                 LoggingPostHandler logging = new LoggingPostHandler(context, token[0], session_complete_date, "course", session_number, meta, groupID, userID, internet);
                                 SessionPostHandler handler = new SessionPostHandler(context, token[0], groupID, args, userID, internet);
 
