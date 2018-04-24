@@ -192,6 +192,10 @@ public class GetUser extends AppCompatActivity {
                                 username = user;
                                 password = pass;
                             }
+                            else if(username.equals("") && password.equals("")){
+                                username = user;
+                                password = pass;
+                            }
 
                         } catch (IOException e) {
                             e.printStackTrace();
