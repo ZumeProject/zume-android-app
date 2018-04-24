@@ -139,7 +139,7 @@ public class Session extends AppCompatActivity {
     }
 
     public void addToContentList(String url, String title){
-        File file = new File(getFilesDir(), title.replace(" ", "_").replace("/", "_"));
+        File file = new File(getFilesDir(), title.replace("\u00c3\u009a", "\u00DA").replace(" ", "_").replace("/", "_")+".pdf");
         if(file.exists() && file.isFile()){
             SessionRow row = new SessionRow(url, title);
             this.contentList.add(row);
