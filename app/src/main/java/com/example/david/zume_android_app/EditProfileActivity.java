@@ -230,7 +230,21 @@ public class EditProfileActivity extends AppCompatActivity {
             JSONObject reader = new JSONObject(resultFromUserProfile);
             JSONArray first = reader.getJSONArray("first_name");
             JSONArray last = reader.getJSONArray("last_name");
-            JSONArray phone = reader.getJSONArray("zume_phone_number");
+            try {
+                JSONArray phone = reader.getJSONArray("zume_phone_number");
+                // Set phoneNumber
+                EditText phoneNumber = (EditText)findViewById(R.id.phoneNumber);
+                phoneNumber.setText(phone.get(0).toString());
+                Log.d("Phone", phone.get(0).toString());
+                this.prevPhoneNumber = phone.get(0).toString();
+            }
+            catch(Exception o){
+                // Set phoneNumber
+                EditText phoneNumber = (EditText)findViewById(R.id.phoneNumber);
+                phoneNumber.setText("");
+                this.prevPhoneNumber = "";
+                o.printStackTrace();
+            }
 
             // Set firstName
             EditText firstName = (EditText)findViewById(R.id.firstName);
@@ -240,11 +254,6 @@ public class EditProfileActivity extends AppCompatActivity {
             EditText lastName = (EditText)findViewById(R.id.lastName);
             lastName.setText(last.get(0).toString());
             this.prevLastName = last.get(0).toString();
-            // Set phoneNumber
-            EditText phoneNumber = (EditText)findViewById(R.id.phoneNumber);
-            phoneNumber.setText(phone.get(0).toString());
-            Log.d("Phone", phone.get(0).toString());
-            this.prevPhoneNumber = phone.get(0).toString();
 
             // Get email from user
             reader = new JSONObject(resultFromUser);

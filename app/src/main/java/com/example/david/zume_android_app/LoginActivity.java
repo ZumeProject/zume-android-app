@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse("http://zume.hsutx.edu/wp-login.php?action=register"); // missing 'http://' will cause crashed
+                Uri uri = Uri.parse("http://zume.sergeantservices.com/wp-login.php?action=register"); // missing 'http://' will cause crashed
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }

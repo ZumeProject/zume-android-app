@@ -157,7 +157,17 @@ public class ProfileActivity extends AppCompatActivity {
             JSONArray first = reader.getJSONArray("first_name");
             JSONArray last = reader.getJSONArray("last_name");
             JSONArray nickname = reader.getJSONArray("nickname");
-            JSONArray phone = reader.getJSONArray("zume_phone_number");
+            try {
+                JSONArray phone = reader.getJSONArray("zume_phone_number");
+                // Set phone number
+                TextView phoneNumber = (TextView)findViewById(R.id.phoneProfile);
+                phoneNumber.setText((phone.get(0).toString()));
+            }
+            catch(Exception o){
+                TextView phoneNumber = (TextView)findViewById(R.id.phoneProfile);
+                phoneNumber.setText("");
+                o.printStackTrace();
+            }
 
             // Set first name
             TextView firstName = (TextView)findViewById(R.id.firstNameProfile);
@@ -176,10 +186,6 @@ public class ProfileActivity extends AppCompatActivity {
             else{
                 lastName.setText(nickname.get(0).toString());
             }
-
-            // Set phone number
-            TextView phoneNumber = (TextView)findViewById(R.id.phoneProfile);
-            phoneNumber.setText((phone.get(0).toString()));
 
             // Get email from user
             reader = new JSONObject(resultFromUser);
