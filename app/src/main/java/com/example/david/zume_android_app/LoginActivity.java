@@ -36,37 +36,29 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
+/**
+ * Created by David on 2/15/2018.
+ *
+ * This java file lets the user login and calls GetUser before moving on to the Dashboard.
+ */
 public class LoginActivity extends AppCompatActivity {
-    private Button button_login_login;
-    private EditText editText_login_username;
-    private EditText editText_login_password;
-    private String username;
-    private String password;
-    private String token;
-    private Integer user_id;
-    private String baseUrlUserProfile = "http://zume.hsutx.edu/wp-json/zume/v1/android/user_profile/1";
-    private GetUser auth;
-    public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
-    private Button startBtn;
+    private Button button_login_login;          //Login button
+    private EditText editText_login_username;   //EditText for the username
+    private EditText editText_login_password;   //EditText for the password
+    private String username;                    //Username for the current user
+    private String password;                    //Password for the current user
+    private String token;                       //Token for the current user
+    private long timeStamp;                     //TimeStamp for the current user
+    private String user_id;                    //User_id of the current user
+    private GetUser auth;                       //GetUser for login
+    public static final int DIALOG_DOWNLOAD_PROGRESS = 0;   //Progress for downloading
     private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        /*
-         * Bypass button to help with debugging. So I don't have to type in a login
-         */
-//        Button bypass = (Button) findViewById(R.id.bypass_button);
-//        bypass.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                username = "daoffner";
-//                password = "Astra2008";
-//                goToDashboardActivity();
-//            }
-//        });
-
+        //Takes the user to the zume site to register if they dont have an account
         Button register = (Button) findViewById(R.id.button_login_register);
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,7 +93,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 //Creates new files with the user information if the credentials are correct.
-                // switched && to ||
                 if (failed && isNetworkAvailable()) {
                     makeApiCall(getApplicationContext());
                 }
@@ -129,15 +120,11 @@ public class LoginActivity extends AppCompatActivity {
                     if (user.equals(username) && pass.equals(password)) {
                         Log.d("Test", "Passing saved data");
                         if(isNetworkAvailable()){
-                            //get token from file.
-                            //get new info.
+                            //Makes a new token and updates the user info
                             makeApiCall(getApplicationContext());
-                            // USe this to reuse token auth = new GetUser(oldToken,getApplicationContext() );
-                            //Go to get User to handle what happens.
-                            //check token
                         }
                         else{
-                            //get token from file.
+                            //Sets the token to the old one
                             token = oldToken;
                             goToDashboardActivity();
                         }
@@ -173,8 +160,6 @@ public class LoginActivity extends AppCompatActivity {
      * Open the Dashboard window.
      */
     private void goToDashboardActivity() {
-        //if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
-        //Fix logic after the &&
         // If network is available and the pdfs have not already been downloaded, download them (note, due to the API not returning URLs for the PDFs, when that is fixed, we will need to comment out this code so that the pdfs_downloaded.txt may be overwritten and the pdfs saved)
         if(isNetworkAvailable() && !(new File(getApplicationContext().getFilesDir()+"/pdfs_downloaded.txt").exists())) {
             AsyncTask<Void, String, String> download = new DownloadFileAsync().execute();
@@ -186,13 +171,11 @@ public class LoginActivity extends AppCompatActivity {
         String createdDate = format.format(complete);
         createdDate = createdDate.replace(" ", "%20");
 
-        LoggingPostHandler handler = new LoggingPostHandler(getApplicationContext(), token, createdDate, "login", "logged_id", String.valueOf(user_id), isNetworkAvailable());
+        LoggingPostHandler handler = new LoggingPostHandler(getApplicationContext(), token, createdDate, "login", "logged_id", user_id, isNetworkAvailable());
 
 
         Bundle bundle = new Bundle();
-        //bundle.putString("username", username);
-        //bundle.putString("password", password);
-        //bundle.putString("baseUrl", baseUrlUserProfile);
+        bundle.putLong("timeStamp", timeStamp);
         bundle.putString("token", token);
 
         Intent intent = new Intent(this, DashboardActivity.class);
@@ -206,6 +189,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void makeApiCall(Context context) {
         final Context cont = context;
+        //Gets a token and the user info
         auth = new GetUser(username, password, context);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -214,33 +198,25 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("Login - Internet", String.valueOf(isNetworkAvailable()));
                 Log.d("What!", String.valueOf(auth.getFailed()));
                 if(!auth.getFailed()) {
+                    //Gets the new token and timestamp for the current login
                     token = auth.getToken();
-                    String userID = auth.getUserID();
-                    SessionPostHandler pendingPosts = new SessionPostHandler(cont, token, isNetworkAvailable(), userID);
-                    LoggingPostHandler pendingLogs = new LoggingPostHandler(cont, token, isNetworkAvailable(), userID);
-                }
-
-            }
-        }, 2000);
-        auth = new GetUser(username, password, context);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("Login - Internet", String.valueOf(isNetworkAvailable()));
-                Log.d("What!", String.valueOf(auth.getFailed()));
-                if(!auth.getFailed()){
-                    token = auth.getToken();
+                    timeStamp = auth.getTimeStamp();
+                    user_id = auth.getUserID();
+                    //Makes POSTs to the api to update logging information.
+                    SessionPostHandler pendingPosts = new SessionPostHandler(cont, token, isNetworkAvailable(), user_id);
+                    LoggingPostHandler pendingLogs = new LoggingPostHandler(cont, token, isNetworkAvailable(), user_id);
                     goToDashboardActivity();
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
                     Log.d("Testing" , String.valueOf(auth.getFailed()));
                 }
+
             }
         }, 2000);
-
     }
 
+    //Downloads the PDFS and puts them into a file
     class DownloadFileAsync extends AsyncTask<Void, String, String> {
 
         @Override
@@ -285,7 +261,9 @@ public class LoginActivity extends AppCompatActivity {
                             //Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
 
                             InputStream input = new BufferedInputStream(url.openStream());
+                            //File file = new File(getFilesDir(), thisUrl[1].replace(" ", "_").replace("/", "_"));
                             File file = new File(getFilesDir(), thisUrl[1].replace(" ", "_").replace("/", "_"));
+
                             OutputStream output = new FileOutputStream(file);
 
                             byte data[] = new byte[1024];
