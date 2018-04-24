@@ -8,7 +8,12 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Created by Brandi on 3/18/2018.
@@ -173,6 +178,24 @@ public class GetUser extends AppCompatActivity {
                 else if(type.equals("user")){
                     failed = false;
                     String filename = "credentials.txt";
+                    FileInputStream fis = null;
+                    try {
+                        fis = openFileInput(filename);
+                        Log.d("Test", "Opened the file");
+                        InputStreamReader isr = new InputStreamReader(fis);
+                        BufferedReader bufferedReader = new BufferedReader(isr);
+                        try {
+                            username = bufferedReader.readLine();
+                            password = bufferedReader.readLine();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Log.d("Test", "Failed");
+                    }
+
                     try {
                         JSONObject reader = new JSONObject(isValidCredentials);
                         int id = reader.getInt("user_id");
