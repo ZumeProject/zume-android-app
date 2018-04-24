@@ -111,6 +111,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
 //                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                         File file = new File(context.getFilesDir(), list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_"));
+                        file = new File("/storage/emulated/0/data/data/com.example.david.zume_android_app/files/"+list.get(position).getPdfTitle().replace(" ", "_").replace("/", "_")+".pdf");
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         Uri apkURI = FileProvider.getUriForFile(
