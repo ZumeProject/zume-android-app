@@ -105,6 +105,10 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                         intent.setDataAndType(apkURI, "application/pdf");
                         //intent.setDataAndType(apkURI, mimeType);
                         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                        PdfHandler pdf = new PdfHandler(context);
+//                        //pdf.openPdf(String.valueOf(file));
+//                        pdf.openPdf("/data/data/com.example.david.zume_android_app/files/Zúme_Video_Scripts:_3_3_Group");
+//                        //data/data/com.example.david.zume_android_app/files/Zúme_Guidebook
 
 
  //                       Uri apkURI = FileProvider.getUriForFile(SessionListAdapter.this, BuildConfig.APPLICATION_ID + ".provider",
@@ -116,7 +120,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
 //                        install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                         try {
-                            context.startActivity(intent);
+                           context.startActivity(intent);
                         }
                         // No pdf reader is installed on this device so let the user know
                         catch(ActivityNotFoundException e){
