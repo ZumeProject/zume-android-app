@@ -180,7 +180,7 @@ public class GetUser extends AppCompatActivity {
                     String filename = "credentials.txt";
                     FileInputStream fis = null;
                     try {
-                        fis = openFileInput(filename);
+                        fis = context.openFileInput(filename);
                         Log.d("Test", "Opened the file");
                         InputStreamReader isr = new InputStreamReader(fis);
                         BufferedReader bufferedReader = new BufferedReader(isr);
