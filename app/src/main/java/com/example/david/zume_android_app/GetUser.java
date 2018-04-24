@@ -184,9 +184,17 @@ public class GetUser extends AppCompatActivity {
                         Log.d("Test", "Opened the file");
                         InputStreamReader isr = new InputStreamReader(fis);
                         BufferedReader bufferedReader = new BufferedReader(isr);
+                        String user = "", pass = "", tok ="";
                         try {
-                            username = bufferedReader.readLine();
-                            password = bufferedReader.readLine();
+                            user = bufferedReader.readLine();
+                            pass = bufferedReader.readLine();
+                            bufferedReader.readLine();
+                            tok = bufferedReader.readLine();
+                            if (user.equals(username) && pass.equals(password)) {
+                                username = user;
+                                password = pass;
+                            }
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
