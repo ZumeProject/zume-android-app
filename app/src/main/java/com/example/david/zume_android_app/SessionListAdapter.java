@@ -4,14 +4,20 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.FileProvider;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
@@ -74,10 +80,19 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
             final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             //Choose view based on if this row contains a video
-            if(list.get(position).isVideo()){
-                view = inflater.inflate(R.layout.session_list_text_layout, null);
-                TextView listItemText = (TextView)view.findViewById(R.id.session_item_text);
-                listItemText.setText(cleanText(list.get(position).getVideo()));
+            if(list.get(position).isVideo() && !list.get(position).getVideoEmbed().equals("")){
+                view = inflater.inflate(R.layout.session_list_video_layout, null);
+                //TextView listItemText = (TextView)view.findViewById(R.id.session_item_text);
+                WebView webview = (WebView)view.findViewById(R.id.session_item_video);
+                //String embed = "<iframe src=\"https://player.vimeo.com/video/247063338?app_id=122963\" width=\"640\" height=\"360\" frameborder=\"0\" title=\"(06) Producers vs Consumers\" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>";
+                //listItemText.setText(cleanText(list.get(position).getVideoEmbed()));
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE); // the results will be higher than using the activity context object or the getWindowManager() shortcut
+                wm.getDefaultDisplay().getMetrics(displayMetrics);
+                int width = new Double(displayMetrics.widthPixels * .6).intValue();
+                int height = (9*width)/16;
+                String css = "<style> iframe { position: absolute; top:0; left: 0; width: "+width+"px; height: "+height+"; }</style>";
+                webview.loadData(css+list.get(position).getVideoEmbed(), "text/html", null);
             }
             //Handle pdf link
             else if(list.get(position).isPdf()){
@@ -213,6 +228,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                                         bundle.putString("groupName", groupName);
                                         bundle.putString("next_session", finalNext_session);
                                         bundle.putString("members", members);
+                                        bundle.putString("user_id", userID);
 
                                         // Update the local session number for this group
                                         updateSession(finalNext_session, groupID);
@@ -239,6 +255,7 @@ public class SessionListAdapter extends BaseAdapter implements ListAdapter{
                                 bundle.putString("groupName", groupName);
                                 bundle.putString("next_session", next_session);
                                 bundle.putString("members", members);
+                                bundle.putString("user_id", userID);
 
                                 // Update the local session number for this group
                                 updateSession(next_session, groupID);

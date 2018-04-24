@@ -134,7 +134,7 @@ public class Session extends AppCompatActivity {
      * @param isVideo
      */
     public void addToContentList(String value, boolean isVideo){
-        SessionRow row = new SessionRow(value, isVideo);
+        SessionRow row = new SessionRow(value, isVideo, isNetworkAvailable());
         this.contentList.add(row);
     }
 
