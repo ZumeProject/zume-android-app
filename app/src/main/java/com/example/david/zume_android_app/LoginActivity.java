@@ -2,7 +2,6 @@ package com.example.david.zume_android_app;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -19,7 +18,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -40,7 +38,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -101,11 +98,8 @@ public class LoginActivity extends AppCompatActivity {
                 //Checks to see if the user information exists
                 try {
                     fis = openFileInput("credentials.txt");
-                    Log.d("Test", "Opened the file");
-
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    Log.d("Test", "Failed");
                     failed = true;
                 }
 
@@ -131,11 +125,8 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    Log.d("Test", user);
-                    Log.d("Test", pass);
                     //Checking if its the same user loging in.
                     if (user.equals(username) && pass.equals(password)) {
-                        Log.d("Test", "Passing saved data");
                         if(isNetworkAvailable()){
                             //Makes a new token and updates the user info
                             makeApiCall(getApplicationContext());
@@ -212,8 +203,7 @@ public class LoginActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d("Login - Internet", String.valueOf(isNetworkAvailable()));
-                Log.d("What!", String.valueOf(auth.getFailed()));
+                //Log.d("Login - Internet", String.valueOf(isNetworkAvailable()));
                 if(!auth.getFailed()) {
                     //Gets the new token and timestamp for the current login
                     token = auth.getToken();
@@ -226,7 +216,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
-                    Log.d("Testing" , String.valueOf(auth.getFailed()));
+                    //Log.d("Testing" , String.valueOf(auth.getFailed()));
                 }
 
             }
@@ -277,13 +267,8 @@ public class LoginActivity extends AppCompatActivity {
                             conexion.connect();
 
                             int lenghtOfFile = conexion.getContentLength();
-                            //Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
 
                             InputStream input = new BufferedInputStream(url.openStream());
-                            //File file = new File(getFilesDir(), thisUrl[1].replace(" ", "_").replace("/", "_"));
-                            //File file = new File(getFilesDir(), thisUrl[1].replace(" ", "_").replace("/", "_")+".pdf");
-
-                            //OutputStream output = new FileOutputStream(file);
 
                             OutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory()
                                     .toString()+"/Download/"+thisUrl[1].replace(" ", "_").replace("/", "_")+".pdf");
