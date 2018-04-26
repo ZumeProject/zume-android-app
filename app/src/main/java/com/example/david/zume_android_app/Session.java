@@ -242,7 +242,7 @@ public class Session extends AppCompatActivity {
                     if(listIndex > 0){
                         text = listIndex+". "+text;
                         if(nestedList > 1){
-                            text = text+" (nested!!!!!)";
+                            text = "    "+text;
                         }
                         addToContentList(text, false);
                     }
