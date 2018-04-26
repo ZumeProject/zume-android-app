@@ -80,15 +80,6 @@
             android:layout_marginTop="41dp"
             android:text="Register" />
 
-        <Button
-            android:id="@+id/bypass_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/button_login_register"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="24dp"
-            android:text="Bypass for Debug" />
-
     </RelativeLayout>
 
 </RelativeLayout>
